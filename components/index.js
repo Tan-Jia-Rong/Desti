@@ -1,2 +1,2 @@
-export { default as AuthPressable } from './AuthPressable';
-export { default as AuthTextInput } from './AuthTextInput';
+export { default as FormButton } from './FormButton';
+export { default as FormInput } from './FormInput';

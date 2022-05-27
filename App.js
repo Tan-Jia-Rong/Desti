@@ -1,15 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
 import { LogBox } from 'react-native';
-
-import AppNavigator from './navigation/AppNavigator';
+import Providers from './navigation';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const App = () => {
-  return (
-    <AppNavigator />
-  )
+  return <Providers />;
 }
 
 export default App;

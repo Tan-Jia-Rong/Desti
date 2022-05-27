@@ -1,112 +1,85 @@
-import React, {useState} from "react";
-import { View, Image, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import logo from '../assets/Desti.png';
-import { AuthTextInput, AuthPressable } from '../components';
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../firebase';
+import React, {useState, useContext } from "react";
+import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { FormButton, FormInput } from '../components';
+import { AuthContext } from "../navigation/AuthProvider";
 
 const SignUpScreen = ({navigation}) => {
-    const [emailReg, setEmailReg] = useState('');
-    const [passwordReg, setPasswordReg] = useState('');
-    const [passwordRegConf, setPasswordRegConf] = useState('');
+    const [emailReg, setEmailReg] = useState();
+    const [passwordReg, setPasswordReg] = useState();
+    const [passwordRegConf, setPasswordRegConf] = useState();
 
-    const restoreForm = () => {
-        setEmailReg('');
-        setPasswordReg('');
-        setPasswordRegConf('');
-        Keyboard.dismiss();
-    };
-
-    const signUpHandler = async () => {
-        if (emailReg.length == 0 || passwordReg.length == 0) {
-            alert("Missing fields! Please Try Again!")
-            return;
-        } else if (passwordReg !== passwordRegConf) {
-            alert("Your password does not match!")
-            return;
-        }
-
-        await createUserWithEmailAndPassword(auth, emailReg, passwordReg)
-            .then(uc => {
-                const user = uc.user;
-
-                console.log(user);
-
-                alert("Sign Up Successful");
-                restoreForm();
-
-            }).catch(error => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                if(errorCode == 'auth/weak-password') {
-                    alert('Your password is too weak!');
-                } else if (errorCode == 'auth/email-already-in-use') {
-                    alert('Email is already in use');
-                } else if ('auth/invalid-email') {
-                    alert('Please enter a valid email');
-                }
-
-                console.error('[signUpHandler]', errorCode, errorMessage);
-            });
-    };
+    const {register} = useContext(AuthContext);
 
     return (
-        <TouchableWithoutFeedback onPress={() => {Keyboard.dismiss()}}>
-            <View style={styles.container}>
-                <Image source={ logo } style={styles.logo}/>
+        <View style = {styles.container}>
+            <Text style = {styles.text}>Create an account</Text>
 
-                <AuthTextInput
-                    value={emailReg}
-                    placeholder='Email'
-                    textHandler={setEmailReg}
-                />
+            <FormInput
+                labelValue = {emailReg}
+                onChangeText = {setEmailReg}
+                placeHolderText = "Email"
+                iconType = "user"
+                keyboardType = "email-address"
+                autoCapitalize = "none"
+                autocorrect = {false}
+            />
 
-                <AuthTextInput
-                    value={passwordReg}
-                    placeholder='Password'
-                    textHandler={setPasswordReg}
-                    secureTextEntry
-                />
+            <FormInput
+                labelValue = {passwordReg}
+                onChangeText = {setPasswordReg}
+                placeHolderText = "Password"
+                iconType = "lock"
+                secureTextEntry = {true}
+            />
 
-                <AuthTextInput
-                    value={passwordRegConf}
-                    placeholder='Confirm Password'
-                    textHandler={setPasswordRegConf}
-                    secureTextEntry
-                />
+            <FormInput
+                labelValue = {passwordRegConf}
+                onChangeText = {setPasswordRegConf}
+                placeHolderText = "Confirm Password"
+                iconType = "lock"
+                secureTextEntry = {true}
+            />
 
-                <AuthPressable
-                    title="Sign Up"
-                    onPressHandler={signUpHandler}
-                />
-            </View>
-        </TouchableWithoutFeedback>
+            <FormButton
+                buttonTitle = "Sign up"
+                onPress = {() => register(emailReg, passwordReg)}
+            />
+        </View>
     );
-};
+}
 
 export default SignUpScreen;
 
 const styles = StyleSheet.create({
     container: {
+      backgroundColor: '#f9fafd',
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#ffffff',
       padding: 20,
-      paddingTop: 20
     },
-    logo: {
-        height: 300,
-        width: 300,
-        resizeMode: 'cover',
+    text: {
+      fontSize: 28,
+      marginBottom: 10,
+      color: '#051d5f',
     },
-    welcomeText: {
-        fontSize: 32,
-        textAlign: 'center',
-        marginBottom: 20
+    navButton: {
+      marginTop: 15,
     },
-    authText: {
-        fontSize: 20,
-        marginBottom: 10
-    }
+    navButtonText: {
+      fontSize: 18,
+      fontWeight: '500',
+      color: '#2e64e5',
+    },
+    textPrivate: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginVertical: 35,
+      justifyContent: 'center',
+    },
+    color_textPrivate: {
+      fontSize: 13,
+      fontWeight: '400',
+      color: 'grey',
+    },
 });

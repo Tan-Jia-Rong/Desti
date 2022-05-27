@@ -1,77 +1,50 @@
-import React, {useState} from "react";
-import { View, Image, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import React, {useContext, useState} from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import logo from '../assets/Desti.png';
-import { AuthTextInput, AuthPressable } from '../components';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../firebase';
+import { FormInput, FormButton } from '../components';
+import { AuthContext } from "../navigation/AuthProvider";
 
 const LoginScreen = ({ navigation }) => {
-    const [emailLogin, setEmailLogin] = useState('');
-    const [passwordLogin, setPasswordLogin] = useState('');
-
-    const restoreForm = () => {
-        setEmailLogin('');
-        setPasswordLogin('');
-        Keyboard.dismiss();
-    };
-
-    const loginHandler = async () => {
-        if(emailLogin.length == 0 || passwordLogin.length == 0) {
-            alert("Missing fields! Please Try Again!")
-            return;
-        }
-
-        await signInWithEmailAndPassword(auth, emailLogin, passwordLogin)
-                .then(uc => {
-                    const user = uc.user;
-                    console.log(user);
-                    restoreForm();
-                }).catch(error => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    if(errorCode == 'auth/wrong-password') {
-                        alert('Wrong Password');
-                    } else if (errorCode == 'auth/user-not-found') {
-                        alert('User not found, have you already created an account?');
-                    } else if ('auth/invalid-email') {
-                        alert('Please enter a valid email');
-                    }
-
-                    console.error('[loginHandler]', errorCode, errorMessage);
-                });
-    };
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const {login} = useContext(AuthContext);
 
     return (
-        <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss() }} backgroundColor='blue'>
+        <View style = {styles.container}>
+            <Image source={ logo } style={styles.logo}/>
 
-                <View style={styles.container}>
-            
-                    <Image source={ logo } style={styles.logo}/>
+            <FormInput
+                labelValue = {email}
+                onChangeText = {setEmail}
+                placeHolderText = "Email"
+                iconType = "user"
+                keyboardType = "email-address"
+                autoCapitalize = "none"
+                autocorrect = {false}
+            />
 
-                    <AuthTextInput
-                        value={emailLogin}
-                        placeholder='Your Email'
-                        textHandler={setEmailLogin}
-                    />
+            <FormInput
+                labelValue = {password}
+                onChangeText = {setPassword}
+                placeHolderText = "Password"
+                iconType = "lock"
+                secureTextEntry = {true}
+            />
 
-                    <AuthTextInput
-                        value={passwordLogin}
-                        placeholder='Your Password'
-                        textHandler={setPasswordLogin}
-                        secureTextEntry
-                    />
+            <FormButton
+                buttonTitle="Sign in"
+                onPress = {() => login(email, password)}
+            />
 
-                    <AuthPressable
-                        title="Log in"
-                        onPressHandler={loginHandler}
-                    />
-
-                    <AuthPressable
-                        title="Don't have an account? Sign Up!"
-                        onPressHandler={() => navigation.navigate('SignUp')}
-                    />
-            </View>
-        </TouchableWithoutFeedback>
+            <TouchableOpacity
+                style = {styles.signUpButton}
+                onPress = {() => navigation.navigate("Signup")}
+            >
+                <Text style = {styles.navButtonText}>
+                    Don't have an account? Create here
+                </Text>
+            </TouchableOpacity>
+        </View>
     );
 };
 
@@ -79,25 +52,30 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#ffffff',
       padding: 20,
-      paddingTop: 50,
+      paddingTop: 50
     },
     logo: {
-        height: 300,
-        width: 300,
-        resizeMode: 'cover',
+      height: 150,
+      width: 150,
+      resizeMode: 'cover',
     },
-    welcomeText: {
-        fontSize: 32,
-        textAlign: 'center',
-        marginBottom: 20
+    text: {
+      fontSize: 28,
+      marginBottom: 10,
+      color: '#051d5f',
     },
-    authText: {
-        fontSize: 20,
-        marginBottom: 10
+    navButton: {
+      marginTop: 15,
     },
-});
+    signUpButton: {
+      marginVertical: 35,
+    },
+    navButtonText: {
+      fontSize: 18,
+      fontWeight: '500',
+      color: '#2e64e5',
+    },
+  });

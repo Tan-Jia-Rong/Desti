@@ -1,12 +1,34 @@
-import React from "react";
-import { Text, View } from 'react-native';
+import { useContext } from "react"
+import { Text, View, StyleSheet } from "react-native"
+import { FormButton } from "../components"
+import { AuthContext } from "../navigation/AuthProvider"
 
 const HomeScreen = () => {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text> Welcome to Desti! </Text>
-      </View>
-    );
+  const {user, logout} = useContext(AuthContext);
+
+  return (
+    <View style={styles.container}>
+        <Text style={styles.text}>Welcome </Text>
+        <FormButton 
+          buttonTitle='Logout'
+          onPress={() => logout()}
+        />
+    </View>
+  );
 }
 
 export default HomeScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#f9fafd',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  text: {
+    fontSize: 20,
+    color: '#333333'
+  }
+})
