@@ -14,7 +14,6 @@ const HomeStack = createNativeStackNavigator();
 const AppNavigator = () => {
 
     // Set an initializing state whilst Firebase connect
-    const [initializing, setInitializing] = useState(true);
     const [isAuth, setIsAuth] = useState(false);
 
     const logoutHandler = () => {
@@ -45,7 +44,7 @@ const AppNavigator = () => {
         // Clean up mechanism
         // React performs clean up when component unmounts. In our case,
         // app stops running.
-        return unsubscribeAuthStateChanged;
+        return () => unsubscribeAuthStateChanged();
     }, []);
 
     const MainNavigator = () => (

@@ -15,13 +15,13 @@ const SignUpScreen = ({navigation}) => {
         Keyboard.dismiss();
     };
 
-    const signUpHandler = () => {
+    const signUpHandler = async () => {
         if(emailReg.length == 0 || passwordReg.length == 0) {
             alert("Missing fields! Please Try Again!")
             return;
         }
 
-        createUserWithEmailAndPassword(auth, emailReg, passwordReg)
+        await createUserWithEmailAndPassword(auth, emailReg, passwordReg)
             .then(uc => {
                 const user = uc.user;
 

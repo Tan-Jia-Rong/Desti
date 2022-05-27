@@ -15,13 +15,13 @@ const LoginScreen = ({ navigation }) => {
         Keyboard.dismiss();
     };
 
-    const loginHandler = () => {
+    const loginHandler = async () => {
         if(emailLogin.length == 0 || passwordLogin.length == 0) {
             alert("Missing fields! Please Try Again!")
             return;
         }
 
-        return signInWithEmailAndPassword(auth, emailLogin, passwordLogin)
+        await signInWithEmailAndPassword(auth, emailLogin, passwordLogin)
                 .then(uc => {
                     const user = uc.user;
                     console.log(user);
