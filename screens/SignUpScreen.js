@@ -1,22 +1,30 @@
 import React, {useState, useContext } from "react";
-import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, Text, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { FormButton, FormInput } from '../components';
 import { AuthContext } from "../navigation/AuthProvider";
 
 const SignUpScreen = ({navigation}) => {
-    const [emailReg, setEmailReg] = useState();
-    const [passwordReg, setPasswordReg] = useState();
-    const [passwordRegConf, setPasswordRegConf] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [passwordConf, setPasswordConf] = useState();
 
     const {register} = useContext(AuthContext);
 
+    const restoreForm = () => {
+      setEmail();
+      setPassword();
+      setPasswordConf();
+      Keyboard.dismiss();
+    };
+
     return (
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style = {styles.container}>
             <Text style = {styles.text}>Create an account</Text>
 
             <FormInput
-                labelValue = {emailReg}
-                onChangeText = {setEmailReg}
+                labelValue = {email}
+                onChangeText = {setEmail}
                 placeHolderText = "Email"
                 iconType = "user"
                 keyboardType = "email-address"
@@ -25,16 +33,16 @@ const SignUpScreen = ({navigation}) => {
             />
 
             <FormInput
-                labelValue = {passwordReg}
-                onChangeText = {setPasswordReg}
+                labelValue = {password}
+                onChangeText = {setPassword}
                 placeHolderText = "Password"
                 iconType = "lock"
                 secureTextEntry = {true}
             />
 
             <FormInput
-                labelValue = {passwordRegConf}
-                onChangeText = {setPasswordRegConf}
+                labelValue = {passwordConf}
+                onChangeText = {setPasswordConf}
                 placeHolderText = "Confirm Password"
                 iconType = "lock"
                 secureTextEntry = {true}
@@ -42,9 +50,10 @@ const SignUpScreen = ({navigation}) => {
 
             <FormButton
                 buttonTitle = "Sign up"
-                onPress = {() => register(emailReg, passwordReg)}
+                onPress = {() => register(email, password, passwordConf) && restoreForm()}
             />
         </View>
+      </TouchableWithoutFeedback>
     );
 }
 

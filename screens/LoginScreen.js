@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import logo from '../assets/Desti.png';
 import { FormInput, FormButton } from '../components';
 import { AuthContext } from "../navigation/AuthProvider";
@@ -9,7 +9,14 @@ const LoginScreen = ({ navigation }) => {
     const [password, setPassword] = useState();
     const {login} = useContext(AuthContext);
 
+    const restoreForm = () => {
+      setEmail('');
+      setPassword('');
+      Keyboard.dismiss();
+    };
+
     return (
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style = {styles.container}>
             <Image source={ logo } style={styles.logo}/>
 
@@ -33,7 +40,7 @@ const LoginScreen = ({ navigation }) => {
 
             <FormButton
                 buttonTitle="Sign in"
-                onPress = {() => login(email, password)}
+                onPress = {() => login(email, password) && restoreForm()}
             />
 
             <TouchableOpacity
@@ -45,6 +52,7 @@ const LoginScreen = ({ navigation }) => {
                 </Text>
             </TouchableOpacity>
         </View>
+      </TouchableWithoutFeedback>
     );
 };
 
