@@ -19,12 +19,12 @@ export const AuthProvider = ({children}) => {
                         const errorCode = error.code;
                         const errorMessage = error.message;
 
-                        if(errorCode == 'auth/wrong-password') {
-                            alert('Wrong Password');
+                        if(errorCode == 'auth/invalid-email') {
+                            alert('Please enter a valid email');
                         } else if (errorCode == 'auth/user-not-found') {
                             alert('User not found, have you already created an account?');
-                        } else if ('auth/invalid-email') {
-                            alert('Please enter a valid email');
+                        } else if (errorCode == 'auth/wrong-password') {
+                            alert('Wrong Password');
                         }
 
                         console.log(errorCode, errorMessage);
@@ -45,12 +45,12 @@ export const AuthProvider = ({children}) => {
                         const errorCode = error.code;
                         const errorMessage = error.message;
 
-                        if(errorCode == 'auth/weak-password') {
-                            alert('Your password is too weak!');
+                        if(errorCode == 'auth/invalid-email') {
+                            alert('Please enter a valid email');
                         } else if (errorCode == 'auth/email-already-in-use') {
                             alert('Email is already in use');
-                        } else if ('auth/invalid-email') {
-                            alert('Please enter a valid email');
+                        } else if (errorCode == 'auth/weak-password') {
+                            alert('Your password is too weak!');
                         }
                         console.log(errorCode, errorMessage);
                     }

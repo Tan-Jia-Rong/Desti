@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import logo from '../assets/Desti.png';
 import { FormInput, FormButton } from '../components';
 import { AuthContext } from "../navigation/AuthProvider";
@@ -16,43 +16,48 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style = {styles.container}>
-            <Image source={ logo } style={styles.logo}/>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <View style = {styles.container}>
+              <Image source={ logo } style={styles.logo}/>
 
-            <FormInput
-                labelValue = {email}
-                onChangeText = {setEmail}
-                placeHolderText = "Email"
-                iconType = "user"
-                keyboardType = "email-address"
-                autoCapitalize = "none"
-                autocorrect = {false}
-            />
+              <FormInput
+                  labelValue = {email}
+                  onChangeText = {setEmail}
+                  placeHolderText = "Email"
+                  iconType = "user"
+                  keyboardType = "email-address"
+                  autoCapitalize = "none"
+                  autocorrect = {false}
+              />
 
-            <FormInput
-                labelValue = {password}
-                onChangeText = {setPassword}
-                placeHolderText = "Password"
-                iconType = "lock"
-                secureTextEntry = {true}
-            />
+              <FormInput
+                  labelValue = {password}
+                  onChangeText = {setPassword}
+                  placeHolderText = "Password"
+                  iconType = "lock"
+                  secureTextEntry = {true}
+              />
 
-            <FormButton
-                buttonTitle="Sign in"
-                onPress = {() => login(email, password) && restoreForm()}
-            />
+              <FormButton
+                  buttonTitle="Sign in"
+                  onPress = {() => login(email, password) && restoreForm()}
+              />
 
-            <TouchableOpacity
-                style = {styles.signUpButton}
-                onPress = {() => navigation.navigate("Signup")}
-            >
-                <Text style = {styles.navButtonText}>
-                    Don't have an account? Create here
-                </Text>
-            </TouchableOpacity>
-        </View>
-      </TouchableWithoutFeedback>
+              <TouchableOpacity
+                  style = {styles.signUpButton}
+                  onPress = {() => navigation.navigate("Signup")}
+              >
+                  <Text style = {styles.navButtonText}>
+                      Don't have an account? Create here
+                  </Text>
+              </TouchableOpacity>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     );
 };
 

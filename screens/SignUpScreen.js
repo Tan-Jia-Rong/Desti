@@ -1,5 +1,5 @@
 import React, {useState, useContext } from "react";
-import { View, Text, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { View, Text, Keyboard, TouchableWithoutFeedback, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { FormButton, FormInput } from '../components';
 import { AuthContext } from "../navigation/AuthProvider";
 
@@ -18,42 +18,47 @@ const SignUpScreen = ({navigation}) => {
     };
 
     return (
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style = {styles.container}>
-            <Text style = {styles.text}>Create an account</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <View style = {styles.container}>
+              <Text style = {styles.text}>Create an account</Text>
 
-            <FormInput
-                labelValue = {email}
-                onChangeText = {setEmail}
-                placeHolderText = "Email"
-                iconType = "user"
-                keyboardType = "email-address"
-                autoCapitalize = "none"
-                autocorrect = {false}
-            />
+              <FormInput
+                  labelValue = {email}
+                  onChangeText = {setEmail}
+                  placeHolderText = "Email"
+                  iconType = "user"
+                  keyboardType = "email-address"
+                  autoCapitalize = "none"
+                  autocorrect = {false}
+              />
 
-            <FormInput
-                labelValue = {password}
-                onChangeText = {setPassword}
-                placeHolderText = "Password"
-                iconType = "lock"
-                secureTextEntry = {true}
-            />
+              <FormInput
+                  labelValue = {password}
+                  onChangeText = {setPassword}
+                  placeHolderText = "Password"
+                  iconType = "lock"
+                  secureTextEntry = {true}
+              />
 
-            <FormInput
-                labelValue = {passwordConf}
-                onChangeText = {setPasswordConf}
-                placeHolderText = "Confirm Password"
-                iconType = "lock"
-                secureTextEntry = {true}
-            />
+              <FormInput
+                  labelValue = {passwordConf}
+                  onChangeText = {setPasswordConf}
+                  placeHolderText = "Confirm Password"
+                  iconType = "lock"
+                  secureTextEntry = {true}
+              />
 
-            <FormButton
-                buttonTitle = "Sign up"
-                onPress = {() => register(email, password, passwordConf) && restoreForm()}
-            />
-        </View>
-      </TouchableWithoutFeedback>
+              <FormButton
+                  buttonTitle = "Sign up"
+                  onPress = {() => register(email, password, passwordConf) && restoreForm()}
+              />
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     );
 }
 
