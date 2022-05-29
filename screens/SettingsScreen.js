@@ -11,7 +11,7 @@ const SettingsScreen = ({navigation}) => {
     <View style={styles.container}>
         <Image 
           source={{uri: 'https://assets.change.org/photos/8/jw/ax/QMjwAxeQAfcpoxs-800x450-noPad.jpg?1597557421'}}
-          style={styles.profilePicture} 
+          style={styles.profilePicture}
           />
         <Text style={styles.text}>Edit Profile</Text>
         <Text style={styles.text}> Username: {user.displayName}</Text>
@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
   profilePicture: {
     height: 150,
     width: 150,
-    borderRadius: '100',
+    borderRadius: 100,
   }
 })

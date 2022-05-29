@@ -101,7 +101,7 @@ const AppStack = () => {
                 component={RouletteScreen}
                 options={{
                     tabBarIcon: ({color, size}) => (
-                        <Ionicons name="dice-outline" color ={color} size={size}/>
+                        <Ionicons name="help" color ={color} size={size}/>
                     )
                 }}
             />
