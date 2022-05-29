@@ -8,16 +8,12 @@ const RestaurantScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-        <Text style={styles.text}>This is the Restaurant Page</Text>
         <Image 
         style={{width: 300, height: 300}}
         source={{uri: "https://www.meme-arsenal.com/memes/bcf086f200fdab25abd43134ae1ee491.jpg"}}
         />
 
-        <FormButton 
-          buttonTitle='Go Back'
-          onPress={() => navigation.navigate("Home")}
-        />
+        <Text style={styles.text}>This is the Restaurant Page</Text>
     </View>
   );
 }

@@ -23,7 +23,7 @@ const SignUpScreen = ({navigation}) => {
         style={styles.container}
       >
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <View style = {styles.container}>
+          <View style = {styles.inner}>
               <Text style = {styles.text}>Create an account</Text>
 
               <FormInput
@@ -66,11 +66,13 @@ export default SignUpScreen;
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: '#f9fafd',
       flex: 1,
+    },
+    inner: {
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
+      paddingTop: 50
     },
     text: {
       fontSize: 28,

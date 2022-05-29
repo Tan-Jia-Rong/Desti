@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }) => {
         style={styles.container}
       >
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <View style = {styles.container}>
+          <View style = {styles.inner}>
               <Image source={ logo } style={styles.logo}/>
 
               <FormInput
@@ -65,6 +65,9 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
     container: {
+      flex: 1,
+    },
+    inner: {
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,

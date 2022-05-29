@@ -1,24 +1,18 @@
 import { useContext } from "react"
 import { Text, View, StyleSheet, Image } from "react-native"
-import { FormButton } from "../components"
 import { AuthContext } from "../navigation/AuthProvider"
 
-const MapScreen = ({navigation}) => {
+const FeedsScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
-        <Image 
-        style={{width: 400, height: 300}}
-        source={{uri: "https://media2.giphy.com/media/B14Ym7cs4PxwRUdCtN/200.gif"}}
-        />
-
-        <Text style={styles.text}>There's no map for now...</Text>
+        <Text style={styles.text}>There's no feeds for now...</Text>
     </View>
   );
 }
 
-export default MapScreen;
+export default FeedsScreen;
 
 const styles = StyleSheet.create({
   container: {

@@ -23,11 +23,6 @@ const RouletteScreen = ({navigation}) => {
           buttonTitle='Roll'
           onPress={() => setValue(Math.floor((Math.random() * 100) + 1))}
         />
-
-        <FormButton 
-          buttonTitle='Go Back'
-          onPress={() => navigation.navigate("Home")}
-        />
     </View>
   );
 }
