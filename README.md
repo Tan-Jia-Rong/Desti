@@ -100,8 +100,9 @@ The activity diagram shows the overview of the actions that users can take at va
       <td>4 (31/5 - 6/6)</td>
       <td>
         <ul>
-          <li>To be filled</li>
-          <li>To be filled</li>
+          <li>Do up Firebase Database</li>
+          <li>Home Page : real time update of Review's + Add Review button</li>
+          <li>Review Page : Add Review to Home Page + Upload Photo </li>
         </ul>
       </td>
      </tr>
@@ -109,8 +110,8 @@ The activity diagram shows the overview of the actions that users can take at va
       <td>5 (7/6 - 13/6)</td>
       <td>
         <ul>
-          <li>To be filled</li>
-          <li>To be filled</li>
+          <li>Restaurant Page + features</li>
+          <li>Link Reviews to Restaurant Page</li>
         </ul>
       </td>
     </tr>
@@ -118,8 +119,8 @@ The activity diagram shows the overview of the actions that users can take at va
       <td>6 (14/6 - 20/6)</td>
       <td>
         <ul>
-          <li>To be filled</li>
-          <li>To be filled</li>
+          <li>Bookmark Page + features</li>
+          <li>Link Restaurant Page to Bookmarks</li>
         </ul>
       </td>
     </tr>
@@ -127,8 +128,8 @@ The activity diagram shows the overview of the actions that users can take at va
       <td>7 (21/6 - 27/6)</td>
       <td>
         <ul>
-          <li>To be filled</li>
-          <li>To be filled</li>
+          <li>Map Feature</li>
+          <li>Search Feature</li>
         </ul>
       </td>
     </tr>
@@ -136,7 +137,7 @@ The activity diagram shows the overview of the actions that users can take at va
       <td>8 (28/6 - 4/7)</td>
       <td>
         <ul>
-          <li>To be filled</li>
+          <li>Roulette Feature</li>
           <li>To be filled</li>
         </ul>
       </td>
@@ -145,8 +146,8 @@ The activity diagram shows the overview of the actions that users can take at va
       <td>9 (5/7 - 11/7)</td>
       <td>
         <ul>
-          <li>To be filled</li>
-          <li>To be filled</li>
+          <li>Profile Page</li>
+          <li>Edit Profile Page</li>
         </ul>
       </td>
     </tr>
