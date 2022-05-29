@@ -1,6 +1,8 @@
 ﻿# Desti #
 A Social Food Review application
 
+![Logo](https://raw.githubusercontent.com/Tan-Jia-Rong/Desti/main/assets/icon.png)
+
 Proposed level of achievement: Apollo 11
 
 ## Motivation ##
