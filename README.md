@@ -76,7 +76,7 @@ By providing relevant information to facilitate the decision-making process, we 
     * It is assumed that users will have connection to the internet.
 
 ### Activity Diagram ###
-![Activity Diagram](https://raw.githubusercontent.com/Tan-Jia-Rong/Desti/master/.github/ActivityDiagram.png)
+![Activity Diagram](https://raw.githubusercontent.com/Tan-Jia-Rong/Desti/main/.github/ActivityDiagram.png?token=GHSAT0AAAAAABULXMBVMMRL5XSEW4QN3US6YUUS4TQ)
 
 The activity diagram shows the overview of the actions that users can take at various page and the relationship between pages in the application.
 
