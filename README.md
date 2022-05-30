@@ -1,7 +1,7 @@
 ﻿# Desti #
 A Social Food Review application
 
-![Logo](https://raw.githubusercontent.com/Tan-Jia-Rong/Desti/main/assets/icon.png)
+![Logo]([https://raw.githubusercontent.com/Tan-Jia-Rong/Desti/main/assets/icon.png](https://raw.githubusercontent.com/Tan-Jia-Rong/Desti/main/assets/Desti.png?token=GHSAT0AAAAAABULXMBUOUKKVQZ7TWB562I2YUUS22A))
 
 Proposed level of achievement: Apollo 11
 
@@ -171,5 +171,67 @@ The activity diagram shows the overview of the actions that users can take at va
         </ul>
       </td>
     </tr> 
+  </tbody>
+</table>
+
+## Project Log ##
+<table>
+  <tbody>
+    <tr>
+      <th>Task</th>
+      <th>Wei Rui</th>
+      <th>Jia Rong</th>
+    </tr>
+    <tr>
+        <td style="text-align: center; vertical-align: middle;">
+          Learning of React Native (React, CSS, HTML, JSX)
+        </td>
+        <td style="text-align: center; vertical-align: middle;">8hrs</td>
+        <td style="text-align: center; vertical-align: middle;">8hrs</td>
+    </tr>
+    <tr>
+        <td style="text-align: center; vertical-align: middle;">
+          Learning of Firebase Auth
+        </td>
+        <td style="text-align: center; vertical-align: middle;">3hrs</td>
+        <td style="text-align: center; vertical-align: middle;">3hrs</td>
+    </tr>
+    <tr>
+        <td style="text-align: center; vertical-align: middle;">
+          Ideation (Activity Diagram)
+        </td>
+        <td style="text-align: center; vertical-align: middle;">2hrs</td>
+        <td style="text-align: center; vertical-align: middle;">2hrs</td>
+    </tr>
+     <tr>
+        <td style="text-align: center; vertical-align: middle;">
+          SignUp/Login Screen (UI)
+        </td>
+        <td style="text-align: center; vertical-align: middle;">4hrs</td>
+        <td style="text-align: center; vertical-align: middle;">2hrs</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;"> FireBase Authentication </td>
+        <td style="text-align: center; vertical-align: middle;">2hrs</td>
+        <td style="text-align: center; vertical-align: middle;">6hrs</td>
+     </tr>
+     <tr>
+        <td style="text-align: center; vertical-align: middle;">
+          Mock Up of Application with Navigation
+          <ul> Feeds Page</ul>
+          <ul> Profile Page</ul>
+          <ul> Map Page</ul>
+          <ul> Settings Page</ul>
+          <ul> Restaurants Page</ul>
+          <ul> Roulette Page</ul>
+        </td>
+        <td style="text-align: center; vertical-align: middle;">2hrs</td>
+        <td style="text-align: center; vertical-align: middle;">6hrs</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">To be filled</td>
+        <td style="text-align: center; vertical-align: middle;">To be filled</td>
+        <td style="text-align: center; vertical-align: middle;">To be filled</td>
+     </tr>
   </tbody>
 </table>
