@@ -179,6 +179,7 @@ The activity diagram shows the overview of the actions that users can take at va
   <tbody>
     <tr>
       <th>Task</th>
+      <th>Date</th>
       <th>Wei Rui</th>
       <th>Jia Rong</th>
       <th>Remarks</th>
@@ -187,6 +188,7 @@ The activity diagram shows the overview of the actions that users can take at va
         <td style="text-align: center; vertical-align: middle;">
           Mission Control 1
         </td>
+        <td style="text-align: center; vertical-align: middle;">14/05/22</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">React Native 1st Workshop</td>
@@ -195,6 +197,7 @@ The activity diagram shows the overview of the actions that users can take at va
         <td style="text-align: center; vertical-align: middle;">
           Mission Control 1
         </td>
+        <td style="text-align: center; vertical-align: middle;">14/05/22</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">SupaBase 1st Workshop</td>
@@ -203,6 +206,7 @@ The activity diagram shows the overview of the actions that users can take at va
         <td style="text-align: center; vertical-align: middle;">
           Mission Control 1
         </td>
+         <td style="text-align: center; vertical-align: middle;">21/05/22</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">React Native 2nd Workshop</td>
@@ -211,6 +215,7 @@ The activity diagram shows the overview of the actions that users can take at va
         <td style="text-align: center; vertical-align: middle;">
           Mission Control 1
         </td>
+         <td style="text-align: center; vertical-align: middle;">21/05/22</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">SupaBase 2nd Workshop</td>
@@ -219,6 +224,7 @@ The activity diagram shows the overview of the actions that users can take at va
         <td style="text-align: center; vertical-align: middle;">
           Mission Control 1
         </td>
+         <td style="text-align: center; vertical-align: middle;">21/05/22</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">Catch up on Git Workshop</td>
@@ -227,6 +233,7 @@ The activity diagram shows the overview of the actions that users can take at va
         <td style="text-align: center; vertical-align: middle;">
           Mission Control 2
         </td>
+         <td style="text-align: center; vertical-align: middle;">28/05/22</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">2hrs</td>
         <td style="text-align: center; vertical-align: middle;">UI/UX 1st Workshop</td>
@@ -235,6 +242,7 @@ The activity diagram shows the overview of the actions that users can take at va
         <td style="text-align: center; vertical-align: middle;">
           Learning of React Native (React, CSS, HTML, JSX)
         </td>
+         <td style="text-align: center; vertical-align: middle;">14/05/22-30/05/22</td>
         <td style="text-align: center; vertical-align: middle;">12hrs</td>
         <td style="text-align: center; vertical-align: middle;">12hrs</td>
          <td style="text-align: center; vertical-align: middle;">Time spent on docs, YouTube guides etc</td>
@@ -243,12 +251,14 @@ The activity diagram shows the overview of the actions that users can take at va
         <td style="text-align: center; vertical-align: middle;">
           SignUp/Login Screen (UI)
         </td>
+        <td style="text-align: center; vertical-align: middle;">23/05/22-26/05/22</td>
         <td style="text-align: center; vertical-align: middle;">6hrs</td>
         <td style="text-align: center; vertical-align: middle;">4hrs</td>
          <td style="text-align: center; vertical-align: middle;">UI for login/signup screen</td>
      </tr>
      <tr>
       <td style="text-align: center; vertical-align: middle;"> FireBase Authentication </td>
+        <td style="text-align: center; vertical-align: middle;">23/05/22-29/05/22</td>
         <td style="text-align: center; vertical-align: middle;">4hrs</td>
         <td style="text-align: center; vertical-align: middle;">8hrs</td>
          <td style="text-align: center; vertical-align: middle;">firebase Auth for login/signup screen</td>
@@ -263,14 +273,23 @@ The activity diagram shows the overview of the actions that users can take at va
           <ul> Restaurants Page</ul>
           <ul> Roulette Page</ul>
         </td>
-        <td style="text-align: center; vertical-align: middle;">3hrs</td>
-        <td style="text-align: center; vertical-align: middle;">7hrs</td>
+        <td style="text-align: center; vertical-align: middle;">28/05/22-30/05/22</td>
+        <td style="text-align: center; vertical-align: middle;">2hrs</td>
+        <td style="text-align: center; vertical-align: middle;">4hrs</td>
          <td style="text-align: center; vertical-align: middle;">Various screens basic UI</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Total Hours</td>
+        <td style="text-align: center; vertical-align: middle;">NIL</td>
+        <td style="text-align: center; vertical-align: middle;">36</td>
+        <td style="text-align: center; vertical-align: middle;">40</td>
+         <td style="text-align: center; vertical-align: middle;">NIL</td>
      </tr>
      <tr>
       <td style="text-align: center; vertical-align: middle;">To be filled</td>
         <td style="text-align: center; vertical-align: middle;">To be filled</td>
         <td style="text-align: center; vertical-align: middle;">To be filled</td>
+         <td style="text-align: center; vertical-align: middle;">To be filled</td>
          <td style="text-align: center; vertical-align: middle;">To be filled</td>
      </tr>
   </tbody>
