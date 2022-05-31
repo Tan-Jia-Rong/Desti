@@ -4,7 +4,8 @@ import React from "react";
 import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { ProfileScreen, MapScreen, RestaurantScreen, SettingsScreen, RouletteScreen, FeedsScreen, AddReviewScreen } from "../screens";
+import Entypo from 'react-native-vector-icons/Entypo';
+import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen } from "../screens";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,7 +33,15 @@ const FeedsStack = ({navigation}) => {
                 name="AddReviews"
                 component={AddReviewScreen}
                 options={{
-                    headerTitle: "Add Review"
+                    headerTitle: "Add Review",
+                    headerRight: () => (
+                      <View style = {{marginRight : 10}}>
+                          <Entypo 
+                            name="publish"
+                            size={25}
+                            onPress={() => alert("You published a kickass review!")}/>
+                      </View>
+                    )
                 }}
             />
         </Stack.Navigator>
@@ -49,9 +58,18 @@ const ProfileStack = ({navigation}) => {
             />
 
             <Stack.Screen
-                name="Settings"
-                component={SettingsScreen}
-                options={{header: () => null}}
+                name="Edit Profile"
+                component={EditProfileScreen}
+                options={{
+                    headerTitle: 'Edit Profile',
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                    }
+                }}
             />
         </Stack.Navigator>
     );
@@ -76,7 +94,7 @@ const AppStack = () => {
                     }}
             />
 
-            <Stack.Screen
+            <Tab.Screen
                 name="Restaurant"
                 component={RestaurantScreen}
                 options={{
@@ -86,7 +104,7 @@ const AppStack = () => {
                 }}
             />
 
-            <Stack.Screen
+            <Tab.Screen
                 name="Map"
                 component={MapScreen}
                 options={{
@@ -96,7 +114,7 @@ const AppStack = () => {
                 }}
             />
 
-            <Stack.Screen
+            <Tab.Screen
                 name="Roulette"
                 component={RouletteScreen}
                 options={{

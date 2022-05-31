@@ -1,7 +1,11 @@
 import { useContext, useState } from "react"
-import { Text, View, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from "react-native"
+import { Text, View, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, Dimensions } from "react-native"
 import { FormButton, ReviewInput } from "../components"
 import { AuthContext } from "../navigation/AuthProvider"
+import { InputWrapper, InputField } from '../styles/AddReview';
+import ActionButton from "react-native-action-button";
+import Icon from 'react-native-vector-icons/Ionicons';
+import { CurrentRenderContext } from "@react-navigation/native";
 
 
 const AddReviewScreen = ({navigation}) => {
@@ -11,55 +15,50 @@ const AddReviewScreen = ({navigation}) => {
   return (
     <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-    >
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={styles.inner}>
-
-                <Image 
-                    source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}}
-                    style={{height: 250, width: 250}}
-                />
-
-                <Text
-                    style={styles.text}
-                > Select your photo!</Text>
-
-                <ReviewInput
-                    value={review}
-                    onChangeText={setReview}
-                    placeHolderText = "Write your Review!"
-                    autoCapitalize = "sentences"
-                />
-                
-                <FormButton
-                    buttonTitle={"Post"}
-                    onPress={() => navigation.navigate("Home")}
-                />
-            </View>
-        </TouchableWithoutFeedback>
+        style={{flex: 1}}>
+      <InputWrapper>
+        <InputField 
+          value ={review}
+          onChangeText={setReview} 
+          placeholder ="Write your review here"
+          multiLine={true}
+          numberOfLines={4}
+          />
+      </InputWrapper>
+      <ActionButton buttonColor="#2e64e5">
+        <ActionButton.Item
+          buttonColor="#9b59b6"
+          title="Take Photo"
+          onPress={() => {}}>
+          <Icon name="camera-outline" style={styles.actionButtonIcon} />
+        </ActionButton.Item>
+        <ActionButton.Item
+          buttonColor="#3498db"
+          title="Choose Photo"
+          onPress={() => {}}>
+          <Icon name="md-images-outline" style={styles.actionButtonIcon} />
+        </ActionButton.Item>
+      </ActionButton>
     </KeyboardAvoidingView>
-
   );
 }
 
 export default AddReviewScreen;
 
+var width = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-  inner: {
-    backgroundColor: '#f9fafd',
+  container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    justifyContent: 'center',
   },
-  text: {
+  actionButtonIcon: {
     fontSize: 20,
-    color: '#333333',
-    paddingTop: 10,
-    paddingBottom: 50
+    height: 22,
+    color: 'white',
   }
-})
+});
+
+// Majority of the stylings for this screen
+// is imported from '../styles/FeedStyles', where code there is written in CSS.

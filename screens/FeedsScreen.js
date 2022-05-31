@@ -1,29 +1,68 @@
-import { useContext } from "react"
-import { Text, View, StyleSheet, Image } from "react-native"
-import { AuthContext } from "../navigation/AuthProvider"
+import { useContext } from "react";
+import { Text, View, StyleSheet, Image, FlatList } from "react-native";
+import { AuthContext } from "../navigation/AuthProvider";
+import PostCard from '../components/PostCard';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import { Container } from "../styles/FeedStyles";
+
+// Fake data, an array of data
+const Posts = [
+  {
+    id: '1',
+    userName: 'Jenny Doe',
+    userImg: require('../assets/this_is_fine.jpg'),
+    postTime: '4 mins ago',
+    post:
+      'Hey there, this is my test for a post of my social app in React Native.',
+    postImg: require('../assets/mike.png'),
+    liked: true,
+    likes: '14',
+    comments: '5',
+  },
+  {
+    id: '2',
+    userName: 'Ken William',
+    userImg: require('../assets/mike.png'),
+    postTime: '1 hours ago',
+    post:
+      'Hey there, this is my test for a post of my social app in React Native.',
+    postImg: require('../assets/this_is_fine.jpg'),
+    liked: true,
+    likes: '1',
+    comments: '0',
+  },
+  {
+    id: '3',
+    userName: 'Selina Paul',
+    userImg: require('../assets/this_is_fine.jpg'),
+    postTime: '1 day ago',
+    post:
+      'Hey there, this is my test for a post of my social app in React Native.',
+    postImg: require('../assets/mike.png'),
+    liked: false,
+    likes: '22',
+    comments: '4',
+  }
+];
 
 const FeedsScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
 
   return (
-    <View style={styles.container}>
-        <Text style={styles.text}>There's no feeds for now...</Text>
-    </View>
+    <Container>
+      <FlatList 
+        data={Posts}
+        renderItem={({item}) => <PostCard item={item} />}
+        keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+      />
+    </Container>
   );
 }
 
 export default FeedsScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#f9fafd',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  text: {
-    fontSize: 20,
-    color: '#333333'
-  }
-})
+// There is no styling stylesheet here as all stylings for this screen
+// is imported from '../styles/FeedStyles', where code there is written in CSS.
+// This is for active props, ie interactions
