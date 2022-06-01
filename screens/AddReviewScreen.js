@@ -5,8 +5,9 @@ import { InputWrapper, InputField, AddImage, StatusWrapper, SubmitBtn, SubmitBtn
 import ActionButton from "react-native-action-button";
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from "expo-image-picker";
-import * as firebase from 'firebase/app';
-import storage from '@react-native-firebase/storage';
+import { storage } from "../firebase";
+import { ref, uploadBytes } from "firebase/storage";
+
 
 const AddReviewScreen = ({navigation}) => {
   const {user, logout} = useContext(AuthContext);
@@ -73,9 +74,14 @@ const AddReviewScreen = ({navigation}) => {
     try {
       // A reference is a local pointer to some file on your bucket. This
       // can either be a file which already exists, or one which does not exist yet.
-      const reference = storage().ref(fileName);
-      // Put the image into the reference
-      await reference.putFile(uploadUri);
+      const reference = ref(storage, fileName);
+
+      // Convert image into array of bytes
+      const img = await fetch(uploadUri);
+      const bytes = await img.blob();
+
+      // Upload the image
+      await uploadBytes(reference, bytes);
     } catch (e) {
       console.log(e);
     }
