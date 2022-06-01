@@ -33,15 +33,7 @@ const FeedsStack = ({navigation}) => {
                 name="AddReviews"
                 component={AddReviewScreen}
                 options={{
-                    headerTitle: "Add Review",
-                    headerRight: () => (
-                      <View style = {{marginRight : 10}}>
-                          <Entypo 
-                            name="publish"
-                            size={25}
-                            onPress={() => alert("You published a kickass review!")}/>
-                      </View>
-                    )
+                    headerTitle: "Add Review"
                 }}
             />
         </Stack.Navigator>
