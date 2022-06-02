@@ -1,12 +1,13 @@
 import { useState, useEffect, useContext } from "react"
-import { Text, View, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, Dimensions, Alert, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, Image, KeyboardAvoidingView, Platform, Dimensions, Alert, ActivityIndicator, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { AuthContext } from "../navigation/AuthProvider"
 import { InputWrapper, InputField, AddImage, StatusWrapper, SubmitBtn, SubmitBtnText } from '../styles/AddReview';
 import ActionButton from "react-native-action-button";
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from "expo-image-picker";
 import { storage } from "../firebase";
-import { ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
 
 
 const AddReviewScreen = ({navigation}) => {
@@ -60,7 +61,8 @@ const AddReviewScreen = ({navigation}) => {
     };
   }
 
-  const submitPost = async () => {
+  // Whenever user submits a post, uploads image to firebase cloud storage and returns download URL
+  const uploadImage = async () => {
     // If no photo has been uplodaded yet
     if (image === null) {
       return null;
@@ -81,15 +83,15 @@ const AddReviewScreen = ({navigation}) => {
     try {
       // A reference is a local pointer to some file on your bucket. This
       // can either be a file which already exists, or one which does not exist yet.
-      const reference = ref(storage, fileName);
+      const reference = ref(storage, 'photos/' + fileName);
 
       // Convert image into array of bytes
       const img = await fetch(uploadUri);
       const bytes = await img.blob();
 
-      // Upload the image
+      // Upload the image, and then get the url
       const uploadTask = uploadBytesResumable(reference, bytes);
-
+     
       // Register three observers:
       // 1. 'state_changed' observer, called any time the state changes
       // 2. Error observer, called on failure
@@ -99,21 +101,35 @@ const AddReviewScreen = ({navigation}) => {
           // Observe state change events such as progress, pause, and resume
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes * 100);
-          console.log('Upload is ' + progress + '% done');
 
-          setTransferred(Math.round(snapshot.bytesTransferred / snapshot.totalBytes * 100));
+          setTransferred(Math.round(progress));
         }
       );
+
+      // Get the downloaded URL
+      const url = await uploadTask.then(() => {
+        return getDownloadURL(reference)
+          .then((downloadedUrl) => {
+            return downloadedUrl;
+          })
+      })
+
+      // After post has been uploaded to the Firebase Cloud Storage and we have gotten the URL
+      setUpLoading(false);
+      setImage(null);
       Alert.alert('Image uploaded to the Firebase Cloud Storage successfully');
+      return url;
     } catch (e) {
       console.log(e);
+      return null;
     }
-
-    // After post has been uploaded to the Firebase Cloud Storage
-    setUpLoading(false);
-    setImage(null);
   }
-  
+
+  const submitPost = async () => {
+    const imageUrl = await uploadImage();
+    console.log("Image url is: " + imageUrl)
+  }
+
   if (hasCameraPermission === false && hasGalleryPermission === false) {
     return <Text>No permission access to camera and photo gallery</Text>
   }
@@ -127,31 +143,31 @@ const AddReviewScreen = ({navigation}) => {
   }
 
   return (
-    <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{flex: 1}}>
-
-      <InputWrapper>
-        {image === null ? <AddImage source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} /> : <AddImage source={{uri: image}} />}
-
-        <InputField 
-          value ={review}
-          onChangeText={setReview} 
-          placeholder ="Write your review here"
-          multiLine={true}
-          numberOfLines={4}
-          />
-          {uploading ? (
-            <StatusWrapper>
-              <Text>{transferred}% Completed</Text>
-              <ActivityIndicator size='large' color='#0000ff' />
-            </StatusWrapper>
-          ) : (
-            <SubmitBtn onPress={submitPost}>
-              <SubmitBtnText>Post</SubmitBtnText>
-            </SubmitBtn>
-          )}
-      </InputWrapper>
+    <KeyboardAvoidingView style={{flex:1, backgroundColor: '#2e64e515'}}>
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <InputWrapper>
+            {image === null ? <AddImage source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} /> : <AddImage source={{uri: image}} />}
+              <InputField 
+                value ={review}
+                onChangeText={setReview} 
+                placeholder ="Write your review here"
+                multiline={true}
+                numberOfLines={4}
+              />
+            {uploading ? (
+              <StatusWrapper>
+                <Text>{transferred}% Completed</Text>
+                <ActivityIndicator size='large' color='#0000ff' />
+              </StatusWrapper>
+            ) : (
+              <SubmitBtn onPress={submitPost}>
+                <SubmitBtnText>Post</SubmitBtnText>
+              </SubmitBtn>
+            )}
+          </InputWrapper>
+        </TouchableWithoutFeedback>
+      </ScrollView>
 
       <ActionButton buttonColor="#2e64e5">
         <ActionButton.Item

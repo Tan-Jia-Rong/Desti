@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 
 export const InputWrapper = styled.View`
-    flex: 1
+    flex: 1;
     justify-content: center;
     align-items: center;
     width: 100%;
-    background-color: #2e64e515;
 `;
 
 export const InputField = styled.TextInput`
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     font-size: 24px;
@@ -33,6 +33,8 @@ export const SubmitBtn = styled.TouchableOpacity`
     background-color: #2e64e515;
     border-radius: 5px;
     padding: 10px 25px;
+    borderColor: '#2e64e5';
+    borderWidth: 2;
 `;
 
 export const SubmitBtnText = styled.Text`

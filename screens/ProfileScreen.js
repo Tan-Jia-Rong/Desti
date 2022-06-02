@@ -6,7 +6,7 @@ import { AuthContext } from "../navigation/AuthProvider"
 import firestore from '@react-native-firebase/firestore';
 
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const {user, logout} = useContext(AuthContext);
 
   return (
@@ -24,7 +24,7 @@ const ProfileScreen = () => {
       <Text style = {styles.aboutUser}>Placeholder user information</Text>
 
       <View style={styles.userBtnWrapper}>
-        <TouchableOpacity style = {styles.userBtn} onPress={() => {}}>
+        <TouchableOpacity style = {styles.userBtn} onPress={() => navigation.navigate('Edit Profile')}>
           <Text style = {styles.userBtnTxt}>Edit Profile</Text>
         </TouchableOpacity>
         <TouchableOpacity style = {styles.userBtn} onPress={() => logout()}>
