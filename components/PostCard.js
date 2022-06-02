@@ -46,7 +46,7 @@ const PostCard = ({ item }) => {
             <PostTime>{item.postTime}</PostTime>
           </UserInfoText>
         </UserInfo>
-        <PostText>{item.post}</PostText>
+        <PostText>{item.postText}</PostText>
         <PostImg source={item.postImg}/>
         <InteractionWrapper>
           <Interaction active = {item.liked}>

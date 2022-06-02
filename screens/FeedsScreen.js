@@ -1,8 +1,10 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Text, View, StyleSheet, Image, FlatList } from "react-native";
 import { AuthContext } from "../navigation/AuthProvider";
 import PostCard from '../components/PostCard';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
+
 
 import { Container } from "../styles/FeedStyles";
 
@@ -13,7 +15,7 @@ const Posts = [
     userName: 'Jenny Doe',
     userImg: require('../assets/this_is_fine.jpg'),
     postTime: '4 mins ago',
-    post:
+    postText:
       'Hey there, this is my test for a post of my social app in React Native.',
     postImg: require('../assets/mike.png'),
     liked: true,
@@ -25,7 +27,7 @@ const Posts = [
     userName: 'Ken William',
     userImg: require('../assets/mike.png'),
     postTime: '1 hours ago',
-    post:
+    postText:
       'Hey there, this is my test for a post of my social app in React Native.',
     postImg: require('../assets/this_is_fine.jpg'),
     liked: true,
@@ -37,7 +39,7 @@ const Posts = [
     userName: 'Selina Paul',
     userImg: require('../assets/this_is_fine.jpg'),
     postTime: '1 day ago',
-    post:
+    postText:
       'Hey there, this is my test for a post of my social app in React Native.',
     postImg: require('../assets/mike.png'),
     liked: false,
@@ -48,6 +50,22 @@ const Posts = [
 
 const FeedsScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'Posts'));
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+        })
+      } catch(e) {
+        console.log(e);
+      }
+    }
+
+    fetchPosts();
+  }, []);
 
   return (
     <Container>

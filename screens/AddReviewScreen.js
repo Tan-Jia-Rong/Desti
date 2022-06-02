@@ -5,8 +5,9 @@ import { InputWrapper, InputField, AddImage, StatusWrapper, SubmitBtn, SubmitBtn
 import ActionButton from "react-native-action-button";
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from "expo-image-picker";
-import { storage } from "../firebase";
+import { storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 
 
 
@@ -117,7 +118,6 @@ const AddReviewScreen = ({navigation}) => {
       // After post has been uploaded to the Firebase Cloud Storage and we have gotten the URL
       setUpLoading(false);
       setImage(null);
-      Alert.alert('Image uploaded to the Firebase Cloud Storage successfully');
       return url;
     } catch (e) {
       console.log(e);
@@ -126,8 +126,26 @@ const AddReviewScreen = ({navigation}) => {
   }
 
   const submitPost = async () => {
+    // If no image has been uploaded
+    if (image === null) {
+      Alert.alert("You have not submitted any photo");
+      return null;
+    }
     const imageUrl = await uploadImage();
     console.log("Image url is: " + imageUrl)
+
+  
+    const docReference = await addDoc(collection(db, 'Posts'), {
+      userId: user.uid,
+      postText: review,
+      postImg: imageUrl,
+      postTime: Timestamp.fromDate(new Date()),
+      likes: null,
+      comments: null
+    });
+    console.log("Document written with ID: ", docReference.id);
+    setReview('');
+    Alert.alert('Image uploaded to the Firebase Cloud Storage and firecloud database successfully');
   }
 
   if (hasCameraPermission === false && hasGalleryPermission === false) {
@@ -188,8 +206,6 @@ const AddReviewScreen = ({navigation}) => {
 }
 
 export default AddReviewScreen;
-
-var width = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {

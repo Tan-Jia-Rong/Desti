@@ -3,7 +3,6 @@ import { useState, useEffect, useContext } from "react"
 import { Text, View, StyleSheet, Image, ScrollView, SafeAreaView, TouchableOpacity} from "react-native"
 import { FormButton } from "../components"
 import { AuthContext } from "../navigation/AuthProvider"
-import firestore from '@react-native-firebase/firestore';
 
 
 const ProfileScreen = ({ navigation }) => {
