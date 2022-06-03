@@ -40,6 +40,7 @@ const LoginScreen = ({ navigation }) => {
                   placeHolderText = "Password"
                   iconType = "lock"
                   secureTextEntry = {true}
+                  autoCapitalize = "none"
               />
 
               <FormButton
