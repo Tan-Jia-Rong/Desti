@@ -13,43 +13,40 @@ import { Container } from "../styles/FeedStyles";
 const FeedsScreen = () => {
   const {user} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [deleted, setDeleted] = useState(false);
 
-  useFocusEffect(React.useCallback(() => {
-    const fetchPosts = async () => {
-      try {
-        const arr = [];
-        const q = query(collection(db, 'Posts'), orderBy("postTime", "desc"));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          const {userId, postText, postImg, postTime, likes, comments} = doc.data();
-          // For each doc in the firecloud database, push it into the array
-          arr.push({
-            id: doc.id,  
-            userId,
-            userName: 'Placeholder',
-            userImg: require('../assets/this_is_fine.jpg'),
-            postTime: postTime,
-            postText: postText,
-            postImg: postImg,
-            liked: false,
-            likes,
-            comments
-          });
-        }, []);
-        
-        setPosts(arr);
-        console.log("useEffect triggered");
+  const fetchPosts = async () => {
+    try {
+      const arr = [];
+      const q = query(collection(db, 'Posts'), orderBy("postTime", "desc"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        const {userId, postText, postImg, postTime, likes, comments} = doc.data();
+        // For each doc in the firecloud database, push it into the array
+        arr.push({
+          id: doc.id,  
+          userId,
+          userName: 'Placeholder',
+          userImg: require('../assets/this_is_fine.jpg'),
+          postTime: postTime,
+          postText: postText,
+          postImg: postImg,
+          liked: false,
+          likes,
+          comments
+        });
+      }, []);
+      
+      setPosts(arr);
+      console.log("useEffect triggered");
 
-      } catch(e) {
-        console.log(e);
-      }
+    } catch(e) {
+      console.log(e);
     }
+  }
 
-    fetchPosts();
-  }, []));
-
+  // Deletes a post on both firebase storage and firestore cloud, as well as refreshes the feed
   const deletePost = async (postId) => {
     console.log("Current Post Id: ", postId);
 
@@ -66,6 +63,7 @@ const FeedsScreen = () => {
         console.log("Successful deletion");
         // Second, delete data from firestore cloud
         await deleteDoc(doc(db, 'Posts', postId));
+        setDeleted(true);
         Alert.alert("Post has been successfully deleted");
       })
       .catch((e) => {
@@ -74,11 +72,36 @@ const FeedsScreen = () => {
     }
   }
 
+  const handleDelete = (postId) => {
+    Alert.alert(
+      "Confirm Deletion of post",
+      "Are you sure?",  
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { 
+          text: "Yes", 
+          onPress: () => deletePost(postId) }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  // useFocusEffect ensures that my home screen refreshes each time I visit home screen
+  useFocusEffect(React.useCallback(() => {
+    fetchPosts();
+  }, []));
+
+  useEffect(() => {fetchPosts();},[deleted]);
+
   return (
     <Container>
       <FlatList 
         data={posts}
-        renderItem={({item}) => <PostCard item={item} onDelete={deletePost}/>}
+        renderItem={({item}) => <PostCard item={item} onDelete={handleDelete}/>}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
       />
