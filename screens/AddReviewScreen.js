@@ -90,7 +90,7 @@ const AddReviewScreen = ({navigation}) => {
       const img = await fetch(uploadUri);
       const bytes = await img.blob();
 
-      // Upload the image, and then get the url
+      // Upload the image to firebase cloud storage, and then get the url
       const uploadTask = uploadBytesResumable(reference, bytes);
      
       // Register three observers:

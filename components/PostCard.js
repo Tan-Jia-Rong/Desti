@@ -43,11 +43,11 @@ const PostCard = ({ item }) => {
           <UserImg source={item.userImg}/>
           <UserInfoText>
             <UserName>{item.userName}</UserName>
-            <PostTime>{item.postTime}</PostTime>
+            <PostTime>{item.postTime.toString()}</PostTime>
           </UserInfoText>
         </UserInfo>
         <PostText>{item.postText}</PostText>
-        <PostImg source={item.postImg}/>
+        <PostImg source={{uri: item.postImg}}/>
         <InteractionWrapper>
           <Interaction active = {item.liked}>
             <Ionicons name={likeIcon} size={25} color={likeIconColor}/>

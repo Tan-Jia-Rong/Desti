@@ -1,76 +1,58 @@
-import { useContext, useEffect } from "react";
+import React, {useCallback, useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Image, FlatList } from "react-native";
 import { AuthContext } from "../navigation/AuthProvider";
 import PostCard from '../components/PostCard';
 import { db } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 import { Container } from "../styles/FeedStyles";
 
-// Fake data, an array of data
-const Posts = [
-  {
-    id: '1',
-    userName: 'Jenny Doe',
-    userImg: require('../assets/this_is_fine.jpg'),
-    postTime: '4 mins ago',
-    postText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: require('../assets/mike.png'),
-    liked: true,
-    likes: '14',
-    comments: '5',
-  },
-  {
-    id: '2',
-    userName: 'Ken William',
-    userImg: require('../assets/mike.png'),
-    postTime: '1 hours ago',
-    postText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: require('../assets/this_is_fine.jpg'),
-    liked: true,
-    likes: '1',
-    comments: '0',
-  },
-  {
-    id: '3',
-    userName: 'Selina Paul',
-    userImg: require('../assets/this_is_fine.jpg'),
-    postTime: '1 day ago',
-    postText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: require('../assets/mike.png'),
-    liked: false,
-    likes: '22',
-    comments: '4',
-  }
-];
-
-const FeedsScreen = ({navigation}) => {
+const FeedsScreen = () => {
   const {user} = useContext(AuthContext);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     const fetchPosts = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'Posts'));
+        const arr = [];
+        const q = query(collection(db, 'Posts'), orderBy("postTime", "desc"));
+        const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-        })
+          const {userId, postText, postImg, postTime, likes, comments} = doc.data();
+          // For each doc in the firecloud database, push it into the array
+          arr.push({
+            id: doc.id,
+            userId,
+            userName: 'Placeholder',
+            userImg: require('../assets/this_is_fine.jpg'),
+            postTime: postTime,
+            postText: postText,
+            postImg: postImg,
+            liked: false,
+            likes,
+            comments
+          });
+        }, []);
+        
+        setPosts(arr);
+        console.log("useEffect triggered");
+
       } catch(e) {
         console.log(e);
       }
     }
 
     fetchPosts();
-  }, []);
+  }, []));
 
   return (
     <Container>
       <FlatList 
-        data={Posts}
+        data={posts}
         renderItem={({item}) => <PostCard item={item} />}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
