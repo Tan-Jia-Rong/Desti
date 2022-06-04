@@ -3715,6 +3715,13 @@
   "resolved" "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-10.1.1.tgz"
   "version" "10.1.1"
 
+"expo-location@^14.2.2":
+  "integrity" "sha512-P1v+huBWhuerV4okRhN0+Htx3Nw8LGWTUF66E5iwuZEWvLTYQEQ+Od0j2CvD4FY6rhncNpoIZcWVlIy5NmG4fg=="
+  "resolved" "https://registry.npmjs.org/expo-location/-/expo-location-14.2.2.tgz"
+  "version" "14.2.2"
+  dependencies:
+    "@expo/config-plugins" "^4.0.14"
+
 "expo-manifests@~0.3.0":
   "integrity" "sha512-HegANp+KpZlMX0T2Zb8X7mAVkCThFDq1wjLIjkrSLHhKLczYI2xa/Z5Nk0Tm7qPdGT8NTInCDoOL/nUMtKdNyQ=="
   "resolved" "https://registry.npmjs.org/expo-manifests/-/expo-manifests-0.3.0.tgz"
@@ -3740,6 +3747,11 @@
   dependencies:
     "compare-versions" "^3.4.0"
     "invariant" "^2.2.4"
+
+"expo-permissions@^13.2.0":
+  "integrity" "sha512-fAvutJjlUjlmyR2jjI9uQT0LXQ+A3U8hZnA4twQG8eXEURR3/V5WSGkx5wwX+7OF6qWR68rvs7Xjkd3ghsCm4w=="
+  "resolved" "https://registry.npmjs.org/expo-permissions/-/expo-permissions-13.2.0.tgz"
+  "version" "13.2.0"
 
 "expo-splash-screen@~0.15.1":
   "integrity" "sha512-Yvz6p/ig+cQp9c1PLSm1YshpNJXRp/xtxajfwPq2kampf61zA+xnoMk+J6YcNeXeIlqHysj3ND2tMhEEQjM/ow=="
