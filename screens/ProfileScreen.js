@@ -7,7 +7,7 @@ import { ref, deleteObject } from "firebase/storage";
 import { db } from "../firebase";
 import PostCard from "../components/PostCard";
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation, route }) => {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
 
@@ -61,15 +61,36 @@ const ProfileScreen = ({ navigation }) => {
        source={require('../assets/mike.png')}
       />
       <Text style = {styles.userName}>Placeholder username</Text>
+      <Text>{route.params ? route.params.userId : user.uid}</Text>
       <Text style = {styles.aboutUser}>Placeholder user information</Text>
 
       <View style={styles.userBtnWrapper}>
-        <TouchableOpacity style = {styles.userBtn} onPress={() => navigation.navigate('Edit Profile')}>
-          <Text style = {styles.userBtnTxt}>Edit Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style = {styles.userBtn} onPress={() => logout()}>
-          <Text style = {styles.userBtnTxt}>Logout</Text>
-        </TouchableOpacity>
+        {route.params ? (
+          route.params.userId === user.uid ? 
+          <>
+            <TouchableOpacity style = {styles.userBtn} onPress={() => navigation.navigate('Edit Profile')}>
+              <Text style = {styles.userBtnTxt}>Edit Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.userBtn} onPress={() => logout()}>
+              <Text style = {styles.userBtnTxt}>Logout</Text>
+            </TouchableOpacity>
+          </> :
+          <>
+           <TouchableOpacity style = {styles.userBtn} onPress={() => {}}>
+              <Text style = {styles.userBtnTxt}>Follow</Text>
+            </TouchableOpacity>
+          </>
+
+        ) : (
+          <>
+            <TouchableOpacity style = {styles.userBtn} onPress={() => navigation.navigate('Edit Profile')}>
+              <Text style = {styles.userBtnTxt}>Edit Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.userBtn} onPress={() => logout()}>
+              <Text style = {styles.userBtnTxt}>Logout</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
 
       <View style = {styles.userInfoWrapper}>

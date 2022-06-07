@@ -10,7 +10,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import { Container } from "../styles/FeedStyles";
 
-const FeedsScreen = () => {
+const FeedsScreen = ({ navigation }) => {
   const {user} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [deleted, setDeleted] = useState(false);
@@ -102,7 +102,7 @@ const FeedsScreen = () => {
     <Container>
       <FlatList 
         data={posts}
-        renderItem={({item}) => <PostCard item={item} onDelete={handleDelete}/>}
+        renderItem={({item}) => <PostCard item={item} onDelete={handleDelete} onPress={() => navigation.navigate("Profile", {userId: item.userId})}/>}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
       />

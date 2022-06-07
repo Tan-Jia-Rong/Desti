@@ -33,7 +33,28 @@ const FeedsStack = ({navigation}) => {
                 name="AddReviews"
                 component={AddReviewScreen}
                 options={{
-                    headerTitle: "Add Review"
+                    headerTitle: "Add Review",
+                    headerTitleAlign: 'center'
+                }}
+            />
+
+            <Stack.Screen
+                name="Profile"
+                component={ProfileScreen}
+            />
+
+            <Stack.Screen
+                name="Edit Profile"
+                component={EditProfileScreen}
+                options={{
+                    headerTitle: 'Edit Profile',
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                    }
                 }}
             />
         </Stack.Navigator>
@@ -46,7 +67,6 @@ const ProfileStack = ({navigation}) => {
             <Stack.Screen
                 name="Profile"
                 component={ProfileScreen}
-                options={{header: () => null}}
             />
 
             <Stack.Screen
@@ -120,6 +140,7 @@ const AppStack = () => {
                 name="Profile"
                 component={ProfileStack}
                 options={{
+                    header: () => null,
                     tabBarIcon: ({color, size}) => (
                         <Ionicons name="person-outline" color ={color} size={size}/>
                     )

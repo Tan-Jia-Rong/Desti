@@ -14,8 +14,9 @@ import { Container,
     InteractionWrapper, 
     Interaction, 
     InteractionText } from "../styles/FeedStyles";
+import { TouchableOpacity } from 'react-native';
 
-const PostCard = ({ item, onDelete }) => {
+const PostCard = ({ item, onDelete, onPress }) => {
     const {user, logout} = useContext(AuthContext);
 
     let likeIcon = item.liked? 'heart' : 'heart-outline';
@@ -44,7 +45,9 @@ const PostCard = ({ item, onDelete }) => {
         <UserInfo>
           <UserImg source={item.userImg}/>
           <UserInfoText>
-            <UserName>{item.userName}</UserName>
+            <TouchableOpacity onPress={onPress}>
+              <UserName>{item.userName}</UserName>
+            </TouchableOpacity>
             <PostTime>{moment(item.postTime.toDate()).fromNow()}</PostTime>
           </UserInfoText>
         </UserInfo>
