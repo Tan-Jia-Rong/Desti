@@ -1,12 +1,53 @@
-import { BottomTabBar } from "@react-navigation/bottom-tabs"
-import { useState, useEffect, useContext } from "react"
-import { Text, View, StyleSheet, Image, ScrollView, SafeAreaView, TouchableOpacity} from "react-native"
-import { FormButton } from "../components"
-import { AuthContext } from "../navigation/AuthProvider"
-
+import React, {useCallback, useState, useEffect, useContext } from "react";
+import { Text, View, StyleSheet, Image, ScrollView, SafeAreaView, TouchableOpacity} from "react-native";
+import { AuthContext } from "../navigation/AuthProvider";
+import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native";
+import { ref, deleteObject } from "firebase/storage";
+import { db } from "../firebase";
+import PostCard from "../components/PostCard";
 
 const ProfileScreen = ({ navigation }) => {
   const {user, logout} = useContext(AuthContext);
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = async () => {
+    try {
+      const arr = [];
+      const q = query(collection(db, 'Posts'), where('userId', "==", user.uid), orderBy("postTime", "desc"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        const {userId, postText, postImg, postTime, likes, comments} = doc.data();
+        // For each doc in the firecloud database, push it into the array
+        arr.push({
+          id: doc.id,  
+          userId,
+          userName: 'Placeholder',
+          userImg: require('../assets/this_is_fine.jpg'),
+          postTime: postTime,
+          postText: postText,
+          postImg: postImg,
+          liked: false,
+          likes,
+          comments
+        });
+      }, []);
+      
+      setPosts(arr);
+      console.log("useEffect triggered");
+
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+    // useFocusEffect ensures that my home screen refreshes each time I visit home screen
+    useFocusEffect(React.useCallback(() => {
+      fetchPosts();
+    }, []));
+
+    const handleDelete = () => {}
 
   return (
    <SafeAreaView style = {{flex: 1, backgroundColor: '#fff'}}>
@@ -46,7 +87,9 @@ const ProfileScreen = ({ navigation }) => {
         </View>
       </View>
 
-
+      {posts.map((item) => (
+        <PostCard key={item.id} item={item} onDelete={handleDelete} />
+      ))}
      </ScrollView>
    </SafeAreaView>
   );

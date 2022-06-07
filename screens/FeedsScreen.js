@@ -95,6 +95,7 @@ const FeedsScreen = () => {
     fetchPosts();
   }, []));
 
+  // Re-renders screen when a post has been deleted
   useEffect(() => {fetchPosts();},[deleted]);
 
   return (

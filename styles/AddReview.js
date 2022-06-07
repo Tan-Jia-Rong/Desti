@@ -34,7 +34,7 @@ export const SubmitBtn = styled.TouchableOpacity`
     border-radius: 5px;
     padding: 10px 25px;
     borderColor: '#2e64e5';
-    borderWidth: 2;
+    borderWidth: 2px;
 `;
 
 export const SubmitBtnText = styled.Text`
