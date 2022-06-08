@@ -1,6 +1,8 @@
 import React, { createContext, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { updateProfile } from "firebase/auth";
 
 export const AuthContext = createContext();
 
@@ -30,7 +32,7 @@ export const AuthProvider = ({children}) => {
                         console.log(errorCode, errorMessage);
                     }
                 },
-                register: async (email, password, passwordConf) => {
+                register: async (userName, email, password, passwordConf) => {
                     if (email.length == 0 || password.length == 0) {
                         alert("Missing fields! Please Try Again!")
                         return;
@@ -40,7 +42,19 @@ export const AuthProvider = ({children}) => {
                     }
 
                     try {
-                        await createUserWithEmailAndPassword(auth, email, password);
+                        await createUserWithEmailAndPassword(auth, email, password)
+                          .then(() => updateProfile(auth.currentUser, {
+                              displayName: userName
+                          }))
+                          .then(async () => {
+                            await setDoc(doc(db, 'Users', auth.currentUser.uid), {
+                                userName: userName,
+                                email: email,
+                                createdAt: Timestamp.fromDate(new Date()),
+                                userImg: null,
+                                userId: auth.currentUser.uid
+                              });
+                          });
                     } catch (error) {
                         const errorCode = error.code;
                         const errorMessage = error.message;

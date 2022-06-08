@@ -60,7 +60,7 @@ const ProfileScreen = ({ navigation, route }) => {
        style={styles.userImg}
        source={require('../assets/mike.png')}
       />
-      <Text style = {styles.userName}>Placeholder username</Text>
+      <Text style = {styles.userName}>{user.displayName}</Text>
       <Text>{route.params ? route.params.userId : user.uid}</Text>
       <Text style = {styles.aboutUser}>Placeholder user information</Text>
 

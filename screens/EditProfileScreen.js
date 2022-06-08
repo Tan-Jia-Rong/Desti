@@ -1,19 +1,106 @@
-import React, { useContext, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, TextInput, ImageBackground, TouchableWithoutFeedback, Keyboard, Alert } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, ImageBackground, TouchableWithoutFeedback, Keyboard, Alert, Image } from "react-native";
 import { FormButton, FormInput } from "../components";
 import { AuthContext } from "../navigation/AuthProvider";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import * as ImagePicker from "expo-image-picker";
 
 
 const EditProfileScreen = () => {
+  const {user, logout} = useContext(AuthContext);
+
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
+  const [image, setImage] = useState(null);
+  const [userData, setUserData] = useState(null);
+
+  // Ask for permissions to access user's camera and media gallery
+  useEffect(() => {
+    (async () => {
+      const camerastatus = await ImagePicker.requestCameraPermissionsAsync();
+      const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      setHasCameraPermission(camerastatus.status === 'granted');
+      setHasGalleryPermission(galleryStatus.status === 'granted');
+    })();
+  }, []);
+
+  // Function for taking photo from camera
+  const takePhotoFromCamera = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1
+    });
+
+    // If result is not cancelled
+    if (!result.cancelled) {
+      setImage(result.uri);
+    };
+  }
+
+  // Function for choosing photo from media library
+  const choosePhotoFromLibrary = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1
+    });
+
+    // If result is not cancelled
+    if (!result.cancelled) {
+      setImage(result.uri);
+    };
+  }
+
+  const getUser = async () => {
+    
+  }
+
+  const handleUpdate = () => {
+
+  }
+
+  if (hasCameraPermission === false && hasGalleryPermission === false) {
+    return <Text>No permission access to camera and photo gallery</Text>
+  }
+
+  if (hasCameraPermission === false ) {
+    return <Text>No permission access to camera</Text>
+  }
+
+  if (hasGalleryPermission === false) {
+    return <Text>No permission access to photo gallery</Text>
+  }
+
   return (
     <View style = {styles.container}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={{margin: 20}}>
           <View style = {{alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => Alert.alert(
+              "Method of Upload",
+              "Choose one", 
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel"
+                },
+                {
+                  text: "Take Photo",
+                  onPress: takePhotoFromCamera
+                },
+                { 
+                  text: "Choose Photo", 
+                  onPress: choosePhotoFromLibrary
+                }
+              ],
+              { cancelable: false }
+            )}>
               <View style={{
                 height:100,
                 width:100,
@@ -21,35 +108,59 @@ const EditProfileScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center'
               }}>
-                <ImageBackground
-                  source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}}
-                  style={{height: 100, width: 100}}
-                  imageStyle={{borderRadius: 15}}
-                >
-                  <View style={{
-                    flex:1,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}>
-                    <Icon 
-                      name="camera" 
-                      size={35}
-                      color="#fff"
-                      style={{
-                        opacity: 0.7,
-                        alignItems: 'center',
+                {image === null ? 
+                  <ImageBackground 
+                    source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} 
+                    style={{height: 100, width: 100}}
+                    imageStyle={{borderRadius: 15}}>
+                    <View style={{
+                      flex:1,
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}>
+                      <Icon 
+                        name="camera" 
+                        size={35}
+                        color="#fff"
+                        style={{
+                          opacity: 0.7,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderWidth: 1,
+                          borderColor: '#fff',
+                          borderRadius: 10
+                        }}/>
+                    </View>
+                  </ImageBackground>: 
+                  <ImageBackground 
+                      source={{uri: image}} 
+                      style={{height: 100, width: 100}}
+                      imageStyle={{borderRadius: 15}}>
+                      <View style={{
+                        flex:1,
                         justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: '#fff',
-                        borderRadius: 10
-                      }}/>
-                  </View>
-                </ImageBackground>
+                        alignItems: 'center'
+                    }}>
+                      <Icon 
+                        name="camera" 
+                        size={35}
+                        color="#fff"
+                        style={{
+                          opacity: 0.7,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderWidth: 1,
+                          borderColor: '#fff',
+                          borderRadius: 10
+                        }}/>
+                      </View>
+                  </ImageBackground>}
               </View>
             </TouchableOpacity>
             <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>
-              Placeholder edit
+              {user.displayName}
             </Text>
+            <Text>{user.uid}</Text>
           </View>
 
           
@@ -69,7 +180,7 @@ const EditProfileScreen = () => {
 
           <FormButton
             buttonTitle="Update"
-            onPress = {() => {}}
+            onPress = {handleUpdate}
           />
         </View>
       </TouchableWithoutFeedback>

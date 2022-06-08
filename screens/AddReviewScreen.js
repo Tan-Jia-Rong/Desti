@@ -125,7 +125,7 @@ const AddReviewScreen = ({navigation}) => {
     }
   }
 
-  // Upload to firecloud database
+  // Upload to cloud firestore
   const submitPost = async () => {
     // If no image has been uploaded
     if (image === null) {
