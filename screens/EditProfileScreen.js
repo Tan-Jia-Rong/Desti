@@ -3,9 +3,10 @@ import { Text, View, StyleSheet, TouchableOpacity, TextInput, ImageBackground, T
 import { FormButton, FormInput } from "../components";
 import { AuthContext } from "../navigation/AuthProvider";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
 import * as ImagePicker from "expo-image-picker";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db, storage } from "../firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 
 const EditProfileScreen = () => {
@@ -14,6 +15,9 @@ const EditProfileScreen = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
   const [image, setImage] = useState(null);
+  const [uploading, setUpLoading] = useState(false);
+  // Transferred bytes
+  const [transferred, setTransferred] = useState(0);
   const [userData, setUserData] = useState(null);
 
   // Ask for permissions to access user's camera and media gallery
@@ -56,13 +60,107 @@ const EditProfileScreen = () => {
     };
   }
 
-  const getUser = async () => {
+  // Whenever user submits a new profile picture, uploads image to firebase cloud storage and returns download URL
+  const uploadImage = async () => {
+    // If no photo has been uplodaded yet
+    if (image === null) {
+      return null;
+    }
+    const uploadUri = image;
+    // Get the last part of the string
+    let fileName = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to fileName to give unique fileNames, ie string manipulation
+    // Split method splits a string into an array of substrings, then pop it
+    const extension = fileName.split('.').pop();
+    const name = fileName.split('.').slice(0, -1).join('.');
+    fileName = name + Date.now() + '.' + extension;
     
+    setUpLoading(true);
+    setTransferred(0);
+
+    try {
+      // A reference is a local pointer to some file on your bucket. This
+      // can either be a file which already exists, or one which does not exist yet.
+      const reference = ref(storage, 'photos/' + fileName);
+
+      // Convert image into array of bytes
+      const img = await fetch(uploadUri);
+      const bytes = await img.blob();
+
+      // Upload the image to firebase cloud storage, and then get the url
+      const uploadTask = uploadBytesResumable(reference, bytes);
+     
+      // Register three observers:
+      // 1. 'state_changed' observer, called any time the state changes
+      // 2. Error observer, called on failure
+      // 3. Completion observer, called on successful completion
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes * 100);
+
+          setTransferred(Math.round(progress));
+        }
+      );
+
+      // Get the downloaded URL
+      const url = await uploadTask.then(() => {
+        return getDownloadURL(reference)
+          .then((downloadedUrl) => {
+            return downloadedUrl;
+          })
+      })
+
+      // After post has been uploaded to the Firebase Cloud Storage and we have gotten the URL
+      setUpLoading(false);
+      setImage(null);
+      return url;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   }
 
-  const handleUpdate = () => {
+  // Get the user data from firecloud
+  const getUser = async () => {
+    const docRef = doc(db, "Users", user.uid);
+    const docSnap = await getDoc(docRef);
 
+    if (docSnap.exists()) {
+      console.log("User Data", docSnap.data());
+      setUserData(docSnap.data());
+    }
   }
+
+  // Update the user data in firecloud
+  const handleUpdate = async () => {
+    let imageUrl = await uploadImage(); 
+
+    // If user only wants to update text input fields and not his/her profile pic
+    if (imageUrl === null && userData.userImg !== null) {
+      imageUrl = userData.userImg;
+    }
+    
+    // Update the data in firecloud
+    const userRef = doc(db, 'Users', user.uid);
+    await updateDoc(userRef, {
+      userName: userData.userName,
+      email: userData.email,
+      userImg: imageUrl
+    }).then(() => {
+      console.log('User updated!');
+      Alert.alert(
+        'Profile Updated',
+        'Your profile has been updated successfully'
+      )
+    });
+  }
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   if (hasCameraPermission === false && hasGalleryPermission === false) {
     return <Text>No permission access to camera and photo gallery</Text>
@@ -165,12 +263,16 @@ const EditProfileScreen = () => {
 
           
           <FormInput
+            value={userData ? userData.userName : 'Username'}
+            onChangeText={(text) => setUserData({...userData, userName: text})}
             placeHolderText = "Username"
             iconType = "user"
             autoCapitalize = "none"
             autocorrect = {false}
             />
           <FormInput
+            value={userData ? userData.email : 'Email'}
+            onChangeText={(text) => setUserData({...userData, email: text})}
             placeHolderText = "Email"
             iconType = "mail"
             keyboardType = "email-address"
