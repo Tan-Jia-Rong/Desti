@@ -1,20 +1,22 @@
 import React, {useCallback, useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Image, ScrollView, SafeAreaView, TouchableOpacity} from "react-native";
 import { AuthContext } from "../navigation/AuthProvider";
-import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, where, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import { ref, deleteObject } from "firebase/storage";
 import { db } from "../firebase";
 import PostCard from "../components/PostCard";
 
+
 const ProfileScreen = ({ navigation, route }) => {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
+  const [userData, setUserData] = useState(null);
 
   const fetchPosts = async () => {
     try {
       const arr = [];
-      const q = query(collection(db, 'Posts'), where('userId', "==", user.uid), orderBy("postTime", "desc"));
+      const q = query(collection(db, 'Posts'), where('userId', "==", route.params ? route.params.userId : user.uid), orderBy("postTime", "desc"));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
@@ -42,8 +44,19 @@ const ProfileScreen = ({ navigation, route }) => {
     }
   }
 
+  // Get the user data from firecloud
+  const getUser = async () => {
+    const docRef = doc(db, "Users", route.params ? route.params.userId : user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {  
+      setUserData(docSnap.data());
+    }
+  }
+
     // useFocusEffect ensures that my home screen refreshes each time I visit home screen
     useFocusEffect(React.useCallback(() => {
+      getUser();
       fetchPosts();
     }, []));
 
@@ -56,12 +69,19 @@ const ProfileScreen = ({ navigation, route }) => {
         contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
         showsVerticalScrollIndicator={false}
     >
+      {userData ? 
+       <Image
+       style={styles.userImg}
+       source={{uri: userData.userImg}} 
+      />
+      : 
       <Image
        style={styles.userImg}
-       source={require('../assets/mike.png')}
+       source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} 
       />
-      <Text style = {styles.userName}>{user.displayName}</Text>
-      <Text>{route.params ? route.params.userId : user.uid}</Text>
+      }
+      <Text style = {styles.userName}>{userData ? userData.userName : 'Placeholder username'}</Text>
+      {/* <Text>{route.params ? route.params.userId : user.uid}</Text> */}
       <Text style = {styles.aboutUser}>Placeholder user information</Text>
 
       <View style={styles.userBtnWrapper}>
@@ -95,8 +115,8 @@ const ProfileScreen = ({ navigation, route }) => {
 
       <View style = {styles.userInfoWrapper}>
         <View style = {styles.userInfoItem}>
-          <Text style = {styles.userInfoTitle}>22</Text>
-          <Text style={styles.userInfoSubtitle}>Posts</Text>
+          <Text style = {styles.userInfoTitle}>{posts.length}</Text>
+          <Text style={styles.userInfoSubtitle}>{posts.length === 0 || posts.length === 1 ? 'Post' : 'Posts'}</Text>
         </View>
         <View style = {styles.userInfoItem}>
           <Text style = {styles.userInfoTitle}>100</Text>

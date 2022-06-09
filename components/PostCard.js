@@ -1,7 +1,11 @@
-import { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../navigation/AuthProvider';
 import moment from 'moment';
+import { doc, getDoc } from "firebase/firestore";
+import { TouchableOpacity } from 'react-native';
+import { db } from "../firebase";
+import { useFocusEffect } from '@react-navigation/native';
 import { Container, 
     Card, 
     UserInfo, 
@@ -14,10 +18,25 @@ import { Container,
     InteractionWrapper, 
     Interaction, 
     InteractionText } from "../styles/FeedStyles";
-import { TouchableOpacity } from 'react-native';
+
 
 const PostCard = ({ item, onDelete, onPress }) => {
     const {user, logout} = useContext(AuthContext);
+    const [userData, setUserData] = useState(null);
+
+    // Get the user data from firecloud
+  const getUser = async () => {
+    const docRef = doc(db, "Users", item.userId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {  
+      setUserData(docSnap.data());
+    }
+  }
+
+  useFocusEffect(React.useCallback(() => {
+    getUser();
+  }, []));
 
     let likeIcon = item.liked? 'heart' : 'heart-outline';
     let likeIconColor = item.liked? '#2e64e5' : '#333';
@@ -43,10 +62,10 @@ const PostCard = ({ item, onDelete, onPress }) => {
     return (
       <Card>
         <UserInfo>
-          <UserImg source={item.userImg}/>
+          <UserImg source={{uri: userData ? userData.userImg : 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}}/>
           <UserInfoText>
             <TouchableOpacity onPress={onPress}>
-              <UserName>{item.userName}</UserName>
+              <UserName>{userData ? userData.userName : 'Placeholder username'}</UserName>
             </TouchableOpacity>
             <PostTime>{moment(item.postTime.toDate()).fromNow()}</PostTime>
           </UserInfoText>

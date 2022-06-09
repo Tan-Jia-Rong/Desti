@@ -1,14 +1,82 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth, db } from "../firebase";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { auth, db, storage } from "../firebase";
+import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
+import { toBeExportedImageUrl } from "../screens/SignUpScreen";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
+    const [uploading, setUpLoading] = useState(false);
+    // Transferred bytes
+    const [transferred, setTransferred] = useState(0);
+    const [image, setImage] = useState('https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png');
 
+    // Whenever user submits a post, uploads image to firebase cloud storage and returns download URL
+  const uploadImage = async () => {
+    // If no photo has been uplodaded yet
+    if (toBeExportedImageUrl === null) {
+      return null;
+    }
+    const uploadUri = toBeExportedImageUrl;
+    // Get the last part of the string
+    let fileName = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to fileName to give unique fileNames, ie string manipulation
+    // Split method splits a string into an array of substrings, then pop it
+    const extension = fileName.split('.').pop();
+    const name = fileName.split('.').slice(0, -1).join('.');
+    fileName = name + Date.now() + '.' + extension;
+    
+    setUpLoading(true);
+    setTransferred(0);
+
+    try {
+      // A reference is a local pointer to some file on your bucket. This
+      // can either be a file which already exists, or one which does not exist yet.
+      const reference = ref(storage, 'photos/' + fileName);
+
+      // Convert image into array of bytes
+      const img = await fetch(uploadUri);
+      const bytes = await img.blob();
+
+      // Upload the image to firebase cloud storage, and then get the url
+      const uploadTask = uploadBytesResumable(reference, bytes);
+     
+      // Register three observers:
+      // 1. 'state_changed' observer, called any time the state changes
+      // 2. Error observer, called on failure
+      // 3. Completion observer, called on successful completion
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes * 100);
+
+          setTransferred(Math.round(progress));
+        }
+      );
+
+      // Get the downloaded URL
+      const url = await uploadTask.then(() => {
+        return getDownloadURL(reference)
+          .then((downloadedUrl) => {
+            return downloadedUrl;
+          })
+      })
+
+      // After post has been uploaded to the Firebase Cloud Storage and we have gotten the URL
+      setUpLoading(false);
+      return url;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+ 
     return (
         <AuthContext.Provider
             value={{
@@ -33,7 +101,7 @@ export const AuthProvider = ({children}) => {
                     }
                 },
                 register: async (userName, email, password, passwordConf) => {
-                    if (email.length == 0 || password.length == 0) {
+                    if (userName.length == 0 || email.length == 0 || password.length == 0) {
                         alert("Missing fields! Please Try Again!")
                         return;
                     } else if (password !== passwordConf) {
@@ -43,18 +111,24 @@ export const AuthProvider = ({children}) => {
 
                     try {
                         await createUserWithEmailAndPassword(auth, email, password)
-                          .then(() => updateProfile(auth.currentUser, {
-                              displayName: userName
-                          }))
                           .then(async () => {
                             await setDoc(doc(db, 'Users', auth.currentUser.uid), {
                                 userName: userName,
                                 email: email,
                                 createdAt: Timestamp.fromDate(new Date()),
-                                userImg: null,
-                                userId: auth.currentUser.uid
+                                userId: auth.currentUser.uid,
+                                userImg: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'
                               });
-                          });
+                          })
+                          .then(async () => {
+                            const imageUrl = await uploadImage();
+                            console.log("imageURL is: ", imageUrl);
+                            if (imageUrl !== null) {
+                                await updateDoc(doc(db, 'Users', auth.currentUser.uid), {
+                                    userImg: imageUrl
+                                     })
+                            }
+                          })
                     } catch (error) {
                         const errorCode = error.code;
                         const errorMessage = error.message;

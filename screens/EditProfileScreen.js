@@ -7,9 +7,10 @@ import * as ImagePicker from "expo-image-picker";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 
-const EditProfileScreen = () => {
+const EditProfileScreen = ({ navigation }) => {
   const {user, logout} = useContext(AuthContext);
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -129,7 +130,6 @@ const EditProfileScreen = () => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("User Data", docSnap.data());
       setUserData(docSnap.data());
     }
   }
@@ -155,12 +155,13 @@ const EditProfileScreen = () => {
         'Profile Updated',
         'Your profile has been updated successfully'
       )
+      navigation.navigate("Profile");
     });
   }
 
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     getUser();
-  }, []);
+  }, []));
 
   if (hasCameraPermission === false && hasGalleryPermission === false) {
     return <Text>No permission access to camera and photo gallery</Text>
@@ -206,59 +207,59 @@ const EditProfileScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center'
               }}>
-                {image === null ? 
+                {image === null && userData ? 
                   <ImageBackground 
-                    source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} 
-                    style={{height: 100, width: 100}}
-                    imageStyle={{borderRadius: 15}}>
-                    <View style={{
-                      flex:1,
+                  source={{uri: userData.userImg}} 
+                  style={{height: 100, width: 100}}
+                  imageStyle={{borderRadius: 15}}>
+                  <View style={{
+                    flex:1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                  <Icon 
+                    name="camera" 
+                    size={35}
+                    color="#fff"
+                    style={{
+                      opacity: 0.7,
+                      alignItems: 'center',
                       justifyContent: 'center',
-                      alignItems: 'center'
-                    }}>
-                      <Icon 
-                        name="camera" 
-                        size={35}
-                        color="#fff"
-                        style={{
-                          opacity: 0.7,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderWidth: 1,
-                          borderColor: '#fff',
-                          borderRadius: 10
-                        }}/>
-                    </View>
-                  </ImageBackground>: 
+                      borderWidth: 1,
+                      borderColor: '#fff',
+                      borderRadius: 10
+                    }}/>
+                  </View>
+              </ImageBackground>: 
                   <ImageBackground 
-                      source={{uri: image}} 
-                      style={{height: 100, width: 100}}
-                      imageStyle={{borderRadius: 15}}>
-                      <View style={{
-                        flex:1,
+                  source={{uri: image}} 
+                  style={{height: 100, width: 100}}
+                  imageStyle={{borderRadius: 15}}>
+                  <View style={{
+                    flex:1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <Icon 
+                      name="camera" 
+                      size={35}
+                      color="#fff"
+                      style={{
+                        opacity: 0.7,
+                        alignItems: 'center',
                         justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                      <Icon 
-                        name="camera" 
-                        size={35}
-                        color="#fff"
-                        style={{
-                          opacity: 0.7,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderWidth: 1,
-                          borderColor: '#fff',
-                          borderRadius: 10
-                        }}/>
-                      </View>
-                  </ImageBackground>}
+                        borderWidth: 1,
+                        borderColor: '#fff',
+                        borderRadius: 10
+                      }}/>
+                  </View>
+                </ImageBackground>}
               </View>
             </TouchableOpacity>
             <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>
-              {user.displayName}
+              {userData ? userData.userName : 'Placeholder username'}
             </Text>
-            <Text>{user.uid}</Text>
+            <Text>Unique ID: {user.uid}</Text>
           </View>
 
           

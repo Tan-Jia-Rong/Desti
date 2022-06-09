@@ -48,6 +48,7 @@ const SignUpScreen = ({navigation}) => {
     // If result is not cancelled
     if (!result.cancelled) {
       setImage(result.uri);
+      toBeExportedImageUrl = result.uri;
     };
   }
 
@@ -63,6 +64,7 @@ const SignUpScreen = ({navigation}) => {
     // If result is not cancelled
     if (!result.cancelled) {
       setImage(result.uri);
+      toBeExportedImageUrl = result.uri;
     };
   }
 
@@ -220,6 +222,8 @@ const SignUpScreen = ({navigation}) => {
 }
 
 export default SignUpScreen;
+
+export let toBeExportedImageUrl = null;
 
 const styles = StyleSheet.create({
     container: {
