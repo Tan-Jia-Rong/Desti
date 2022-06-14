@@ -1,10 +1,10 @@
 import React, {useCallback, useState, useEffect, useContext } from "react";
-import { Text, View, StyleSheet, Image, ScrollView, SafeAreaView, TouchableOpacity} from "react-native";
+import { Text, View, StyleSheet, Image, ScrollView, SafeAreaView, TouchableOpacity, Alert} from "react-native";
 import { AuthContext } from "../navigation/AuthProvider";
-import { collection, getDocs, query, orderBy, where, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, where, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import { ref, deleteObject } from "firebase/storage";
-import { db } from "../firebase";
+import { storage, db } from "../firebase";
 import PostCard from "../components/PostCard";
 
 
@@ -12,6 +12,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [deleted, setDeleted] = useState(false);
 
   const fetchPosts = async () => {
     try {
@@ -60,7 +61,56 @@ const ProfileScreen = ({ navigation, route }) => {
       fetchPosts();
     }, []));
 
-    const handleDelete = () => {}
+    // Re-renders screen when a post has been deleted
+    useEffect(() => {
+      getUser();
+      fetchPosts();
+    },[deleted]);
+
+    const handleDelete = (postId) => {
+      Alert.alert(
+        "Confirm Deletion of post",
+        "Are you sure?",  
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { 
+            text: "Yes", 
+            onPress: () => deletePost(postId) }
+        ],
+        { cancelable: false }
+      );
+    }
+
+    // Deletes a post on both firebase storage and firestore cloud, as well as refreshes the feed
+  const deletePost = async (postId) => {
+    setDeleted(false);
+    console.log("Current Post Id: ", postId);
+
+    // First, delete the image from firebase storage
+    const docRef = doc(db, 'Posts', postId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const {postImg} = docSnap.data();
+      const imageRef = ref(storage, postImg);
+
+      deleteObject(imageRef)
+      .then(async () => {
+        console.log("Successful deletion");
+        // Second, delete data from firestore cloud
+        await deleteDoc(doc(db, 'Posts', postId));
+        Alert.alert("Post has been successfully deleted");
+        setDeleted(true);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    }
+  }
 
   return (
    <SafeAreaView style = {{flex: 1, backgroundColor: '#fff'}}>

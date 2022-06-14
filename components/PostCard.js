@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../navigation/AuthProvider';
 import moment from 'moment';
@@ -23,6 +23,7 @@ import { Container,
 const PostCard = ({ item, onDelete, onPress }) => {
     const {user, logout} = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
+    const componentMounted = useRef(true); 
 
     // Get the user data from firecloud
   const getUser = async () => {
@@ -35,7 +36,12 @@ const PostCard = ({ item, onDelete, onPress }) => {
   }
 
   useFocusEffect(React.useCallback(() => {
-    getUser();
+    if (componentMounted.current) {
+      getUser();
+    };
+    return () => {
+      componentMounted.current = false;
+      };
   }, []));
 
     let likeIcon = item.liked? 'heart' : 'heart-outline';

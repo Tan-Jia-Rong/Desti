@@ -147,6 +147,7 @@ const AddReviewScreen = ({navigation}) => {
     console.log("Document written with ID: ", docReference.id);
     setReview('');
     Alert.alert('Image uploaded to the Firebase Cloud Storage and firecloud database successfully');
+    navigation.navigate('Home');
   }
 
   if (hasCameraPermission === false && hasGalleryPermission === false) {

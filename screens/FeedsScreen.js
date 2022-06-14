@@ -48,6 +48,7 @@ const FeedsScreen = ({ navigation }) => {
 
   // Deletes a post on both firebase storage and firestore cloud, as well as refreshes the feed
   const deletePost = async (postId) => {
+    setDeleted(false);
     console.log("Current Post Id: ", postId);
 
     // First, delete the image from firebase storage
@@ -96,7 +97,9 @@ const FeedsScreen = ({ navigation }) => {
   }, []));
 
   // Re-renders screen when a post has been deleted
-  useEffect(() => {fetchPosts();},[deleted]);
+  useEffect(() => {
+    fetchPosts();
+  },[deleted]);
 
   return (
     <Container>
