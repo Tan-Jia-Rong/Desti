@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef, memo } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../navigation/AuthProvider';
 import moment from 'moment';
@@ -97,4 +97,4 @@ const PostCard = ({ item, onDelete, onPress }) => {
     );
 }
 
-export default PostCard;
+export default memo(PostCard);
