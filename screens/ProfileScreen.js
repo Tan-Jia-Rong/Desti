@@ -1,7 +1,7 @@
-import React, {useCallback, useState, useEffect, useContext } from "react";
+import React, {useCallback, useState, useEffect, useContext, useRef } from "react";
 import { Text, View, StyleSheet, Image, ScrollView, SafeAreaView, TouchableOpacity, Alert} from "react-native";
 import { AuthContext } from "../navigation/AuthProvider";
-import { collection, getDocs, query, orderBy, where, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, where, doc, getDoc, updateDoc, deleteDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import { ref, deleteObject } from "firebase/storage";
 import { storage, db } from "../firebase";
@@ -13,6 +13,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
   const [userData, setUserData] = useState(null);
   const [deleted, setDeleted] = useState(false);
+  const componentMounted = useRef(true); 
 
   const fetchPosts = async () => {
     try {
@@ -55,10 +56,15 @@ const ProfileScreen = ({ navigation, route }) => {
     }
   }
 
-    // useFocusEffect ensures that my home screen refreshes each time I visit home screen
+    // useFocusEffect ensures that my profile screen refreshes each time I visit it, to ensure that posts are updated in real time
     useFocusEffect(React.useCallback(() => {
-      getUser();
-      fetchPosts();
+      if (componentMounted.current) {
+        getUser();
+        fetchPosts();
+      };
+      return () => {
+        componentMounted.current = false;
+        };
     }, []));
 
     // Re-renders screen when a post has been deleted
@@ -112,6 +118,49 @@ const ProfileScreen = ({ navigation, route }) => {
     }
   }
 
+  // Follow users when clicked, unfollows when clicked again
+  const handleFollow = async () => {
+    // Get the document in Following collection for the current logged in user
+    const followingRef = doc(db, 'Following', user.uid);
+    const followingSnap = await getDoc(followingRef);
+
+    // Get the document in Users collection for the current logged in user
+    const currentUserRef = doc(db, 'Users', user.uid);
+    const currentUserSnap = await getDoc(currentUserRef);
+
+    // Get the document in Users collection for the user that got followed
+    const followedUserRef = doc(db, 'Users', route.params ? route.params.userId : user.uid);
+    const followedUserSnap = await getDoc(followedUserRef);
+
+    if (followingSnap.exists() && currentUserSnap.exists() && followedUserSnap.exists()) {
+      // 1)
+      // Obtain the usersFollowing array field in Following collection for the current logged in user
+      const {usersFollowing} = followingSnap.data();
+       // Update the Following collection, arrayUnion() adds elements to an array
+       await updateDoc(followingRef, {
+        usersFollowing: arrayUnion(route.params.userId)
+      });
+
+      // 2)
+      // Obtain the following field (number) in Users collection for the current logged in user
+      const {following} = currentUserSnap.data();
+      // Update the Users collection, increment following count of current logged in user by one
+      await updateDoc(currentUserRef, {
+        following: following + 1
+      });
+
+      // 3)
+      // Obtain the followers field (number) in Users collection for the user that got followed
+      const {followers} = followedUserSnap.data();
+      // Update the Users collection, increment followers count of user that got followed by one
+      await updateDoc(followedUserRef, {
+        followers: followers + 1
+      });
+    } else {
+      console.log("No such document");
+    }    
+  }
+
   return (
    <SafeAreaView style = {{flex: 1, backgroundColor: '#fff'}}>
      <ScrollView
@@ -146,7 +195,7 @@ const ProfileScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </> :
           <>
-           <TouchableOpacity style = {styles.userBtn} onPress={() => {}}>
+           <TouchableOpacity style = {styles.userBtn} onPress={handleFollow}>
               <Text style = {styles.userBtnTxt}>Follow</Text>
             </TouchableOpacity>
           </>
@@ -163,20 +212,36 @@ const ProfileScreen = ({ navigation, route }) => {
         )}
       </View>
 
+      {userData ? 
       <View style = {styles.userInfoWrapper}>
         <View style = {styles.userInfoItem}>
           <Text style = {styles.userInfoTitle}>{posts.length}</Text>
           <Text style={styles.userInfoSubtitle}>{posts.length === 0 || posts.length === 1 ? 'Post' : 'Posts'}</Text>
         </View>
         <View style = {styles.userInfoItem}>
-          <Text style = {styles.userInfoTitle}>100</Text>
+          <Text style = {styles.userInfoTitle}>{userData.followers}</Text>
           <Text style={styles.userInfoSubtitle}>Followers</Text>
         </View>
         <View style = {styles.userInfoItem}>
-          <Text style = {styles.userInfoTitle}>88</Text>
+          <Text style = {styles.userInfoTitle}>{userData.following}</Text>
           <Text style={styles.userInfoSubtitle}>Following</Text>
         </View>
+      </View> :
+      <View style = {styles.userInfoWrapper}>
+      <View style = {styles.userInfoItem}>
+        <Text style = {styles.userInfoTitle}>{posts.length}</Text>
+        <Text style={styles.userInfoSubtitle}>{posts.length === 0 || posts.length === 1 ? 'Post' : 'Posts'}</Text>
       </View>
+      <View style = {styles.userInfoItem}>
+        <Text style = {styles.userInfoTitle}>0</Text>
+        <Text style={styles.userInfoSubtitle}>Followers</Text>
+      </View>
+      <View style = {styles.userInfoItem}>
+        <Text style = {styles.userInfoTitle}>0</Text>
+        <Text style={styles.userInfoSubtitle}>Following</Text>
+      </View>
+    </View>
+      }
 
       {posts.map((item) => (
         <PostCard key={item.id} item={item} onDelete={handleDelete} />

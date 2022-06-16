@@ -117,7 +117,9 @@ export const AuthProvider = ({children}) => {
                                 email: email,
                                 createdAt: Timestamp.fromDate(new Date()),
                                 userId: auth.currentUser.uid,
-                                userImg: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'
+                                userImg: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png',
+                                following: 0,
+                                followers: 0
                               });
                           })
                           .then(async () => {
@@ -128,6 +130,11 @@ export const AuthProvider = ({children}) => {
                                     userImg: imageUrl
                                      })
                             }
+                          })
+                          .then(async () => {
+                            await setDoc(doc(db, 'Following', auth.currentUser.uid), {
+                                usersFollowing: []
+                            })
                           })
                     } catch (error) {
                         const errorCode = error.code;
