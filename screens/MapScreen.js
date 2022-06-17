@@ -3,7 +3,8 @@ import { StyleSheet, Text, View, Dimensions, Button} from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location"
 import { useEffect, useState } from 'react';
-import Polyline from '@mapbox/polyline'
+import Polyline from '@mapbox/polyline';
+import { apiKey } from '@env';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -23,7 +24,7 @@ const MapScreen = ({navigation}) => {
     const location = `location=${latitude},${longitude}`;
     const radius = '&radius=2000';
     const type = '&keyword=restaurant';
-    const key = '&key=AIzaSyAz3u26W_yN_8Oo1oC4eQfSy91_nPho20c';
+    const key = `&key=${apiKey}`;
     const restaurantSearchUrl = url + location + radius + type + key;
     const result = await fetch(restaurantSearchUrl).then(response => response.json());
     return result;
@@ -33,7 +34,7 @@ const MapScreen = ({navigation}) => {
     const url = 'https://maps.googleapis.com/maps/api/directions/json?'
     const origin = `origin=${start}`
     const destination = `&destination=${end}`
-    const key = `&key=AIzaSyAz3u26W_yN_8Oo1oC4eQfSy91_nPho20c`
+    const key = `&key=${apiKey}`
     const getDirectionUrl = url + origin + destination + key;
     try {
     const result = await fetch(getDirectionUrl).then(response => response.json());
