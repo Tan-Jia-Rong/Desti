@@ -12,6 +12,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [followersData, setFollowersData] = useState(null);
   const [deleted, setDeleted] = useState(false);
   const componentMounted = useRef(true); 
 
@@ -56,21 +57,33 @@ const ProfileScreen = ({ navigation, route }) => {
     }
   }
 
+  // Get followers data from firecloud
+  const getFollowers = async () => {
+    const docRef = doc(db, "Following", route.params ? route.params.userId : user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      setFollowersData(docSnap.data());
+    }
+  }
+
     // useFocusEffect ensures that my profile screen refreshes each time I visit it, to ensure that posts are updated in real time
     useFocusEffect(React.useCallback(() => {
+      getUser();
+      getFollowers();
+      fetchPosts();
+    }, []));
+
+    // Re-renders screen when a post has been deleted
+    useEffect(() => {
       if (componentMounted.current) {
         getUser();
+        getFollowers();
         fetchPosts();
       };
       return () => {
         componentMounted.current = false;
         };
-    }, []));
-
-    // Re-renders screen when a post has been deleted
-    useEffect(() => {
-      getUser();
-      fetchPosts();
     },[deleted]);
 
     const handleDelete = (postId) => {
@@ -120,45 +133,112 @@ const ProfileScreen = ({ navigation, route }) => {
 
   // Follow users when clicked, unfollows when clicked again
   const handleFollow = async () => {
-    // Get the document in Following collection for the current logged in user
-    const followingRef = doc(db, 'Following', user.uid);
-    const followingSnap = await getDoc(followingRef);
+    let followingCurrentlyLookedAtUser = false;
+    // Check if followersData has been set up, next, see if current user is following the user whose profile page is currently showing
+    {followersData ? (
+      followersData.followers.includes(user.uid) ? followingCurrentlyLookedAtUser = true : followingCurrentlyLookedAtUser = false
+    ) : followingCurrentlyLookedAtUser = false};
 
-    // Get the document in Users collection for the current logged in user
-    const currentUserRef = doc(db, 'Users', user.uid);
-    const currentUserSnap = await getDoc(currentUserRef);
+    // If current logged in user is following current looked at user
+    if (followingCurrentlyLookedAtUser) {
+      // Get the document in Following collection for the current logged in user
+      const followingRef = doc(db, 'Following', user.uid);
+      const followingSnap = await getDoc(followingRef);
 
-    // Get the document in Users collection for the user that got followed
-    const followedUserRef = doc(db, 'Users', route.params ? route.params.userId : user.uid);
-    const followedUserSnap = await getDoc(followedUserRef);
+      // Get the docunment in Following collection for the user that got followed
+      const followedRef = doc(db, 'Following', route.params ? route.params.userId : user.uid);
+      const followedSnap = await getDoc(followedRef);
 
-    if (followingSnap.exists() && currentUserSnap.exists() && followedUserSnap.exists()) {
-      // 1)
-      // Obtain the usersFollowing array field in Following collection for the current logged in user
-      const {usersFollowing} = followingSnap.data();
-       // Update the Following collection, arrayUnion() adds elements to an array
-       await updateDoc(followingRef, {
-        usersFollowing: arrayUnion(route.params.userId)
-      });
+      // Get the document in Users collection for the current logged in user
+      const currentUserRef = doc(db, 'Users', user.uid);
+      const currentUserSnap = await getDoc(currentUserRef);
 
-      // 2)
-      // Obtain the following field (number) in Users collection for the current logged in user
-      const {following} = currentUserSnap.data();
-      // Update the Users collection, increment following count of current logged in user by one
-      await updateDoc(currentUserRef, {
-        following: following + 1
-      });
+      // Get the document in Users collection for the user that got followed
+      const followedUserRef = doc(db, 'Users', route.params ? route.params.userId : user.uid);
+      const followedUserSnap = await getDoc(followedUserRef);
 
-      // 3)
-      // Obtain the followers field (number) in Users collection for the user that got followed
-      const {followers} = followedUserSnap.data();
-      // Update the Users collection, increment followers count of user that got followed by one
-      await updateDoc(followedUserRef, {
-        followers: followers + 1
-      });
+      if (followingSnap.exists() && currentUserSnap.exists() && followedUserSnap.exists()) {
+        // 1)
+        // Update the Following collection for current logged in user, arrayRemove() adds elements to an array
+        await updateDoc(followingRef, {
+          usersFollowing: arrayRemove(route.params.userId),
+        });
+
+        // 2)
+        // Update the Following collection for user that got followed, arrayRemove() adds elements to an array
+        await updateDoc(followedRef, {
+          followers: arrayRemove(user.uid)
+        });
+
+        // 3)
+        // Obtain the following field (number) in Users collection for the current logged in user
+        const {following} = currentUserSnap.data();
+        // Update the Users collection, increment following count of current logged in user by one
+        await updateDoc(currentUserRef, {
+          following: following - 1
+        });
+
+        // 4)
+        // Obtain the followers field (number) in Users collection for the user that got followed
+        const {followers} = followedUserSnap.data();
+        // Update the Users collection, increment followers count of user that got followed by one
+        await updateDoc(followedUserRef, {
+          followers: followers - 1
+        });
+        navigation.navigate("Home");
+      } else {
+        console.log("No such document");
+      }  
     } else {
-      console.log("No such document");
-    }    
+      // Get the document in Following collection for the current logged in user
+      const followingRef = doc(db, 'Following', user.uid);
+      const followingSnap = await getDoc(followingRef);
+
+      // Get the docunment in Following collection for the user that got followed
+      const followedRef = doc(db, 'Following', route.params ? route.params.userId : user.uid);
+      const followedSnap = await getDoc(followedRef);
+
+      // Get the document in Users collection for the current logged in user
+      const currentUserRef = doc(db, 'Users', user.uid);
+      const currentUserSnap = await getDoc(currentUserRef);
+
+      // Get the document in Users collection for the user that got followed
+      const followedUserRef = doc(db, 'Users', route.params ? route.params.userId : user.uid);
+      const followedUserSnap = await getDoc(followedUserRef);
+
+      if (followingSnap.exists() && currentUserSnap.exists() && followedUserSnap.exists()) {
+        // 1)
+        // Update the Following collection for current logged in user, arrayUnion() adds elements to an array
+        await updateDoc(followingRef, {
+          usersFollowing: arrayUnion(route.params.userId),
+        });
+
+        // 2)
+        // Update the Following collection for user that got followed, arrayUnion() adds elements to an array
+        await updateDoc(followedRef, {
+          followers: arrayUnion(user.uid)
+        });
+
+        // 3)
+        // Obtain the following field (number) in Users collection for the current logged in user
+        const {following} = currentUserSnap.data();
+        // Update the Users collection, increment following count of current logged in user by one
+        await updateDoc(currentUserRef, {
+          following: following + 1
+        });
+
+        // 4)
+        // Obtain the followers field (number) in Users collection for the user that got followed
+        const {followers} = followedUserSnap.data();
+        // Update the Users collection, increment followers count of user that got followed by one
+        await updateDoc(followedUserRef, {
+          followers: followers + 1
+        });
+        navigation.navigate("Home");
+      } else {
+        console.log("No such document");
+      } 
+    }
   }
 
   return (
@@ -196,7 +276,9 @@ const ProfileScreen = ({ navigation, route }) => {
           </> :
           <>
            <TouchableOpacity style = {styles.userBtn} onPress={handleFollow}>
-              <Text style = {styles.userBtnTxt}>Follow</Text>
+              <Text style = {styles.userBtnTxt}>{followersData ? (
+                followersData.followers.includes(user.uid) ? 'Following' : 'Follow'
+              ) : 'Follow'}</Text>
             </TouchableOpacity>
           </>
 
@@ -315,3 +397,53 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 })
+
+// setJustFollowed(true);
+//     // Get the document in Following collection for the current logged in user
+//     const followingRef = doc(db, 'Following', user.uid);
+//     const followingSnap = await getDoc(followingRef);
+
+//     // Get the docunment in Following collection for the user that got followed
+//     const followedRef = doc(db, 'Following', route.params ? route.params.userId : user.uid);
+//     const followedSnap = await getDoc(followedRef);
+
+//     // Get the document in Users collection for the current logged in user
+//     const currentUserRef = doc(db, 'Users', user.uid);
+//     const currentUserSnap = await getDoc(currentUserRef);
+
+//     // Get the document in Users collection for the user that got followed
+//     const followedUserRef = doc(db, 'Users', route.params ? route.params.userId : user.uid);
+//     const followedUserSnap = await getDoc(followedUserRef);
+
+//     if (followingSnap.exists() && currentUserSnap.exists() && followedUserSnap.exists()) {
+//       // 1)
+//       // Update the Following collection for current logged in user, arrayUnion() adds elements to an array
+//       await updateDoc(followingRef, {
+//         usersFollowing: arrayUnion(route.params.userId),
+//       });
+
+//       // 2)
+//       // Update the Following collection for user that got followed, arrayUnion() adds elements to an array
+//       await updateDoc(followedRef, {
+//         followers: arrayUnion(user.uid)
+//       });
+
+//       // 3)
+//       // Obtain the following field (number) in Users collection for the current logged in user
+//       const {following} = currentUserSnap.data();
+//       // Update the Users collection, increment following count of current logged in user by one
+//       await updateDoc(currentUserRef, {
+//         following: following + 1
+//       });
+
+//       // 4)
+//       // Obtain the followers field (number) in Users collection for the user that got followed
+//       const {followers} = followedUserSnap.data();
+//       // Update the Users collection, increment followers count of user that got followed by one
+//       await updateDoc(followedUserRef, {
+//         followers: followers + 1
+//       });
+//       setJustFollowed(false);
+//     } else {
+//       console.log("No such document");
+//     }  

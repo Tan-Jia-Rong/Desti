@@ -133,7 +133,8 @@ export const AuthProvider = ({children}) => {
                           })
                           .then(async () => {
                             await setDoc(doc(db, 'Following', auth.currentUser.uid), {
-                                usersFollowing: []
+                                usersFollowing: [],
+                                followers: []
                             })
                           })
                     } catch (error) {
