@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen } from "../screens";
+import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen, SearchUsersScreen, OthersProfileScreen } from "../screens";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -39,8 +39,28 @@ const FeedsStack = ({navigation}) => {
             />
 
             <Stack.Screen
+                name="Others Profile"
+                component={OthersProfileScreen}
+                options={{
+                    headerTitle: "",
+                    headerTransparent: true
+                }}
+            />
+
+            <Stack.Screen
                 name="Profile"
                 component={ProfileScreen}
+                options={{
+                    headerRight: () => (
+                        <View style={{marginRight: 10}}>
+                            <Ionicons 
+                            name="person-add" 
+                            size={25}
+                            onPress={() => navigation.navigate("AddReviews")}
+                            />
+                        </View>
+                    )
+                }}
             />
 
             <Stack.Screen
@@ -48,6 +68,21 @@ const FeedsStack = ({navigation}) => {
                 component={EditProfileScreen}
                 options={{
                     headerTitle: 'Edit Profile',
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                    }
+                }}
+            />
+
+            <Stack.Screen
+                name="Search Users"
+                component={SearchUsersScreen}
+                options={{
+                    headerTitle: 'Search Users',
                     headerBackTitleVisible: false,
                     headerTitleAlign: 'center',
                     headerStyle: {
@@ -67,6 +102,17 @@ const ProfileStack = ({navigation}) => {
             <Stack.Screen
                 name="Profile"
                 component={ProfileScreen}
+                options={{
+                    headerRight: () => (
+                        <View style={{marginRight: 10}}>
+                            <Ionicons 
+                            name="person-add" 
+                            size={25}
+                            onPress={() => navigation.navigate("Search Users")}
+                            />
+                        </View>
+                    )
+                }}
             />
 
             <Stack.Screen
@@ -81,6 +127,30 @@ const ProfileStack = ({navigation}) => {
                         shadowColor: '#fff',
                         elevation: 0
                     }
+                }}
+            />
+
+            <Stack.Screen
+                name="Search Users"
+                component={SearchUsersScreen}
+                options={{
+                    headerTitle: 'Search Users',
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                    }
+                }}
+            />
+
+            <Stack.Screen
+                name="Others Profile"
+                component={OthersProfileScreen}
+                options={{
+                    headerTitle: "",
+                    headerTransparent: true
                 }}
             />
         </Stack.Navigator>

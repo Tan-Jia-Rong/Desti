@@ -105,7 +105,7 @@ const FeedsScreen = ({ navigation }) => {
     <Container>
       <FlatList 
         data={posts}
-        renderItem={({item}) => <PostCard item={item} onDelete={handleDelete} onPress={() => navigation.navigate("Profile", {userId: item.userId})}/>}
+        renderItem={({item}) => <PostCard item={item} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: item.userId})}/>}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
       />

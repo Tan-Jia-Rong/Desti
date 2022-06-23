@@ -8,7 +8,7 @@ import { storage, db } from "../firebase";
 import PostCard from "../components/PostCard";
 
 
-const ProfileScreen = ({ navigation, route }) => {
+const OthersProfileScreen = ({ navigation, route }) => {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [userData, setUserData] = useState(null);
@@ -325,7 +325,7 @@ const ProfileScreen = ({ navigation, route }) => {
   );
 }
 
-export default ProfileScreen;
+export default OthersProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
