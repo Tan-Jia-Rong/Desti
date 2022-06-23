@@ -292,14 +292,18 @@ const ProfileScreen = ({ navigation, route }) => {
           <Text style = {styles.userInfoTitle}>{posts.length}</Text>
           <Text style={styles.userInfoSubtitle}>{posts.length === 0 || posts.length === 1 ? 'Post' : 'Posts'}</Text>
         </View>
+        <TouchableOpacity onPress={() => navigation.navigate("Followers", {userId: userData.userId})}>
         <View style = {styles.userInfoItem}>
           <Text style = {styles.userInfoTitle}>{userData.followers}</Text>
           <Text style={styles.userInfoSubtitle}>Followers</Text>
         </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Following", {userId: userData.userId})}>
         <View style = {styles.userInfoItem}>
           <Text style = {styles.userInfoTitle}>{userData.following}</Text>
           <Text style={styles.userInfoSubtitle}>Following</Text>
         </View>
+        </TouchableOpacity>
       </View> :
       <View style = {styles.userInfoWrapper}>
       <View style = {styles.userInfoItem}>

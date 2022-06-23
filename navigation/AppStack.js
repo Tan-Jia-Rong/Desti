@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen, SearchUsersScreen, OthersProfileScreen } from "../screens";
+import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen, SearchUsersScreen, OthersProfileScreen, FollowersScreen, FollowingScreen } from "../screens";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -92,6 +92,16 @@ const FeedsStack = ({navigation}) => {
                     }
                 }}
             />
+
+        <Stack.Screen
+                name="Followers"
+                component={FollowersScreen}
+            />
+
+        <Stack.Screen
+                name="Following"
+                component={FollowingScreen}
+            />
         </Stack.Navigator>
     )
 }
@@ -152,6 +162,16 @@ const ProfileStack = ({navigation}) => {
                     headerTitle: "",
                     headerTransparent: true
                 }}
+            />
+
+            <Stack.Screen
+                name="Followers"
+                component={FollowersScreen}
+            />
+
+            <Stack.Screen
+                name="Following"
+                component={FollowingScreen}
             />
         </Stack.Navigator>
     );

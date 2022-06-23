@@ -1,36 +1,49 @@
 import { useState, useEffect, useContext } from "react";
 import { StyleSheet, View, Text, TextInput, FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { storage, db } from "../firebase";
-import { collection, query, where, getDocs, doc, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, orderBy } from "firebase/firestore";
 import { FormInput, UserProfileButton } from '../components';
+import { AuthContext } from "../navigation/AuthProvider";
 
 
-const SearchUsersScreen = ({navigation}) => {
+const FollowingScreen = ({ navigation, route }) => {
+    const {user} = useContext(AuthContext);
     const [users, setUsers] = useState([]);
     
     const fetchUsers = async (searchString) => {
         try {
+            const docRef = doc(db, 'Following', route.params ? route.params.userId : user.uid);
+            const docSnap = await getDoc(docRef);
+            const {usersFollowing} = docSnap.data();
+            console.log(usersFollowing);
+            console.log("Fetched following!");
+
             const arr = [];
             const q = query(collection(db, 'Users'), where('userName', '>=', searchString), orderBy("userName"));
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
                 const {userName, userImg, userId} = doc.data();
-                // For each doc in the firecloud database, push it into the array
+                if (usersFollowing.includes(userId)) {
+                     // For each doc in the firecloud database, push it into the array
                 arr.push({
-                  id: doc.id,  
-                  userName,
-                  userImg,
-                  userId
-                });
+                    id: doc.id,  
+                    userName,
+                    userImg,
+                    userId
+                  });
+                }
               }, []);
 
         setUsers(arr);
-        console.log("Fetched users oof!");
         } catch(e) {
             console.log(e);
         }
     }
+
+    useEffect(() => {
+        fetchUsers("");
+    }, [])
 
   
     return (
@@ -41,7 +54,7 @@ const SearchUsersScreen = ({navigation}) => {
                 onChangeText = {(searchString) => (
                     fetchUsers(searchString)
                 )}
-                  placeHolderText = "Search Users"
+                  placeHolderText = "Search Followers"
                   iconType = "search1"
                   autoCapitalize = "none"
                   autocorrect = {false}
@@ -61,7 +74,7 @@ const SearchUsersScreen = ({navigation}) => {
     );
   }
   
-  export default SearchUsersScreen;
+  export default FollowingScreen;
 
   const styles = StyleSheet.create({
     container: {
