@@ -3,8 +3,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../navigation/AuthProvider';
 import moment from 'moment';
 import { doc, getDoc } from "firebase/firestore";
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { db } from "../firebase";
+import StarRating from "react-native-star-rating-widget";
 import { useFocusEffect } from '@react-navigation/native';
 import { Container, 
     Card, 
@@ -23,6 +24,7 @@ import { Container,
 const PostCard = ({ item, onDelete, onPress }) => {
     const {user, logout} = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
+    const [rating, setRating] = useState(item.rating);
     const componentMounted = useRef(true); 
 
     // Get the user data from firecloud
@@ -76,6 +78,13 @@ const PostCard = ({ item, onDelete, onPress }) => {
             <PostTime>{moment(item.postTime.toDate()).fromNow()}</PostTime>
           </UserInfoText>
         </UserInfo>
+        <View style={{paddingLeft:9}}>
+        <StarRating
+          rating={rating}
+          onChange={() => {}}
+          starSize={14}
+        />
+        </View>
         <PostText>{item.postText}</PostText>
         <PostImg source={{uri: item.postImg}}/>
         <InteractionWrapper>

@@ -54,7 +54,7 @@ const FollowingScreen = ({ navigation, route }) => {
                 onChangeText = {(searchString) => (
                     fetchUsers(searchString)
                 )}
-                  placeHolderText = "Search Followers"
+                  placeHolderText = "Search Following"
                   iconType = "search1"
                   autoCapitalize = "none"
                   autocorrect = {false}
