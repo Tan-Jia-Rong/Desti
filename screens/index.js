@@ -11,3 +11,5 @@ export { default as SearchUsersScreen } from './SearchUsersScreen';
 export { default as OthersProfileScreen } from './OthersProfileScreen';
 export { default as FollowersScreen } from './FollowersScreen';
 export { default as FollowingScreen } from './FollowingScreen';
+export { default as InputScreen } from './InputScreen';
+export { default as DirectionScreen } from './DirectionScreen';
