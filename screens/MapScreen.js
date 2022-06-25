@@ -1,14 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Button} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button, Image} from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location"
 import { useEffect, useState } from 'react';
 import Polyline from '@mapbox/polyline';
 import { apiKey } from '@env';
+import DestiMarker from '../assets/DestiMarker.png'
+import DestiNewMarker from '../assets/DestiNewMarker.png'
 
 const { width, height } = Dimensions.get('screen');
 
 const MapScreen = ({navigation}) => {
+  // Initialise states
   const [location, setLocation] = useState(null);
   const [destination, setDestination] = useState(null);
   const [coords, setCoords] = useState(null);
@@ -19,6 +22,7 @@ const MapScreen = ({navigation}) => {
   const [restaurantList, setRestaurantList] = useState([]);
   const [visibility, setVisibility] = useState(false);
 
+  // Handles the fetching of data from google nearbysearch api
   const handleRestaurantSearch = async (latitude, longitude) => {
     const url  = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
     const location = `location=${latitude},${longitude}`;
@@ -30,6 +34,7 @@ const MapScreen = ({navigation}) => {
     return result;
   };
 
+  // Handles the fetchinig of data from google direction api
   const getDirections = async (start, end) => {
     const url = 'https://maps.googleapis.com/maps/api/directions/json?'
     const origin = `origin=${start}`
@@ -57,12 +62,14 @@ const MapScreen = ({navigation}) => {
     }
   }
 
+  // Update state of destination and address once marker is pressed
   const onMarkerPress = (location, address) => {
       setDestination(location);
       setAddress(address)
       mergeCoords();
   }
 
+  // Get Direction from user to selected restaurant
   const mergeCoords = () => {
     const hasStartAndEnd = location != null && destination !== null;
 
@@ -73,39 +80,48 @@ const MapScreen = ({navigation}) => {
     }
   }
 
+  // Renders markers of nearby restaurants <- capped at 20 restaurant as per google api
   const renderMarkers = (restaurantList) => {
     return (
       restaurantList.map((item) => (
         <Marker
           title={item.name}
           description= {'Rating ' + item.rating + ' / 5.0'}
-          icon={{
-            uri: item.icon
-            }}
           key={item.place_id}
           coordinate={{
             latitude: item.geometry.location.lat,
             longitude: item.geometry.location.lng,
           }}
           onPress={() => onMarkerPress(item.geometry.location, item.vicinity)}
-        />
+        >
+          <Image
+            source={DestiMarker}
+            style={styles.markerStyle}
+          />
+        </Marker>
       )))
   }
 
+  // Renders the path from user location to selected restaurant
   const renderPolyLine = () => {
       return (
       <MapView.Polyline
         strokeWidth={2}
-        strokeColor="red"
+        strokeColor="blue"
         coordinates={coords}
       />)
   }
 
+  // Check if location is granted
+  // Issue: Cant check if user deny in the first time
+  // Possible solution: 
+  // 1. Deal with logic when location === null
+  // 2. Deal with logic with useEffect <- cant find any solutioins yet
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if(status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        setErrorMsg("Permission to access location not granted");
         console.log(errorMsg);
         return;
       }
@@ -132,12 +148,14 @@ const MapScreen = ({navigation}) => {
     })();
   }, []);
 
+  // Text to show if location denied / loading of maps
   if (location === null) return (
     <View style={styles.container}>
-      <Text> {errorMsg} </Text>
+      <Text> {errorMsg === null ? "Loading..." : errorMsg} </Text>
     </View>
   );
   
+  // MapView is location services is granted
   if (location) {
   return (
     <View style={{flex: 1}}>
@@ -194,4 +212,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  markerStyle: {
+    width: 50,
+    height: 50,
+  }
 });

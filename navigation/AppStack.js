@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen, SearchUsersScreen, OthersProfileScreen, FollowersScreen, FollowingScreen } from "../screens";
+import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen, SearchUsersScreen, OthersProfileScreen, FollowersScreen, FollowingScreen, InputScreen, DirectionScreen } from "../screens";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -177,6 +177,44 @@ const ProfileStack = ({navigation}) => {
     );
 }
 
+const RestaurantStack = ({route, navigation}) => {
+    return (
+        <Stack.Navigator initialRouteName="InputScreen">
+            <Stack.Screen
+                name="InputScreen"
+                component={InputScreen}
+                options={{
+                    headerTitle: "Restaurant Search"
+                }}
+            />
+
+            <Stack.Screen
+                name="RestaurantScreen"
+                component={RestaurantScreen}
+                options={({route}) => (
+                    // Logic Flow for checking if restaurant exist
+                    route.params.result === null 
+                    ? {headerTitle: "Restaurant Page"} 
+                    : {headerTitle: route.params.result.name,
+                        headerBackTitleVisible: false,
+                        headerTitleAlign: 'center',
+                        headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                        }
+                      }
+                )}
+            />
+
+            <Stack.Screen
+                name="Map"
+                component={DirectionScreen}
+            />
+        </Stack.Navigator>
+    )
+}
+
 const AppStack = () => {
     return (
         <Tab.Navigator initialRouteName="Home">
@@ -198,8 +236,9 @@ const AppStack = () => {
 
             <Tab.Screen
                 name="Restaurant"
-                component={RestaurantScreen}
+                component={RestaurantStack}
                 options={{
+                    header: () => null,
                     tabBarIcon: ({color, size}) => (
                         <Ionicons name="restaurant-outline" color ={color} size={size}/>
                     )
