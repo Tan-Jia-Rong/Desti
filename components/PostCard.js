@@ -38,12 +38,7 @@ const PostCard = ({ item, onDelete, onPress }) => {
   }
 
   useFocusEffect(React.useCallback(() => {
-    if (componentMounted.current) {
-      getUser();
-    };
-    return () => {
-      componentMounted.current = false;
-      };
+    getUser();
   }, []));
 
     let likeIcon = item.liked? 'heart' : 'heart-outline';
