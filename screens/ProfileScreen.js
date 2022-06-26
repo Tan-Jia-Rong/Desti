@@ -22,7 +22,7 @@ const ProfileScreen = ({ navigation, route }) => {
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        const {userId, postText, postImg, postTime, likes, comments} = doc.data();
+        const {userId, postText, postImg, postTime, likes, comments, rating} = doc.data();
         // For each doc in the firecloud database, push it into the array
         arr.push({
           id: doc.id,  
@@ -34,7 +34,8 @@ const ProfileScreen = ({ navigation, route }) => {
           postImg: postImg,
           liked: false,
           likes,
-          comments
+          comments,
+          rating
         });
       }, []);
       

@@ -1,5 +1,5 @@
 import React, {useCallback, useState, useEffect, useContext } from "react";
-import { Text, View, StyleSheet, Image, FlatList, Alert } from "react-native";
+import { Text, View, StyleSheet, Image, FlatList, Alert, ScrollView } from "react-native";
 import { AuthContext } from "../navigation/AuthProvider";
 import PostCard from '../components/PostCard';
 import { storage, db } from "../firebase";
@@ -22,7 +22,7 @@ const FeedsScreen = ({ navigation }) => {
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        const {userId, postText, postImg, postTime, likes, comments} = doc.data();
+        const {userId, postText, postImg, postTime, likes, comments, rating} = doc.data();
         // For each doc in the firecloud database, push it into the array
         arr.push({
           id: doc.id,  
@@ -34,7 +34,8 @@ const FeedsScreen = ({ navigation }) => {
           postImg: postImg,
           liked: false,
           likes,
-          comments
+          comments,
+          rating
         });
       }, []);
       
@@ -48,7 +49,7 @@ const FeedsScreen = ({ navigation }) => {
 
   // Deletes a post on both firebase storage and firestore cloud, as well as refreshes the feed
   const deletePost = async (postId) => {
-    setDeleted(false);
+    setDeleted(true);
     console.log("Current Post Id: ", postId);
 
     // First, delete the image from firebase storage
@@ -64,7 +65,7 @@ const FeedsScreen = ({ navigation }) => {
         console.log("Successful deletion");
         // Second, delete data from firestore cloud
         await deleteDoc(doc(db, 'Posts', postId));
-        setDeleted(true);
+        setDeleted(false);
         Alert.alert("Post has been successfully deleted");
       })
       .catch((e) => {
@@ -103,12 +104,11 @@ const FeedsScreen = ({ navigation }) => {
 
   return (
     <Container>
-      <FlatList 
-        data={posts}
-        renderItem={({item}) => <PostCard item={item} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: item.userId})}/>}
-        keyExtractor={item => item.id}
-        showsVerticalScrollIndicator={false}
-      />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {posts.map((item) => (
+          <PostCard key={item.id} item={item} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: item.userId})}/>
+        ))}
+      </ScrollView>
     </Container>
   );
 }

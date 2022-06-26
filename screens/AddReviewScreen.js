@@ -8,6 +8,7 @@ import * as ImagePicker from "expo-image-picker";
 import { storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
+import StarRating from "react-native-star-rating-widget";
 
 
 
@@ -21,6 +22,7 @@ const AddReviewScreen = ({navigation}) => {
   // Transferred bytes
   const [transferred, setTransferred] = useState(0);
   const [review, setReview] = useState("");
+  const [rating, setRating] = useState(0);
 
   // Ask for permissions to access user's camera and media gallery
   useEffect(() => {
@@ -142,7 +144,8 @@ const AddReviewScreen = ({navigation}) => {
       postImg: imageUrl,
       postTime: Timestamp.fromDate(new Date()),
       likes: null,
-      comments: null
+      comments: null,
+      rating: rating
     });
     console.log("Document written with ID: ", docReference.id);
     setReview('');
@@ -168,6 +171,12 @@ const AddReviewScreen = ({navigation}) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <InputWrapper>
             {image === null ? <AddImage source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} /> : <AddImage source={{uri: image}} />}
+            <View style={{justifyContent: 'center'}}>
+            <StarRating
+              rating={rating}
+              onChange={setRating}
+              />
+            </View>
               <InputField 
                 value ={review}
                 onChangeText={setReview} 

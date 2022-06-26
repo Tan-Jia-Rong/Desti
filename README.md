@@ -70,10 +70,22 @@ By providing relevant information to facilitate the decision-making process, we 
 
 ### Considerations ###
 * Goals
-    * The application tshould be comprehensive to minimise the need to refer to other applications or website when choosing a restaurant. Thus, the features of the application should include most things that people need when choosing on what restaurant to dine in.
+    * The application should be comprehensive to minimise the need to refer to other applications or website when choosing a restaurant. Thus, the features of the application should include most things that people need when choosing on what restaurant to dine in.
     * An easy-to-use interface
+
 * Assumptions
     * It is assumed that users will have connection to the internet.
+
+* How are we different from other platform?
+    * Google Maps
+      * Ranked according to ratings provided by all users and may not be accurate. We plan to rank the restaurants solely using ratings provided by our users.
+    * Food Advisor
+      * Does not provide ratings
+      * Does not provide directions to restaurant
+    * Burpple
+      * Reviews can only be seen in restaurant page. We would like to provide a feeds screen similar to Instagram for users to view various restaurant other users reviewed to aid them in searching for a new restaurant.
+      * Does not have a roulette function to aid the users in selecting a restaurant to dine in. Often users uses food application because they are unsure of what to eat.
+
 
 ### Activity Diagram ###
 ![Activity Diagram](https://raw.githubusercontent.com/Tan-Jia-Rong/Desti/main/.github/ActivityDiagram.png?token=GHSAT0AAAAAABULXMBVMMRL5XSEW4QN3US6YUUS4TQ)

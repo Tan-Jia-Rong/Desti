@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, TextInput, ImageBackground, TouchableWithoutFeedback, Keyboard, Alert, Image } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, ImageBackground, TouchableWithoutFeedback, Keyboard, Alert, Image, ActivityIndicator } from "react-native";
 import { FormButton, FormInput } from "../components";
 import { AuthContext } from "../navigation/AuthProvider";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -280,11 +280,17 @@ const EditProfileScreen = ({ navigation }) => {
             autoCapitalize = "none"
             autocorrect = {false}
             />
-
-          <FormButton
-            buttonTitle="Update"
-            onPress = {handleUpdate}
-          />
+            {uploading ? (
+              <View style={{justifyContent:'center', alignItems:'center'}}>
+                <Text>{transferred}% Completed</Text>
+                <ActivityIndicator size='large' color='#0000ff' />
+              </View>
+            ) : (
+              <FormButton
+                buttonTitle="Update"
+                onPress = {handleUpdate}
+              />
+            )}
         </View>
       </TouchableWithoutFeedback>
     </View>
