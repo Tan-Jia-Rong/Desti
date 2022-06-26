@@ -7,12 +7,13 @@ import { apiKey } from '@env'
 const { width, height } = Dimensions.get('screen');
 
 const DirectionScreen = ({route, navigation}) => {
-  const { destination } = route.params;
+  const  { destination, address, name } = route.params;
   const [location, setLocation] = useState(null);
   const [coords, setCoords] = useState(null);
   const [distance, setDistance] = useState(null);
   const [time, setTime] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const getDirections = async (start, end) => {
     const url = 'https://maps.googleapis.com/maps/api/directions/json?'
@@ -71,6 +72,7 @@ const DirectionScreen = ({route, navigation}) => {
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+      setLoading(false);
 
       Location.watchPositionAsync({
         accuracy: Location.Accuracy.BestForNavigation,
@@ -87,13 +89,19 @@ const DirectionScreen = ({route, navigation}) => {
     })();
   }, []);
 
-  if (location === null) return (
+  if(loading == true) return (
+    <View style={styles.container}>
+      <Text> loading... </Text>
+    </View>
+  )
+
+  else if (location === null) return (
     <View style={styles.container}>
       <Text> {errorMsg ? errorMsg : "I can't seem to find ur location?"} </Text>
     </View>
   );
 
-  return (
+  else return (
     <View style={{flex: 1}}>
       <View
         style={{
@@ -105,15 +113,22 @@ const DirectionScreen = ({route, navigation}) => {
           backgroundColor: 'white',
           justifyContent: 'flex-end',
         }}>
-        
+        <Text style={{ fontWeight: 'bold' }}>{name}</Text>
         <Text style={{ fontWeight: 'bold' }}>Estimated Time: {time}</Text>
         <Text style={{ fontWeight: 'bold' }}>Estimated Distance: {distance}</Text>
+        <Text>Address: {address}</Text>
       </View>
 
       <MapView
         showsUserLocation
         style={{
           flex: 1
+        }}
+        region={{
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04
         }}
       >
       <Marker

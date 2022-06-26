@@ -36,7 +36,10 @@ const RestaurantScreen = ({route, navigation}) => {
             return;
         }
         console.log("Use effect triggered")
-        const photo = await fetchPhoto(result.photos[0].photo_reference);
+        console.log(result.photos);
+        const photo = result.photos === undefined 
+                      ? "https://upload.wikimedia.org/wikipedia/commons/7/75/No_image_available.png" 
+                      :await fetchPhoto(result.photos[0].photo_reference);
         console.log("photo obtained succesfully")
         setPhoto(photo);
         const location = result.geometry.location;
@@ -72,12 +75,12 @@ const RestaurantScreen = ({route, navigation}) => {
                     <DetailFragment
                         address={result.formatted_address}
                         phoneNumber={result.formatted_phone_number}
-                        status={result.opening_hours.open_now}
-                        openingArr={result.opening_hours.weekday_text}
+                        openingArr={result.opening_hours}
                         priceLevel={result.price_level}
                         ratings={result.rating}
                         location={location}
                         navigation={navigation}
+                        name={result.name}
                     />
                 </View>
                 <View

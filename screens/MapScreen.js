@@ -17,6 +17,7 @@ const MapScreen = ({navigation}) => {
   const [coords, setCoords] = useState(null);
   const [distance, setDistance] = useState(null);
   const [address, setAddress] = useState(null);
+  const [name, setName] = useState(null);
   const [time, setTime] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [restaurantList, setRestaurantList] = useState([]);
@@ -63,7 +64,8 @@ const MapScreen = ({navigation}) => {
   }
 
   // Update state of destination and address once marker is pressed
-  const onMarkerPress = (location, address) => {
+  const onMarkerPress = (location, address, name) => {
+      setName(name);
       setDestination(location);
       setAddress(address)
       mergeCoords();
@@ -92,7 +94,7 @@ const MapScreen = ({navigation}) => {
             latitude: item.geometry.location.lat,
             longitude: item.geometry.location.lng,
           }}
-          onPress={() => onMarkerPress(item.geometry.location, item.vicinity)}
+          onPress={() => onMarkerPress(item.geometry.location, item.vicinity, item.name)}
         >
           <Image
             source={DestiMarker}
@@ -169,7 +171,7 @@ const MapScreen = ({navigation}) => {
           backgroundColor: 'white',
           justifyContent: 'flex-end',
         }}>
-        
+        <Text style={{ fontWeight: 'bold' }}>{name}</Text>
         <Text style={{ fontWeight: 'bold' }}>Estimated Time: {visibility ? time : null}</Text>
         <Text style={{ fontWeight: 'bold' }}>Estimated Distance: {visibility ? distance : null}</Text>
         <Text>Address: {address}</Text>
@@ -178,6 +180,15 @@ const MapScreen = ({navigation}) => {
       <MapView
         showsUserLocation
         showsMyLocationButton
+        region={{
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04
+        }}
+        // Disabled scroll for now as region selecting restaurant bring user back to region
+        // Was planning on displaying all the markers in our database instead of nearby
+        scrollEnabled={false}
         style={{
           flex: 1
         }}

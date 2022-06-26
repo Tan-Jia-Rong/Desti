@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
-const DetailFragment = ({address, phoneNumber, status, openingArr, priceLevel, ratings, location, navigation}) => {
+const DetailFragment = ({address, phoneNumber, openingArr, priceLevel, ratings, location, navigation, name}) => {
     const [destination, setDestination] = useState(location);
+    const status = openingArr === undefined ? "Not Applicable" : openingArr.open_now;
+    const openingDays = openingArr === undefined ? "Not Applicable" : openingArr.weekday_text;
     return (
         <View style={{flex: 1}}>
             <View style={styles.locationContainer}>
@@ -11,18 +13,19 @@ const DetailFragment = ({address, phoneNumber, status, openingArr, priceLevel, r
             </View>
             <View style={styles.container}>
                 <View style={styles.leftContainer}>
-                    <View style={styles.leftTopContainer}>
                     <Text>Pricing: {priceLevel ? priceLevel + " / 5" : "Not Applicable"}</Text>
                     <Text>Ratings: {ratings} / 5.0</Text>
                     <Text>Status: {status === undefined ? "Not Applicable"
                                     : status ? "Open" : "Closed"} </Text>
-                    </View>
                 </View>
                 
-                <ScrollView style={StyleSheet.rightContainer}>
+                <ScrollView style={styles.rightContainer}>
                     
                     <Text>Opening Hours</Text>
-                    {openingArr.map(openingHours => {
+                    {
+                        openingDays === "Not Applicable" 
+                        ? <Text> {openingDays} </Text>
+                        : openingDays.map(openingHours => {
                         return <Text key={openingHours}>{openingHours}</Text>;
                     })}
                     
@@ -31,7 +34,7 @@ const DetailFragment = ({address, phoneNumber, status, openingArr, priceLevel, r
             <TouchableOpacity
                 style={styles.buttonContainer}
                 onPress={() => {
-                    navigation.navigate("Map", { destination })}}
+                    navigation.navigate("Map", { destination, address, name })}}
             >
                 <Text style={styles.buttonText}> Get Direction </Text>
             </TouchableOpacity>
@@ -43,36 +46,29 @@ export default DetailFragment;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0.6, 
+        flex: 1, 
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'space-around',
     },
     locationContainer: {
-        height: '20%',
+        flex: 0.2,
         width: '100%',
         alignItems: 'flex-start',
         paddingLeft: 20,
+        marginBottom: 20
     },
     leftContainer: {
         height: '100%',
         width: '50%',
         alignItems: 'flex-start',
-        justifyContent: 'space-around',
-        paddingLeft: 10,
-    },
-    leftTopContainer: {
-        flex: 1,
-        alignItems: 'flex-start',
         justifyContent: 'space-evenly',
-        paddingLeft: 10,
+        paddingLeft: 20,
     },
     rightContainer: {
         flex: 1,
         width: '50%',
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'space-evenly',
+        flexDirection: 'row'
     },
     buttonContainer: {
         flex: 0.15,
