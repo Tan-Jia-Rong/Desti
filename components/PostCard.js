@@ -3,7 +3,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../navigation/AuthProvider';
 import moment from 'moment';
 import { doc, getDoc } from "firebase/firestore";
-import { TouchableOpacity, View, Dimensions } from 'react-native';
+import { TouchableOpacity, View, Dimensions, Text } from 'react-native';
 import { db } from "../firebase";
 import StarRating from "react-native-star-rating-widget";
 import { useFocusEffect } from '@react-navigation/native';
@@ -75,13 +75,26 @@ const PostCard = ({ item, onDelete, onPress }) => {
             <PostTime>{moment(item.postTime.toDate()).fromNow()}</PostTime>
           </UserInfoText>
         </UserInfo>
-        <View style={{paddingLeft:9}}>
-        <StarRating
-          rating={rating}
-          onChange={() => {}}
-          starSize={14}
-        />
-        </View>
+        {item.restaurant != null ? 
+          <View style={{justifyContent:'center', alignItems:'center'}}>
+           <Text style={{fontSize:14, fontWeight:'bold'}}>{item.restaurant}</Text> 
+            <View style={{paddingLeft:0}}>
+          <StarRating
+            rating={rating}
+            onChange={() => {}}
+             starSize={14}
+         />
+          </View>
+        </View> :
+          <View style={{justifyContent:'center', alignItems:'center'}}>
+          <View>
+         <StarRating
+           rating={rating}
+            onChange={() => {}}
+            starSize={14}
+          />
+          </View> 
+          </View>}
         <PostText>{item.postText}</PostText>
         <PostImg source={{uri: item.postImg}}/>
         <InteractionWrapper>

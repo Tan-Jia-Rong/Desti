@@ -216,6 +216,39 @@ const RestaurantStack = ({route, navigation}) => {
                 name="Map"
                 component={DirectionScreen}
             />
+
+            <Stack.Screen
+                name="Others Profile"
+                component={OthersProfileScreen}
+                options={{
+                    headerTitle: "",
+                    headerTransparent: true
+                }}
+            />
+
+            <Stack.Screen
+                name="Edit Profile"
+                component={EditProfileScreen}
+                options={{
+                    headerTitle: 'Edit Profile',
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                    }
+                }}
+            />
+            <Stack.Screen
+                name="Followers"
+                component={FollowersScreen}
+            />
+
+            <Stack.Screen
+                name="Following"
+                component={FollowingScreen}
+            />
         </Stack.Navigator>
     )
 }

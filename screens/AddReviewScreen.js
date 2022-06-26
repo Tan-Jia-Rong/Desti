@@ -146,7 +146,8 @@ const AddReviewScreen = ({navigation, route}) => {
       postTime: Timestamp.fromDate(new Date()),
       likes: null,
       comments: null,
-      rating: rating
+      rating: rating,
+      restaurant: null
     });
     console.log("Document written with ID: ", docReference.id);
     setReview('');
@@ -155,6 +156,11 @@ const AddReviewScreen = ({navigation, route}) => {
     if (route.params) {
       const restaurantRef = doc(db, 'Restaurants', route.params.restaurantResult.place_id);
       const restaurantSnap = await getDoc(restaurantRef);
+
+      // Update the restaurant name in Posts collection
+      await updateDoc(doc(db, 'Posts', docReference.id), {
+        restaurant: route.params.restaurantResult.name
+      })
 
       // If the document already exists
       if (restaurantSnap.exists()) {

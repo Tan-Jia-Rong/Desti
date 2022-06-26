@@ -6,7 +6,7 @@ import { DetailFragment, RestaurantReviewFragment} from "../components"
 
 
 
-const RestaurantScreen = ({route, navigation}) => {
+const RestaurantScreen = ({navigation, route}) => {
     // Get params from previous Screen
     const { result } = route.params;
     const [errormsg, setErrorMsg] = useState(null);
@@ -81,12 +81,15 @@ const RestaurantScreen = ({route, navigation}) => {
                         location={location}
                         navigation={navigation}
                         name={result.name}
+                        placeId={result.place_id}
                     />
                 </View>
                 <View
                     style={{flex: 1}}
                 >
-                    <RestaurantReviewFragment/>
+                    <RestaurantReviewFragment
+                        placeId={result.place_id}
+                        navigation={navigation}/>
                 </View>
         </ScrollView>
     )

@@ -24,9 +24,7 @@ const InputScreen = ({navigation}) => {
     return (
       <Button
             title='Search!'
-            onPress={() => {
-              navigation.navigate("RestaurantScreen", {result})
-              }}
+            onPress={() => {}}
       />
     )
   }
@@ -35,7 +33,6 @@ const InputScreen = ({navigation}) => {
     <View style={{flex: 1}}>
       <GooglePlacesAutocomplete
         minLength={3}
-        renderRightButton={rightButton}
         styles={{flex:1}}
         placeholder='Search'
         fetchDetails={true}
@@ -47,6 +44,7 @@ const InputScreen = ({navigation}) => {
           // 'details' is provided when fetchDetails = true
           const result = details;
           setResult(result);
+          navigation.navigate("RestaurantScreen", {result})
         }}
         query={{
           key: apiKey,
