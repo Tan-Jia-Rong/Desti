@@ -7,12 +7,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from "expo-image-picker";
 import { storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp, doc, setDoc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
 import StarRating from "react-native-star-rating-widget";
+import { FormButton } from "../components";
 
 
 
-const AddReviewScreen = ({navigation}) => {
+const AddReviewScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -149,7 +150,36 @@ const AddReviewScreen = ({navigation}) => {
     });
     console.log("Document written with ID: ", docReference.id);
     setReview('');
-    Alert.alert('Image uploaded to the Firebase Cloud Storage and firecloud database successfully');
+
+    // Update restaurant collection
+    if (route.params) {
+      const restaurantRef = doc(db, 'Restaurants', route.params.restaurantResult.place_id);
+      const restaurantSnap = await getDoc(restaurantRef);
+
+      // If the document already exists
+      if (restaurantSnap.exists()) {
+        const { averageRating, postsThatReviewed } = restaurantSnap.data();
+        
+        await updateDoc(restaurantRef, {
+          averageRating: ((averageRating * postsThatReviewed.length) + rating)/(postsThatReviewed.length + 1)
+        })
+
+        await updateDoc(restaurantRef, {
+          postsThatReviewed: arrayUnion(docReference.id)
+        })
+
+      // Else, we make the document  
+      } else {
+        const restaurantReference = await setDoc(restaurantRef, {
+          name: route.params.restaurantResult.name,
+          priceLevel: route.params.restaurantResult.price_level,
+          averageRating: rating,
+          postsThatReviewed: [docReference.id]
+        })
+      }
+    }
+
+    Alert.alert('Post uploaded to the Firebase Cloud Storage and firecloud database successfully');
     navigation.navigate('Home');
   }
 
@@ -177,6 +207,17 @@ const AddReviewScreen = ({navigation}) => {
               onChange={setRating}
               />
             </View>
+            {route.params ? 
+             <FormButton
+             buttonTitle={route.params.restaurantResult.name}
+             onPress={() => navigation.navigate("Get Restaurant")}
+             />
+            :
+            <FormButton
+              buttonTitle={"Add restaurant"}
+              onPress={() => navigation.navigate("Get Restaurant")}
+              />
+            }
               <InputField 
                 value ={review}
                 onChangeText={setReview} 

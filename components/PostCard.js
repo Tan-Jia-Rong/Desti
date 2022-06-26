@@ -3,7 +3,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../navigation/AuthProvider';
 import moment from 'moment';
 import { doc, getDoc } from "firebase/firestore";
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, Dimensions } from 'react-native';
 import { db } from "../firebase";
 import StarRating from "react-native-star-rating-widget";
 import { useFocusEffect } from '@react-navigation/native';
@@ -26,6 +26,7 @@ const PostCard = ({ item, onDelete, onPress }) => {
     const [userData, setUserData] = useState(null);
     const [rating, setRating] = useState(item.rating);
     const componentMounted = useRef(true); 
+    const windowWidth = Dimensions.get('window').width;
 
     // Get the user data from firecloud
   const getUser = async () => {
@@ -63,6 +64,7 @@ const PostCard = ({ item, onDelete, onPress }) => {
     }
      
     return (
+      <View style={{width:windowWidth * 0.9}}>
       <Card>
         <UserInfo>
           <UserImg source={{uri: userData ? userData.userImg : 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}}/>
@@ -98,6 +100,7 @@ const PostCard = ({ item, onDelete, onPress }) => {
         : null}
         </InteractionWrapper>
       </Card>
+      </View>
     );
 }
 

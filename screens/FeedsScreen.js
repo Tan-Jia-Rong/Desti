@@ -103,12 +103,13 @@ const FeedsScreen = ({ navigation }) => {
   },[deleted]);
 
   return (
-    <Container>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {posts.map((item) => (
-          <PostCard key={item.id} item={item} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: item.userId})}/>
-        ))}
-      </ScrollView>
+    <Container> 
+      <FlatList  
+        data={posts} 
+        renderItem={({item}) => <PostCard item={item} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: item.userId})}/>} 
+        keyExtractor={item => item.id} 
+        showsVerticalScrollIndicator={false} 
+      /> 
     </Container>
   );
 }

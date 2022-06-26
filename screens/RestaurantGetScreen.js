@@ -21,6 +21,7 @@ const RestaurantGetScreen = ({navigation}) => {
     return (
       <Button
             title='Select'
+            onPress={() => {}}
       />
     )
   }
@@ -29,7 +30,7 @@ const RestaurantGetScreen = ({navigation}) => {
     <View style={{flex: 1}}>
       <GooglePlacesAutocomplete
         minLength={3}
-        renderRightButton={rightButton} // Remove if use Method 2
+
         styles={{flex:1}}
         placeholder='Restaurant'
         fetchDetails={true}
@@ -44,7 +45,10 @@ const RestaurantGetScreen = ({navigation}) => {
           // Method 2: Push data to database once user click on the restaurant suggestion
           const result = details;
           setResult(result);
-          setRestaurantName(result.name);
+          console.log(result.name)
+          console.log(result.place_id)
+          navigation.navigate("AddReviews", {restaurantResult: result})
+          
         }}
         // Query stuff probably dont touch but might be possible to add more types to ensure we dont leave out anything
         // Do msg me if u got any suggestion

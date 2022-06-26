@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen, SearchUsersScreen, OthersProfileScreen, FollowersScreen, FollowingScreen, InputScreen, DirectionScreen } from "../screens";
+import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen, SearchUsersScreen, OthersProfileScreen, FollowersScreen, FollowingScreen, InputScreen, DirectionScreen, RestaurantGetScreen } from "../screens";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -39,6 +39,11 @@ const FeedsStack = ({navigation}) => {
             />
 
             <Stack.Screen
+                name="Get Restaurant"
+                component={RestaurantGetScreen}
+            />
+
+            <Stack.Screen
                 name="Others Profile"
                 component={OthersProfileScreen}
                 options={{
@@ -56,7 +61,7 @@ const FeedsStack = ({navigation}) => {
                             <Ionicons 
                             name="person-add" 
                             size={25}
-                            onPress={() => navigation.navigate("AddReviews")}
+                            onPress={() => navigation.navigate("Search Users")}
                             />
                         </View>
                     )
