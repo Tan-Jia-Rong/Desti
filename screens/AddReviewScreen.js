@@ -5,6 +5,8 @@ import { InputWrapper, InputField, AddImage, StatusWrapper, SubmitBtn, SubmitBtn
 import ActionButton from "react-native-action-button";
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as FileSystem from 'expo-file-system';
 import { storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, Timestamp, doc, setDoc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
@@ -35,6 +37,16 @@ const AddReviewScreen = ({navigation, route}) => {
     })();
   }, []);
 
+  const getFileInfo = async (fileURI) => {
+    const fileInfo = await FileSystem.getInfoAsync(fileURI);
+    return fileInfo;
+  }
+
+  const isLessThan800KB = (fileSize) => {
+    const isOk = fileSize / 1024/ 1024 < 0.8
+    return isOk;
+  }
+
   // Function for taking photo from camera
   const takePhotoFromCamera = async () => {
     let result = await ImagePicker.launchCameraAsync({
@@ -46,7 +58,15 @@ const AddReviewScreen = ({navigation, route}) => {
 
     // If result is not cancelled
     if (!result.cancelled) {
-      setImage(result.uri);
+      const fileInfo = await getFileInfo(result.uri);
+
+      if (!isLessThan800KB(fileInfo.size)) {
+        console.log(fileInfo.size);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        setImage(manipResult.uri)
+      } else {
+        setImage(result.uri);
+      }
     };
   }
 
@@ -61,7 +81,15 @@ const AddReviewScreen = ({navigation, route}) => {
 
     // If result is not cancelled
     if (!result.cancelled) {
-      setImage(result.uri);
+      const fileInfo = await getFileInfo(result.uri);
+
+      if (!isLessThan800KB(fileInfo.size)) {
+        console.log(fileInfo.size);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        setImage(manipResult.uri)
+      } else {
+        setImage(result.uri);
+      }
     };
   }
 

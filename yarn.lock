@@ -3789,7 +3789,7 @@
   "resolved" "https://registry.npmjs.org/expo-error-recovery/-/expo-error-recovery-3.1.0.tgz"
   "version" "3.1.0"
 
-"expo-file-system@~14.0.0":
+"expo-file-system@^14.0.0", "expo-file-system@~14.0.0":
   "integrity" "sha512-Asva7ehLUq/PIem6Y+/OQvoIqhFqYDd7l4l49yDRDgLSbK2I7Fr8qGhDeDpnUXrMVamg2uwt9zRGhyrjFNRhVw=="
   "resolved" "https://registry.npmjs.org/expo-file-system/-/expo-file-system-14.0.0.tgz"
   "version" "14.0.0"
@@ -3808,6 +3808,13 @@
   "integrity" "sha512-LU3Q2prn64/HxdToDmxgMIRXS1ZvD9Q3iCxRVTZn1fPQNNDciIQFE5okaa74Ogx20DFHs90r6WoUd7w9Af1OGQ=="
   "resolved" "https://registry.npmjs.org/expo-image-loader/-/expo-image-loader-3.2.0.tgz"
   "version" "3.2.0"
+
+"expo-image-manipulator@^10.3.1":
+  "integrity" "sha512-D08dMD6MerxBu23DmCIhurySQih+eLP7VxKvY5mWqYz9payjDOS1cAGs3HvXPrEDusPQFQ0uIfqc+oqeMNFBIA=="
+  "resolved" "https://registry.npmjs.org/expo-image-manipulator/-/expo-image-manipulator-10.3.1.tgz"
+  "version" "10.3.1"
+  dependencies:
+    "expo-image-loader" "~3.2.0"
 
 "expo-image-picker@~13.1.1":
   "integrity" "sha512-fU8oONRkKg5DvuU+7KvnuOtf1ubzXNU/OsE/T6yB149LbXb+ZN5A49NicvJ+cOG4Oa5NAnILt0aAAkchIr3iRQ=="
