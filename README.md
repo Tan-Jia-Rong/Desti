@@ -291,10 +291,94 @@ The activity diagram shows the overview of the actions that users can take at va
          <td style="text-align: center; vertical-align: middle;">Various screens basic UI</td>
      </tr>
      <tr>
+      <td style="text-align: center; vertical-align: middle;">Learning of firebase cloud firestore and storage</td>
+        <td style="text-align: center; vertical-align: middle;">01/06/22-27/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">12</td>
+         <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">Time spent on docs, YouTube guides etc</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Learning of google places API</td>
+        <td style="text-align: center; vertical-align: middle;">01/06/22-27/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">12</td>
+         <td style="text-align: center; vertical-align: middle;">Time spent on docs, YouTube guides etc</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Add reviews screen and its functionality</td>
+        <td style="text-align: center; vertical-align: middle;">01/06/22-02/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">10</td>
+         <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">Adding of reviews to firebase and displaying on feeds screen</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Feeds screen and its functionality</td>
+        <td style="text-align: center; vertical-align: middle;">01/06/22-03/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">5</td>
+         <td style="text-align: center; vertical-align: middle;">1</td>
+         <td style="text-align: center; vertical-align: middle;">Scroll feed and see other's reviews</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Maps screen and its functionality</td>
+        <td style="text-align: center; vertical-align: middle;">01/06/22-16/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">16</td>
+         <td style="text-align: center; vertical-align: middle;">Map to see nearby restaurants with real time gps tracking and a get directions functionality</td>
+     </tr>
+      <tr>
+      <td style="text-align: center; vertical-align: middle;">Direction screen and its functionality</td>
+        <td style="text-align: center; vertical-align: middle;">01/06/22-27/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">0</td>
+         <td style="text-align: center; vertical-align: middle;">4</td>
+         <td style="text-align: center; vertical-align: middle;"Real time gps tracking and a get directions functionality</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Profile screen and its functionality</td>
+        <td style="text-align: center; vertical-align: middle;">05/06/22-08/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">9</td>
+         <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">Edit own profile and see own posts</td>
+     </tr>
+      <tr>
+      <td style="text-align: center; vertical-align: middle;">Restaurant screen and input screen</td>
+        <td style="text-align: center; vertical-align: middle;">07/06/22-27/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">1</td>
+         <td style="text-align: center; vertical-align: middle;">10</td>
+         <td style="text-align: center; vertical-align: middle;">Search up restaurants and get restaurant details</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Followers-based system</td>
+        <td style="text-align: center; vertical-align: middle;">15/06/22-23/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">8</td>
+         <td style="text-align: center; vertical-align: middle;">0</td>
+         <td style="text-align: center; vertical-align: middle;">Emulate a social app with actual followers and following</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Search users screen</td>
+        <td style="text-align: center; vertical-align: middle;">22/06/22-23/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">4</td>
+         <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">Look up users to add followers</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Sync firebase with google</td>
+        <td style="text-align: center; vertical-align: middle;">26/06/22-27/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">8</td>
+         <td style="text-align: center; vertical-align: middle;">3</td>
+         <td style="text-align: center; vertical-align: middle;">Sync firebase data with google to potray restaurant screen</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Design A1 poster</td>
+        <td style="text-align: center; vertical-align: middle;">26/06/22-27/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">1</td>
+         <td style="text-align: center; vertical-align: middle;">5</td>
+         <td style="text-align: center; vertical-align: middle;">Redesign a new poster for milestone 2</td>
+     </tr>
+     <tr>
       <td style="text-align: center; vertical-align: middle;">Total Hours</td>
         <td style="text-align: center; vertical-align: middle;">NIL</td>
-        <td style="text-align: center; vertical-align: middle;">36</td>
-        <td style="text-align: center; vertical-align: middle;">40</td>
+        <td style="text-align: center; vertical-align: middle;">98</td>
+        <td style="text-align: center; vertical-align: middle;">99</td>
          <td style="text-align: center; vertical-align: middle;">NIL</td>
      </tr>
      <tr>
