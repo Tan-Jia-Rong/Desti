@@ -4,6 +4,8 @@ import { FormButton, FormInput } from '../components';
 import { AuthContext } from "../navigation/AuthProvider";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as FileSystem from 'expo-file-system';
 
 
 const SignUpScreen = ({navigation}) => {
@@ -26,6 +28,16 @@ const SignUpScreen = ({navigation}) => {
       Keyboard.dismiss();
     };
 
+    const getFileInfo = async (fileURI) => {
+      const fileInfo = await FileSystem.getInfoAsync(fileURI);
+      return fileInfo;
+    }
+  
+    const isLessThan800KB = (fileSize) => {
+      const isOk = fileSize / 1024/ 1024 < 0.8
+      return isOk;
+    }
+
     // Ask for permissions to access user's camera and media gallery
   useEffect(() => {
     (async () => {
@@ -45,10 +57,19 @@ const SignUpScreen = ({navigation}) => {
       quality: 1
     });
 
-    // If result is not cancelled
-    if (!result.cancelled) {
-      setImage(result.uri);
-      toBeExportedImageUrl = result.uri;
+     // If result is not cancelled
+     if (!result.cancelled) {
+      const fileInfo = await getFileInfo(result.uri);
+
+      if (!isLessThan800KB(fileInfo.size)) {
+        console.log(fileInfo.size);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        setImage(manipResult.uri);
+        toBeExportedImageUrl = manipResult.uri;
+      } else {
+        setImage(result.uri);
+        toBeExportedImageUrl = result.uri;
+      }
     };
   }
 
@@ -63,8 +84,17 @@ const SignUpScreen = ({navigation}) => {
 
     // If result is not cancelled
     if (!result.cancelled) {
-      setImage(result.uri);
-      toBeExportedImageUrl = result.uri;
+      const fileInfo = await getFileInfo(result.uri);
+
+      if (!isLessThan800KB(fileInfo.size)) {
+        console.log(fileInfo.size);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        setImage(manipResult.uri);
+        toBeExportedImageUrl = manipResult.uri;
+      } else {
+        setImage(result.uri);
+        toBeExportedImageUrl = result.uri;
+      }
     };
   }
 

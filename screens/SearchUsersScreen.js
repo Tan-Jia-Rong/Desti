@@ -32,6 +32,10 @@ const SearchUsersScreen = ({navigation}) => {
         }
     }
 
+    useEffect(() => {
+      fetchUsers("")
+    }, [])
+
   
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
