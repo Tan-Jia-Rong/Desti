@@ -204,12 +204,21 @@ const AddReviewScreen = ({navigation, route}) => {
 
       // Else, we make the document  
       } else {
-        const restaurantReference = await setDoc(restaurantRef, {
-          name: route.params.restaurantResult.name,
-          priceLevel: route.params.restaurantResult.price_level,
-          averageRating: rating,
-          postsThatReviewed: [docReference.id]
-        })
+        // Not all restaurants provided by google has price_level, so we deal with it here
+        if (typeof route.params.restaurantResult.price_level !== 'undefined') {
+          const restaurantReference = await setDoc(restaurantRef, {
+            name: route.params.restaurantResult.name,
+            priceLevel: route.params.restaurantResult.price_level,
+            averageRating: rating,
+            postsThatReviewed: [docReference.id]
+          })
+        } else {
+          const restaurantReference = await setDoc(restaurantRef, {
+            name: route.params.restaurantResult.name,
+            averageRating: rating,
+            postsThatReviewed: [docReference.id]
+          })
+        }
       }
     }
 

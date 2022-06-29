@@ -36,7 +36,6 @@ const RestaurantScreen = ({navigation, route}) => {
             return;
         }
         console.log("Use effect triggered")
-        console.log(result.photos);
         const photo = result.photos === undefined 
                       ? "https://upload.wikimedia.org/wikipedia/commons/7/75/No_image_available.png" 
                       :await fetchPhoto(result.photos[0].photo_reference);
