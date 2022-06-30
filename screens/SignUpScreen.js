@@ -63,9 +63,9 @@ const SignUpScreen = ({navigation}) => {
 
       if (!isLessThan800KB(fileInfo.size)) {
         console.log(fileInfo.size);
-        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
-        setImage(manipResult.uri);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 0});
         toBeExportedImageUrl = manipResult.uri;
+        setImage(manipResult.uri);
       } else {
         setImage(result.uri);
         toBeExportedImageUrl = result.uri;
@@ -84,13 +84,13 @@ const SignUpScreen = ({navigation}) => {
 
     // If result is not cancelled
     if (!result.cancelled) {
-      const fileInfo = await getFileInfo(result.uri);
+      let fileInfo = await getFileInfo(result.uri);
 
       if (!isLessThan800KB(fileInfo.size)) {
         console.log(fileInfo.size);
-        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
-        setImage(manipResult.uri);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 0});
         toBeExportedImageUrl = manipResult.uri;
+        setImage(manipResult.uri);
       } else {
         setImage(result.uri);
         toBeExportedImageUrl = result.uri;

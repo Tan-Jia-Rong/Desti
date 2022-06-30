@@ -58,7 +58,7 @@ const EditProfileScreen = ({ navigation }) => {
 
       if (!isLessThan800KB(fileInfo.size)) {
         console.log(fileInfo.size);
-        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 100000/fileInfo.size});
         setImage(manipResult.uri)
       } else {
         setImage(result.uri);
@@ -81,7 +81,7 @@ const EditProfileScreen = ({ navigation }) => {
 
       if (!isLessThan800KB(fileInfo.size)) {
         console.log(fileInfo.size);
-        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 100000/fileInfo.size});
         setImage(manipResult.uri)
       } else {
         setImage(result.uri);
