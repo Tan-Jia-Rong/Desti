@@ -9,11 +9,17 @@ import { storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, Timestamp, doc, setDoc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
 import StarRating from "react-native-star-rating-widget";
-import { FormButton } from "../components";
+import { FormButton, TagButton } from "../components";
 
 
 
 const AddReviewScreen = ({navigation, route}) => {
+  // Available tags
+  const tags = ["Asian","Beef", "Bars", "Burger", "Breakfast", "Buffet", "Cafes", "Chicken","Chinese", "Date Night", "Desserts", "Dim Sum",
+                  "Drink", "Dinner", "Fine Dining", "French", "Fried", "Good For Groups", "Italian", "Indian", "Halal", "Hawker Food", "Healthy",
+                  "Hot Pot", "Japanese", "Korean", "Korean BBQ", "Late Night", "LightBites","Malay", "Mexican", "Mookata", "Mutton", "Newly Opened",
+                  "Pasta", "Pizza", "Pork", "Ramen", "Salad", "SeaFood", "Spanish", "Steak", "Supper", "Sushi", "Takeaway Option", "Thai", "Turkish",
+                  "Vegetarian", "Western", "Zi Char"];
   const {user, logout} = useContext(AuthContext);
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -24,6 +30,9 @@ const AddReviewScreen = ({navigation, route}) => {
   const [transferred, setTransferred] = useState(0);
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(0);
+  // Tags Selected
+  const [selected, setSelected] = useState([]);
+  console.log(selected);
 
   // Ask for permissions to access user's camera and media gallery
   useEffect(() => {
@@ -189,6 +198,54 @@ const AddReviewScreen = ({navigation, route}) => {
     navigation.navigate('Home');
   }
 
+  // OnPressHandler for Tags
+  const onPressHandler = (tag) => {
+    const result = addOrRemove(selected, tag);
+    setSelected(result);
+  }
+
+  // Function to add or remove tags from selected array
+  const addOrRemove = (array, item) => {
+    console.log("addOrRemove procs")
+    const exists = array.includes(item)
+    if (exists) {
+        console.log("If procs")
+        return array.filter((c) => { return c !== item })
+    } else {
+        const result = array
+        console.log("Else procs")
+        result.push(item)
+        // To ensure user only select 3 tags
+        // Suggestion: To remove the limit but set limit when taking data
+        if (result.length > 3) {
+          alert("You can only select 3 tags MAX");
+          return result.filter((c) => { return c !== item })
+        }
+        // Somehow color does not update when one just return result
+        return result.filter(c => {return c});
+    }
+  }
+
+  // Function to propogate tags
+  const makeButtons = () => {
+    console.log("button is made")
+    return tags.map((tag, i) => {
+      const on = selected.includes(tag)
+      const backgroundColor = on ? "#7ee6ad" : "#ffffff"
+      const textColor = on ? "#ffffff" : "#000000"
+      const borderColor = on ? "#7ee6ad" : "#000000"
+      return (
+        <TagButton
+          backgroundColor={backgroundColor}
+          textColor={textColor}
+          borderColor={borderColor}
+          onPressHandler={() => {onPressHandler(tag)}}
+          key={i}
+          tagName={tag} />
+      )
+    })
+  }
+
   if (hasCameraPermission === false && hasGalleryPermission === false) {
     return <Text>No permission access to camera and photo gallery</Text>
   }
@@ -207,7 +264,7 @@ const AddReviewScreen = ({navigation, route}) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <InputWrapper>
             {image === null ? <AddImage source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} /> : <AddImage source={{uri: image}} />}
-            <View style={{justifyContent: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'center'}}>
             <StarRating
               rating={rating}
               onChange={setRating}
@@ -224,6 +281,14 @@ const AddReviewScreen = ({navigation, route}) => {
               onPress={() => navigation.navigate("Get Restaurant")}
               />
             }
+            <View style={{height:300}}>
+              <Text style={styles.reviewTextStyle}> Please select 3 tags that best describe the restaurant!</Text>
+              <ScrollView nestedScrollEnabled={true}>
+                <View style={styles.tagContainer}>
+                {makeButtons()}
+                </View>
+              </ScrollView>
+            </View>
               <InputField 
                 value ={review}
                 onChangeText={setReview} 
@@ -271,10 +336,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  tagContainer: {
+    height:"30%",
+    width:"100%",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 20
+  },
   actionButtonIcon: {
     fontSize: 20,
     height: 22,
     color: 'white',
+  },
+  reviewTextStyle: {
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontSize: 16
   }
 });
 

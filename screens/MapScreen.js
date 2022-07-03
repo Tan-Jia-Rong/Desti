@@ -67,7 +67,7 @@ const MapScreen = ({navigation}) => {
   const onMarkerPress = (location, address, name) => {
       setName(name);
       setDestination(location);
-      setAddress(address)
+      setAddress(address);
       mergeCoords();
   }
 
@@ -120,6 +120,7 @@ const MapScreen = ({navigation}) => {
   // 1. Deal with logic when location === null
   // 2. Deal with logic with useEffect <- cant find any solutioins yet
   useEffect(() => {
+    console.log("useEffect Triggered");
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if(status !== 'granted') {
@@ -127,8 +128,9 @@ const MapScreen = ({navigation}) => {
         console.log(errorMsg);
         return;
       }
-
-      let location = await Location.getCurrentPositionAsync({});
+      console.log("Location Permission Granted!")
+      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest, maximumAge: 10000});
+      console.log("Obtained Location");
       setLocation(location);
       console.log(location);
 

@@ -70,7 +70,7 @@ const DirectionScreen = ({route, navigation}) => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest, maximumAge: 10000});
       setLocation(location);
       setLoading(false);
 
