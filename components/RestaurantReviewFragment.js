@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, Alert} from "react-native";
 import { storage, db } from "../firebase";
-import { collection, getDocs, query, doc, getDoc, deleteDoc, where, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, doc, getDoc, deleteDoc, where, orderBy, arrayRemove, updateDoc } from "firebase/firestore";
 import  PostCard  from './PostCard';
 import { ref, deleteObject } from "firebase/storage";
 
@@ -56,7 +56,7 @@ const RestaurantReviewFragment = ({ navigation, placeId }) => {
         fetchReviews();
     }, [deleted])
 
-    // Deletes a post on both firebase storage and firestore cloud, as well as refreshes the feed
+  // Deletes a post on three things, firstly firebase storage, secondly Posts collection firestore cloud, thirdly Restaurants collection firestore cloud, as well as refreshes the feed
   const deletePost = async (postId) => {
     setDeleted(true);
     console.log("Current Post Id: ", postId);
@@ -66,7 +66,7 @@ const RestaurantReviewFragment = ({ navigation, placeId }) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const {postImg} = docSnap.data();
+      const {postImg, restaurantPlaceId, rating} = docSnap.data();
       const imageRef = ref(storage, postImg);
 
       deleteObject(imageRef)
@@ -80,7 +80,34 @@ const RestaurantReviewFragment = ({ navigation, placeId }) => {
       .catch((e) => {
         console.log(e);
       });
+
+      // Third, delete post from Restaurants collection
+      const restaurantRef = doc(db, 'Restaurants', restaurantPlaceId);
+      const restaurantSnap = await getDoc(restaurantRef);
+
+      if (restaurantSnap.exists()) {
+        const { averageRating, postsThatReviewed } = restaurantSnap.data();
+
+       // Divison by zero case
+       if (postsThatReviewed.length - 1 === 0) {
+        await updateDoc(restaurantRef, {
+          averageRating: 0
+        })
+  
+        await updateDoc(restaurantRef, {
+          postsThatReviewed: arrayRemove(docRef.id)
+        })
+      } else {
+        await updateDoc(restaurantRef, {
+          averageRating: ((averageRating * postsThatReviewed.length) - rating)/(postsThatReviewed.length - 1)
+        })
+
+        await updateDoc(restaurantRef, {
+          postsThatReviewed: arrayRemove(docRef.id)
+        })
+      }
     }
+   } 
   }
 
   const handleDelete = (postId) => {

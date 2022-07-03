@@ -4,7 +4,7 @@ import { auth, db, storage } from "../firebase";
 import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import { toBeExportedImageUrl } from "../screens/SignUpScreen";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
 
 export const AuthContext = createContext();
 
@@ -44,29 +44,12 @@ export const AuthProvider = ({children}) => {
       const bytes = await img.blob();
 
       // Upload the image to firebase cloud storage, and then get the url
-      const uploadTask = uploadBytesResumable(reference, bytes);
-     
-      // Register three observers:
-      // 1. 'state_changed' observer, called any time the state changes
-      // 2. Error observer, called on failure
-      // 3. Completion observer, called on successful completion
-      uploadTask.on('state_changed',
-        (snapshot) => {
-          // Observe state change events such as progress, pause, and resume
-          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes * 100);
-
-          setTransferred(Math.round(progress));
-        }
-      );
-
-      // Get the downloaded URL
-      const url = await uploadTask.then(() => {
+      const url = uploadBytes(reference, bytes).then(() => {
         return getDownloadURL(reference)
           .then((downloadedUrl) => {
             return downloadedUrl;
           })
-      })
+      });
 
       // After post has been uploaded to the Firebase Cloud Storage and we have gotten the URL
       setUpLoading(false);

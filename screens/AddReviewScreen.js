@@ -5,6 +5,8 @@ import { InputWrapper, InputField, AddImage, StatusWrapper, SubmitBtn, SubmitBtn
 import ActionButton from "react-native-action-button";
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as FileSystem from 'expo-file-system';
 import { storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, Timestamp, doc, setDoc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
@@ -44,6 +46,16 @@ const AddReviewScreen = ({navigation, route}) => {
     })();
   }, []);
 
+  const getFileInfo = async (fileURI) => {
+    const fileInfo = await FileSystem.getInfoAsync(fileURI);
+    return fileInfo;
+  }
+
+  const isLessThan800KB = (fileSize) => {
+    const isOk = fileSize / 1024/ 1024 < 0.8
+    return isOk;
+  }
+
   // Function for taking photo from camera
   const takePhotoFromCamera = async () => {
     let result = await ImagePicker.launchCameraAsync({
@@ -55,7 +67,15 @@ const AddReviewScreen = ({navigation, route}) => {
 
     // If result is not cancelled
     if (!result.cancelled) {
-      setImage(result.uri);
+      const fileInfo = await getFileInfo(result.uri);
+
+      if (!isLessThan800KB(fileInfo.size)) {
+        console.log(fileInfo.size);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        setImage(manipResult.uri)
+      } else {
+        setImage(result.uri);
+      }
     };
   }
 
@@ -70,7 +90,15 @@ const AddReviewScreen = ({navigation, route}) => {
 
     // If result is not cancelled
     if (!result.cancelled) {
-      setImage(result.uri);
+      const fileInfo = await getFileInfo(result.uri);
+
+      if (!isLessThan800KB(fileInfo.size)) {
+        console.log(fileInfo.size);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        setImage(manipResult.uri)
+      } else {
+        setImage(result.uri);
+      }
     };
   }
 
@@ -156,7 +184,8 @@ const AddReviewScreen = ({navigation, route}) => {
       likes: null,
       comments: null,
       rating: rating,
-      restaurant: null
+      restaurant: null,
+      restaurantPlaceId: null
     });
     console.log("Document written with ID: ", docReference.id);
     setReview('');
@@ -168,7 +197,8 @@ const AddReviewScreen = ({navigation, route}) => {
 
       // Update the restaurant name in Posts collection
       await updateDoc(doc(db, 'Posts', docReference.id), {
-        restaurant: route.params.restaurantResult.name
+        restaurant: route.params.restaurantResult.name,
+        restaurantPlaceId: route.params.restaurantResult.place_id
       })
 
       // If the document already exists
@@ -185,12 +215,21 @@ const AddReviewScreen = ({navigation, route}) => {
 
       // Else, we make the document  
       } else {
-        const restaurantReference = await setDoc(restaurantRef, {
-          name: route.params.restaurantResult.name,
-          priceLevel: route.params.restaurantResult.price_level,
-          averageRating: rating,
-          postsThatReviewed: [docReference.id]
-        })
+        // Not all restaurants provided by google has price_level, so we deal with it here
+        if (typeof route.params.restaurantResult.price_level !== 'undefined') {
+          const restaurantReference = await setDoc(restaurantRef, {
+            name: route.params.restaurantResult.name,
+            priceLevel: route.params.restaurantResult.price_level,
+            averageRating: rating,
+            postsThatReviewed: [docReference.id]
+          })
+        } else {
+          const restaurantReference = await setDoc(restaurantRef, {
+            name: route.params.restaurantResult.name,
+            averageRating: rating,
+            postsThatReviewed: [docReference.id]
+          })
+        }
       }
     }
 

@@ -4,6 +4,8 @@ import { FormButton, FormInput } from "../components";
 import { AuthContext } from "../navigation/AuthProvider";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as FileSystem from 'expo-file-system';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -31,6 +33,16 @@ const EditProfileScreen = ({ navigation }) => {
     })();
   }, []);
 
+  const getFileInfo = async (fileURI) => {
+    const fileInfo = await FileSystem.getInfoAsync(fileURI);
+    return fileInfo;
+  }
+
+  const isLessThan800KB = (fileSize) => {
+    const isOk = fileSize / 1024/ 1024 < 0.8
+    return isOk;
+  }
+
   // Function for taking photo from camera
   const takePhotoFromCamera = async () => {
     let result = await ImagePicker.launchCameraAsync({
@@ -42,7 +54,15 @@ const EditProfileScreen = ({ navigation }) => {
 
     // If result is not cancelled
     if (!result.cancelled) {
-      setImage(result.uri);
+      const fileInfo = await getFileInfo(result.uri);
+
+      if (!isLessThan800KB(fileInfo.size)) {
+        console.log(fileInfo.size);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 100000/fileInfo.size});
+        setImage(manipResult.uri)
+      } else {
+        setImage(result.uri);
+      }
     };
   }
 
@@ -57,7 +77,15 @@ const EditProfileScreen = ({ navigation }) => {
 
     // If result is not cancelled
     if (!result.cancelled) {
-      setImage(result.uri);
+      const fileInfo = await getFileInfo(result.uri);
+
+      if (!isLessThan800KB(fileInfo.size)) {
+        console.log(fileInfo.size);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 100000/fileInfo.size});
+        setImage(manipResult.uri)
+      } else {
+        setImage(result.uri);
+      }
     };
   }
 
