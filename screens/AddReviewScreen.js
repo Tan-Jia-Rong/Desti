@@ -16,7 +16,7 @@ import { FormButton, TagButton } from "../components";
 
 
 const AddReviewScreen = ({navigation, route}) => {
-  // Available tags
+  // Available tags: displayed in line 323
   const tags = ["Asian","Beef", "Bars", "Burger", "Breakfast", "Buffet", "Cafes", "Chicken","Chinese", "Date Night", "Desserts", "Dim Sum",
                   "Drink", "Dinner", "Fine Dining", "French", "Fried", "Good For Groups", "Italian", "Indian", "Halal", "Hawker Food", "Healthy",
                   "Hot Pot", "Japanese", "Korean", "Korean BBQ", "Late Night", "LightBites","Malay", "Mexican", "Mookata", "Mutton", "Newly Opened",

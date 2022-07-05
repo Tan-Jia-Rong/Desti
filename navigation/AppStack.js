@@ -253,6 +253,79 @@ const RestaurantStack = ({route, navigation}) => {
     )
 }
 
+const MapStack = ({route, navigation}) => {
+    return (
+        <Stack.Navigator initialRouteName="MapScreen">
+            <Stack.Screen
+                name="MapScreen"
+                component={MapScreen}
+                options={{
+                    tabBarIcon: ({color, size}) => (
+                        <Ionicons name="map-outline" color ={color} size={size}/>
+                    ),
+                    headerTitle: "Map"
+                }}
+            />
+            <Stack.Screen
+                name="RestaurantScreen"
+                component={RestaurantScreen}
+                options={({route}) => (
+                    // Logic Flow for checking if restaurant exist
+                    route.params.result === null 
+                    ? {headerTitle: "Restaurant Page"} 
+                    : {headerTitle: route.params.result.name,
+                        headerBackTitleVisible: false,
+                        headerTitleAlign: 'center',
+                        headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                        }
+                      }
+                )}
+            />
+
+            <Stack.Screen
+                name="Map"
+                component={DirectionScreen}
+            />
+
+            <Stack.Screen
+                name="Others Profile"
+                component={OthersProfileScreen}
+                options={{
+                    headerTitle: "",
+                    headerTransparent: true
+                }}
+            />
+
+            <Stack.Screen
+                name="Edit Profile"
+                component={EditProfileScreen}
+                options={{
+                    headerTitle: 'Edit Profile',
+                    headerBackTitleVisible: false,
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                    }
+                }}
+            />
+            <Stack.Screen
+                name="Followers"
+                component={FollowersScreen}
+            />
+
+            <Stack.Screen
+                name="Following"
+                component={FollowingScreen}
+            />
+        </Stack.Navigator>
+    )
+}
+
 const AppStack = () => {
     return (
         <Tab.Navigator initialRouteName="Home">
@@ -285,11 +358,12 @@ const AppStack = () => {
 
             <Tab.Screen
                 name="Map"
-                component={MapScreen}
+                component={MapStack}
                 options={{
                     tabBarIcon: ({color, size}) => (
                         <Ionicons name="map-outline" color ={color} size={size}/>
-                    )
+                    ),
+                    header: () => null
                 }}
             />
 

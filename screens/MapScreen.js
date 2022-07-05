@@ -2,26 +2,37 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, Button, Image} from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location"
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Polyline from '@mapbox/polyline';
 import { apiKey } from '@env';
 import DestiMarker from '../assets/DestiMarker.png'
 import DestiNewMarker from '../assets/DestiNewMarker.png'
+import { async } from '@firebase/util';
 
 const { width, height } = Dimensions.get('screen');
 
 const MapScreen = ({navigation}) => {
+  // Ref for Map
+  const [mapRef, setMapRef] = useState(null);
   // Initialise states
   const [location, setLocation] = useState(null);
   const [destination, setDestination] = useState(null);
-  const [coords, setCoords] = useState(null);
   const [distance, setDistance] = useState(null);
   const [address, setAddress] = useState(null);
   const [name, setName] = useState(null);
   const [time, setTime] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [restaurantList, setRestaurantList] = useState([]);
-  const [visibility, setVisibility] = useState(false);
+  const [coords, setCoords] = useState(null);
+  const [placeid, setPlaceId] = useState(null);
+  const [result, setResult] = useState([]);
+
+  const getnSetBoundaries = () => {
+    if (mapRef === null) return;
+
+    mapRef.setMapBoundaries({latitude: location.coords.latitude + 0.02, longitude: location.coords.longitude + 0.02},
+                            {latitude: location.coords.latitude - 0.02, longitude: location.coords.longitude - 0.02})
+  }
 
   // Handles the fetching of data from google nearbysearch api
   const handleRestaurantSearch = async (latitude, longitude) => {
@@ -34,6 +45,16 @@ const MapScreen = ({navigation}) => {
     const result = await fetch(restaurantSearchUrl).then(response => response.json());
     return result;
   };
+
+  // Fetches places details using placeId
+  const handlePlaceId = async (place_id) => {
+    const url = 'https://maps.googleapis.com/maps/api/place/details/json?';
+    const placeid = `place_id=${place_id}`;
+    const key = `&key=${apiKey}`;
+    const placeUrl = url + placeid + key;
+    const result = await fetch(placeUrl).then(response => response.json());
+    return result;
+  }
 
   // Handles the fetchinig of data from google direction api
   const getDirections = async (start, end) => {
@@ -55,30 +76,38 @@ const MapScreen = ({navigation}) => {
         longitude: point[1]
       }
     });
+    console.log("Updating coords");
     setCoords(coords);
     setDistance(distance);
     setTime(time);
+    console.log("Finish setting coords")
     } catch (error) {
       console.log('Error: ', error);
     }
   }
 
   // Update state of destination and address once marker is pressed
-  const onMarkerPress = (location, address, name) => {
-      setName(name);
-      setDestination(location);
-      setAddress(address);
-      mergeCoords();
-  }
+  const onMarkerPress = (location, address, name, place_id) => {
+    console.log("onmarker press procs")
+    // Reinitialise state
+    setName(name);
+    setDestination(location);
+    setAddress(address);
+    setTime(null);
+    setDistance(null);
+    setPlaceId(place_id);
+}
 
   // Get Direction from user to selected restaurant
-  const mergeCoords = () => {
+  const mergeCoords = async () => {
+    console.log("mergeCoords procs")
     const hasStartAndEnd = location != null && destination !== null;
 
     if(hasStartAndEnd) {
       const concatStart = `${location.coords.latitude},${location.coords.longitude}`;
       const concatEnd = `${destination.lat},${destination.lng}`
-      getDirections(concatStart,concatEnd);
+      const result = await getDirections(concatStart,concatEnd);
+      return;
     }
   }
 
@@ -94,7 +123,7 @@ const MapScreen = ({navigation}) => {
             latitude: item.geometry.location.lat,
             longitude: item.geometry.location.lng,
           }}
-          onPress={() => onMarkerPress(item.geometry.location, item.vicinity, item.name)}
+          onPress={() => onMarkerPress(item.geometry.location, item.vicinity, item.name, item.place_id)}
         >
           <Image
             source={DestiMarker}
@@ -137,18 +166,24 @@ const MapScreen = ({navigation}) => {
       Location.watchPositionAsync({
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: 5000,
-        distanceInterval: 50
+        distanceInterval: 50,
+        
       },
         async (location) => {
           console.log('update location!', location.coords.latitude, location.coords.longitude)
           setLocation(location);
 
-          mergeCoords();
+          console.log("Merging Coords");
+          await mergeCoords();
 
+          console.log("Finding nearby restaurant");
           let restaurantList = await handleRestaurantSearch(location.coords.latitude, location.coords.longitude);
           setRestaurantList(restaurantList.results);
         }
       )
+
+      console.log("Getting ready to set boundaries");
+      getnSetBoundaries();
     })();
   }, []);
 
@@ -174,23 +209,24 @@ const MapScreen = ({navigation}) => {
           justifyContent: 'flex-end',
         }}>
         <Text style={{ fontWeight: 'bold' }}>{name}</Text>
-        <Text style={{ fontWeight: 'bold' }}>Estimated Time: {visibility ? time : null}</Text>
-        <Text style={{ fontWeight: 'bold' }}>Estimated Distance: {visibility ? distance : null}</Text>
+        <Text style={{ fontWeight: 'bold' }}>Estimated Time: {time}</Text>
+        <Text style={{ fontWeight: 'bold' }}>Estimated Distance: {distance}</Text>
         <Text>Address: {address}</Text>
       </View>
 
       <MapView
+        ref={(ref) => setMapRef(ref)}
         showsUserLocation
         showsMyLocationButton
-        region={{
+        initialRegion={{
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
           latitudeDelta: 0.04,
           longitudeDelta: 0.04
         }}
-        // Disabled scroll for now as region selecting restaurant bring user back to region
+        onUserLocationChange={() => getnSetBoundaries()}
+        onMapReady={() => getnSetBoundaries()}
         // Was planning on displaying all the markers in our database instead of nearby
-        scrollEnabled={false}
         style={{
           flex: 1
         }}
@@ -198,7 +234,7 @@ const MapScreen = ({navigation}) => {
 
       {renderMarkers(restaurantList)}
 
-      {coords !== null && visibility === true && renderPolyLine(coords)}
+      {coords !== null && renderPolyLine()}
     </MapView>
 
     <Button
@@ -208,10 +244,22 @@ const MapScreen = ({navigation}) => {
         top: '95%',
         alignSelf: 'center'
       }}
-      onPress={() => {
-        setVisibility(true);
-        mergeCoords();
+      onPress={async () => {
+        await mergeCoords();
       }}/>
+    <Button
+    title='Restaurant'
+    style={{
+      position: 'absolute',
+      top: '95%',
+      alignSelf: 'center'
+    }}
+    onPress={async () => {
+      const data = await handlePlaceId(placeid);
+      setResult(data.result);
+      console.log(result);
+      navigation.navigate("RestaurantScreen", {result});
+    }}/>
   </View>
   )}
 }
