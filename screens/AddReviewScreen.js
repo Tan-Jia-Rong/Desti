@@ -9,7 +9,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import { storage, db } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, Timestamp, doc, setDoc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
+import { collection, addDoc, Timestamp, doc, setDoc, updateDoc, getDoc, arrayUnion, increment } from "firebase/firestore";
 import StarRating from "react-native-star-rating-widget";
 import { FormButton, TagButton } from "../components";
 
@@ -17,11 +17,11 @@ import { FormButton, TagButton } from "../components";
 
 const AddReviewScreen = ({navigation, route}) => {
   // Available tags: displayed in line 323
-  const tags = ["Asian","Beef", "Bars", "Burger", "Breakfast", "Buffet", "Cafes", "Chicken","Chinese", "Date Night", "Desserts", "Dim Sum",
-                  "Drink", "Dinner", "Fine Dining", "French", "Fried", "Good For Groups", "Italian", "Indian", "Halal", "Hawker Food", "Healthy",
-                  "Hot Pot", "Japanese", "Korean", "Korean BBQ", "Late Night", "LightBites","Malay", "Mexican", "Mookata", "Mutton", "Newly Opened",
-                  "Pasta", "Pizza", "Pork", "Ramen", "Salad", "SeaFood", "Spanish", "Steak", "Supper", "Sushi", "Takeaway Option", "Thai", "Turkish",
-                  "Vegetarian", "Western", "Zi Char"];
+  const tags = ["Asian","Beef", "Bars", "Burger", "Breakfast", "Buffet", "Cafes", "Chicken", "Chinese", "Desserts", 
+                  "Drink", "Dinner", "French", "Fried", "Italian", "Indian", "Halal", "Healthy",
+                  "HotPot", "Japanese", "Korean", "Late Night", "LightBites","Malay", "Mexican", "Mookata", "Mutton",
+                  "Pasta", "Pizza", "Pork", "Ramen", "Salad", "SeaFood", "Spanish", "Steak", "Supper", "Sushi", "Takeaway", "Thai", "Turkish",
+                  "Vegetarian", "Western"];
   const {user, logout} = useContext(AuthContext);
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -35,6 +35,7 @@ const AddReviewScreen = ({navigation, route}) => {
   // Tags Selected
   const [selected, setSelected] = useState([]);
   console.log(selected);
+  const [tagName, setTagName] = useState('');
 
   // Ask for permissions to access user's camera and media gallery
   useEffect(() => {
@@ -190,10 +191,21 @@ const AddReviewScreen = ({navigation, route}) => {
     console.log("Document written with ID: ", docReference.id);
     setReview('');
 
-    // Update restaurant collection
+    // Update userPreferences collection
+    const userPrefRef = doc(db, 'userPreferences', user.uid);
+    selected.forEach(async item => {
+        await updateDoc(userPrefRef, {
+          [item]: increment(1)
+        })
+      })
+
+    // Update restaurant and restaurantTags collection
     if (route.params) {
       const restaurantRef = doc(db, 'Restaurants', route.params.restaurantResult.place_id);
       const restaurantSnap = await getDoc(restaurantRef);
+
+      const restaurantTagsRef = doc(db, 'RestaurantTags', route.params.restaurantResult.place_id);
+      const restaurantTagsSnap = await getDoc(restaurantTagsRef);
 
       // Update the restaurant name in Posts collection
       await updateDoc(doc(db, 'Posts', docReference.id), {
@@ -201,34 +213,149 @@ const AddReviewScreen = ({navigation, route}) => {
         restaurantPlaceId: route.params.restaurantResult.place_id
       })
 
-      // If the document already exists
-      if (restaurantSnap.exists()) {
+      // If the restaurant document already exists 
+      if (restaurantSnap.exists() && restaurantTagsSnap.exists()) {
         const { averageRating, postsThatReviewed } = restaurantSnap.data();
         
+        // update Restaurants collection
         await updateDoc(restaurantRef, {
           averageRating: ((averageRating * postsThatReviewed.length) + rating)/(postsThatReviewed.length + 1)
         })
 
+        // update Restaurants collection
         await updateDoc(restaurantRef, {
           postsThatReviewed: arrayUnion(docReference.id)
         })
+
+       // update RestaurantTags collection
+       selected.forEach(async item => {
+        await updateDoc(restaurantTagsRef, {
+          [item]: increment(1)
+        })
+       })
 
       // Else, we make the document  
       } else {
         // Not all restaurants provided by google has price_level, so we deal with it here
         if (typeof route.params.restaurantResult.price_level !== 'undefined') {
+          // Set Restaurants collection
           const restaurantReference = await setDoc(restaurantRef, {
             name: route.params.restaurantResult.name,
             priceLevel: route.params.restaurantResult.price_level,
             averageRating: rating,
             postsThatReviewed: [docReference.id]
           })
+
+          // Set RestaurantTags collection
+          await setDoc(restaurantTagsRef, {
+            Asian: 0, 
+            Beef: 0, 
+            Bars: 0, 
+            Burger: 0, 
+            Breakfast: 0, 
+            Buffet: 0, 
+            Cafes: 0, 
+            Chicken: 0, 
+            Chinese: 0,  
+            Desserts: 0, 
+            Drink: 0, 
+            Dinner: 0, 
+            French: 0, 
+            Fried: 0, 
+            Italian: 0, 
+            Indian: 0, 
+            Halal: 0, 
+            Healthy: 0, 
+            HotPot: 0,
+            Japanese: 0,
+            Korean: 0,
+            LightBites: 0,
+            Malay: 0,
+            Mexican: 0,
+            Mookata: 0,
+            Mutton: 0,
+            Pasta: 0,
+            Pizza: 0,
+            Pork: 0,
+            Ramen: 0,
+            Salad: 0,
+            SeaFood: 0,
+            Spanish: 0,
+            Steak: 0,
+            Supper: 0,
+            Sushi: 0,
+            Takeaway: 0,
+            Thai: 0,
+            Turkish: 0,
+            Vegetarian: 0,
+            Western: 0,
+          })
+
+          // update RestaurantTags collection
+          selected.forEach(async item => {
+            await updateDoc(restaurantTagsRef, {
+              [item]: increment(1)
+            })
+           })
         } else {
+          // Set Restaurants collection
           const restaurantReference = await setDoc(restaurantRef, {
             name: route.params.restaurantResult.name,
             averageRating: rating,
             postsThatReviewed: [docReference.id]
           })
+
+          // Set RestaurantTags collection
+          await setDoc(restaurantTagsRef, {
+            Asian: 0, 
+            Beef: 0, 
+            Bars: 0, 
+            Burger: 0, 
+            Breakfast: 0, 
+            Buffet: 0, 
+            Cafes: 0, 
+            Chicken: 0, 
+            Chinese: 0,  
+            Desserts: 0, 
+            Drink: 0, 
+            Dinner: 0, 
+            French: 0, 
+            Fried: 0, 
+            Italian: 0, 
+            Indian: 0, 
+            Halal: 0, 
+            Healthy: 0, 
+            HotPot: 0,
+            Japanese: 0,
+            Korean: 0,
+            LightBites: 0,
+            Malay: 0,
+            Mexican: 0,
+            Mookata: 0,
+            Mutton: 0,
+            Pasta: 0,
+            Pizza: 0,
+            Pork: 0,
+            Ramen: 0,
+            Salad: 0,
+            SeaFood: 0,
+            Spanish: 0,
+            Steak: 0,
+            Supper: 0,
+            Sushi: 0,
+            Takeaway: 0,
+            Thai: 0,
+            Turkish: 0,
+            Vegetarian: 0,
+            Western: 0,
+          })
+
+          // update RestaurantTags collection
+          selected.forEach(async item => {
+            await updateDoc(restaurantTagsRef, {
+              [item]: increment(1)
+            })
+           })
         }
       }
     }
