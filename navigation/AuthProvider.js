@@ -120,6 +120,51 @@ export const AuthProvider = ({children}) => {
                                 followers: []
                             })
                           })
+                          .then(async () => { 
+                            await setDoc(doc(db, 'userPreferences', auth.currentUser.uid), { 
+                              Asian: 0, 
+                              Beef: 0, 
+                              Bars: 0, 
+                              Burger: 0, 
+                              Breakfast: 0, 
+                              Buffet: 0, 
+                              Cafes: 0, 
+                              Chicken: 0, 
+                              Chinese: 0,  
+                              Desserts: 0, 
+                              Drink: 0, 
+                              Dinner: 0, 
+                              French: 0, 
+                              Fried: 0, 
+                              Italian: 0, 
+                              Indian: 0, 
+                              Halal: 0, 
+                              Healthy: 0, 
+                              HotPot: 0,
+                              Japanese: 0,
+                              Korean: 0,
+                              LightBites: 0,
+                              Malay: 0,
+                              Mexican: 0,
+                              Mookata: 0,
+                              Mutton: 0,
+                              Pasta: 0,
+                              Pizza: 0,
+                              Pork: 0,
+                              Ramen: 0,
+                              Salad: 0,
+                              SeaFood: 0,
+                              Spanish: 0,
+                              Steak: 0,
+                              Supper: 0,
+                              Sushi: 0,
+                              Takeaway: 0,
+                              Thai: 0,
+                              Turkish: 0,
+                              Vegetarian: 0,
+                              Western: 0,
+                            })
+                          })
                     } catch (error) {
                         const errorCode = error.code;
                         const errorMessage = error.message;
