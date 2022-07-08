@@ -96,6 +96,7 @@ const MapScreen = ({navigation}) => {
     setTime(null);
     setDistance(null);
     setPlaceId(place_id);
+    console.log("Finish")
 }
 
   // Get Direction from user to selected restaurant
