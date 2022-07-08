@@ -24,7 +24,6 @@ const MapScreen = ({navigation}) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [restaurantList, setRestaurantList] = useState([]);
   const [coords, setCoords] = useState(null);
-  const [placeid, setPlaceId] = useState(null);
   const [result, setResult] = useState([]);
 
   const getnSetBoundaries = () => {
@@ -87,7 +86,7 @@ const MapScreen = ({navigation}) => {
   }
 
   // Update state of destination and address once marker is pressed
-  const onMarkerPress = (location, address, name, place_id) => {
+  const onMarkerPress = (location, address, name) => {
     console.log("onmarker press procs")
     // Reinitialise state
     setName(name);
@@ -95,7 +94,6 @@ const MapScreen = ({navigation}) => {
     setAddress(address);
     setTime(null);
     setDistance(null);
-    setPlaceId(place_id);
 }
 
   // Get Direction from user to selected restaurant
@@ -123,7 +121,12 @@ const MapScreen = ({navigation}) => {
             latitude: item.geometry.location.lat,
             longitude: item.geometry.location.lng,
           }}
-          onPress={() => onMarkerPress(item.geometry.location, item.vicinity, item.name, item.place_id)}
+          onPress={() => onMarkerPress(item.geometry.location, item.vicinity, item.name)}
+          onCalloutPress={async () => {
+            const data = await handlePlaceId(item.place_id);
+            const result = data.result;
+            navigation.navigate("RestaurantScreen", {result});
+          }}
         >
           <Image
             source={DestiMarker}
@@ -247,19 +250,6 @@ const MapScreen = ({navigation}) => {
       onPress={async () => {
         await mergeCoords();
       }}/>
-    <Button
-    title='Restaurant'
-    style={{
-      position: 'absolute',
-      top: '95%',
-      alignSelf: 'center'
-    }}
-    onPress={async () => {
-      const data = await handlePlaceId(placeid);
-      setResult(data.result);
-      console.log(result);
-      navigation.navigate("RestaurantScreen", {result});
-    }}/>
   </View>
   )}
 }

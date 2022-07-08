@@ -5,8 +5,11 @@ import { View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { ProfileScreen, MapScreen, RestaurantScreen, RouletteScreen, FeedsScreen, AddReviewScreen, EditProfileScreen, SearchUsersScreen, OthersProfileScreen, FollowersScreen, FollowingScreen, InputScreen, DirectionScreen, RestaurantGetScreen } from "../screens";
-
+import { ProfileScreen, MapScreen, RestaurantScreen, 
+    RouletteScreen, FeedsScreen, AddReviewScreen, 
+    EditProfileScreen, SearchUsersScreen, OthersProfileScreen, 
+    FollowersScreen, FollowingScreen, InputScreen, 
+    DirectionScreen, RestaurantGetScreen, BookmarkScreen} from "../screens";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -115,6 +118,11 @@ const ProfileStack = ({navigation}) => {
     return (
     <Stack.Navigator initialRouteName="Profile">
             <Stack.Screen
+                name="Bookmark"
+                component={BookmarkScreen}
+            />
+
+            <Stack.Screen
                 name="Profile"
                 component={ProfileScreen}
                 options={{
@@ -177,6 +185,30 @@ const ProfileStack = ({navigation}) => {
             <Stack.Screen
                 name="Following"
                 component={FollowingScreen}
+            />
+
+            <Stack.Screen
+                name="RestaurantScreen"
+                component={RestaurantScreen}
+                options={({route}) => (
+                    // Logic Flow for checking if restaurant exist
+                    route.params.result === null 
+                    ? {headerTitle: "Restaurant Page"} 
+                    : {headerTitle: route.params.result.name,
+                        headerBackTitleVisible: false,
+                        headerTitleAlign: 'center',
+                        headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                        }
+                      }
+                )}
+            />
+
+            <Stack.Screen
+                name="Map"
+                component={DirectionScreen}
             />
         </Stack.Navigator>
     );

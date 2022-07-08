@@ -9,6 +9,7 @@ const DetailFragment = ({address, phoneNumber, openingArr, priceLevel, ratings, 
     const [ourRating, setOurRating] = useState(null);
     const status = openingArr === undefined ? "Not Applicable" : openingArr.open_now;
     const openingDays = openingArr === undefined ? "Not Applicable" : openingArr.weekday_text;
+    const [bookmarkStatus, setBookmarkStatus] = useState(false);
 
     const fetchReviews = async () => {
         try {
@@ -42,7 +43,36 @@ const DetailFragment = ({address, phoneNumber, openingArr, priceLevel, ratings, 
           }
     }
 
+    // To do: Fetch Bookmark and check if restaurant exist in user's bookmark and update bookmark status
+    const fetchBookmark = async () => {
+        try {
+            // To check if already bookedmarked in
+            const bookmarkArr = [];
+            const q = query(collection(db, 'Bookmarks'));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                const { place_id, name, image } = doc.data();
+                if (place_id === placeId) setBookmarkStatus(true);
+            }, []);   
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+    // Update bookmark on user's database
+    const updateBookmark = async () => {
+    }
+
+    // To-do: update BookmarkStatus
+    const onBookmarkPress = async () => {
+        await updateBookmark();
+        setBookmarkStatus(!bookmarkStatus);
+
+    }
+
+    // FetchBookmark also
     useEffect(() => {
+        // fetchBookmark()
         fetchReviews();
     }, [])
 
@@ -74,13 +104,22 @@ const DetailFragment = ({address, phoneNumber, openingArr, priceLevel, ratings, 
                     
                 </ScrollView>
             </View>
-            <TouchableOpacity
-                style={styles.buttonContainer}
-                onPress={() => {
-                    navigation.navigate("Map", { destination, address, name })}}
-            >
-                <Text style={styles.buttonText}> Get Direction </Text>
-            </TouchableOpacity>
+            <View style={styles.buttonMainContainer}>
+                <TouchableOpacity
+                    style={styles.buttonLeftContainer}
+                    onPress={() => {
+                        navigation.navigate("Map", { destination, address, name })}}
+                >
+                    <Text style={styles.buttonText}> Get Direction </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.buttonRightContainer}
+                    onPress={onBookmarkPress}
+                >
+                    <Text style={styles.buttonText}> {bookmarkStatus ? "Remove Bookmark" : "Bookmark"} </Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -113,12 +152,23 @@ const styles = StyleSheet.create({
         width: '50%',
         flexDirection: 'row'
     },
-    buttonContainer: {
+    buttonMainContainer: {
         flex: 0.15,
+        flexDirection: 'row',
         backgroundColor: '#2e64e5',
+        marginTop: 5
+    },
+    buttonLeftContainer: {
+        width: "50%",
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 5
+        borderRightWidth: 2,
+        borderRightColor: 'black',
+    },
+    buttonRightContainer: {
+        width: "50%",
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     buttonText: {
         fontSize: 18,
