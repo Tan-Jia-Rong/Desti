@@ -326,6 +326,41 @@ const MapStack = ({route, navigation}) => {
     )
 }
 
+const RouletteStack = ({ route, navigation }) => {
+    return (
+        <Stack.Navigator initialRouteName="Roulette Screen">
+            <Stack.Screen
+                name="Roulette Screen"
+                component={RouletteScreen}
+                options={{
+                    tabBarIcon: ({color, size}) => (
+                        <Ionicons name="help" color ={color} size={size}/>
+                    )
+                }}
+            />
+
+            <Stack.Screen
+                name="Restaurant Screen"
+                component={RestaurantScreen}
+                options={({route}) => (
+                    // Logic Flow for checking if restaurant exist
+                    route.params.result === null 
+                    ? {headerTitle: "Restaurant Page"} 
+                    : {headerTitle: route.params.result.name,
+                        headerBackTitleVisible: false,
+                        headerTitleAlign: 'center',
+                        headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                        }
+                      }
+                )}
+            />
+         </Stack.Navigator>
+    )
+}
+
 const AppStack = () => {
     return (
         <Tab.Navigator initialRouteName="Home">
@@ -369,11 +404,12 @@ const AppStack = () => {
 
             <Tab.Screen
                 name="Roulette"
-                component={RouletteScreen}
+                component={RouletteStack}
                 options={{
                     tabBarIcon: ({color, size}) => (
                         <Ionicons name="help" color ={color} size={size}/>
-                    )
+                    ),
+                    header: () => null
                 }}
             />
 
