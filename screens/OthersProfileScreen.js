@@ -295,6 +295,9 @@ const OthersProfileScreen = ({ navigation, route }) => {
             <TouchableOpacity style = {styles.userBtn} onPress={() => logout()}>
               <Text style = {styles.userBtnTxt}>Logout</Text>
             </TouchableOpacity>
+            <TouchableOpacity style = {styles.userBtn} onPress={() => navigation.navigate("Bookmark")}>
+              <Text style = {styles.userBtnTxt}>Bookmark</Text>
+            </TouchableOpacity>
           </> :
           <>
            <TouchableOpacity style = {styles.userBtn} onPress={handleFollow}>
@@ -311,6 +314,9 @@ const OthersProfileScreen = ({ navigation, route }) => {
             </TouchableOpacity>
             <TouchableOpacity style = {styles.userBtn} onPress={() => logout()}>
               <Text style = {styles.userBtnTxt}>Logout</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.userBtn} onPress={() => navigation.navigate("Bookmark")}>
+              <Text style = {styles.userBtnTxt}>Bookmark</Text>
             </TouchableOpacity>
           </>
         )}

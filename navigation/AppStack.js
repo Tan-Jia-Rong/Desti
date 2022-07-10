@@ -56,6 +56,11 @@ const FeedsStack = ({navigation}) => {
             />
 
             <Stack.Screen
+                name="Bookmark"
+                component={BookmarkScreen}
+            />
+
+            <Stack.Screen
                 name="Profile"
                 component={ProfileScreen}
                 options={{
@@ -388,6 +393,11 @@ const RouletteStack = ({ route, navigation }) => {
                         }
                       }
                 )}
+            />
+
+            <Stack.Screen
+            name="Map"
+            component={DirectionScreen}
             />
          </Stack.Navigator>
     )

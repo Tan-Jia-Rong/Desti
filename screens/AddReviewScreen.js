@@ -72,7 +72,7 @@ const AddReviewScreen = ({navigation, route}) => {
 
       if (!isLessThan800KB(fileInfo.size)) {
         console.log(fileInfo.size);
-        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 0});
         setImage(manipResult.uri)
       } else {
         setImage(result.uri);
@@ -95,7 +95,7 @@ const AddReviewScreen = ({navigation, route}) => {
 
       if (!isLessThan800KB(fileInfo.size)) {
         console.log(fileInfo.size);
-        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 800000/fileInfo.size});
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {compress: 0});
         setImage(manipResult.uri)
       } else {
         setImage(result.uri);
@@ -425,7 +425,7 @@ const AddReviewScreen = ({navigation, route}) => {
   }
 
   return (
-    <KeyboardAvoidingView style={{flex:1, backgroundColor: '#2e64e515'}}>
+    <KeyboardAvoidingView style={{flex:1, backgroundColor: '#2e64e515'}} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}>
       <ScrollView>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <InputWrapper>
@@ -447,14 +447,7 @@ const AddReviewScreen = ({navigation, route}) => {
               onPress={() => navigation.navigate("Get Restaurant")}
               />
             }
-            <View style={{height:300}}>
-              <Text style={styles.reviewTextStyle}> Please select 3 tags that best describe the restaurant!</Text>
-              <ScrollView nestedScrollEnabled={true}>
-                <View style={styles.tagContainer}>
-                {makeButtons()}
-                </View>
-              </ScrollView>
-            </View>
+          
               <InputField 
                 value ={review}
                 onChangeText={setReview} 
@@ -462,6 +455,14 @@ const AddReviewScreen = ({navigation, route}) => {
                 multiline={true}
                 numberOfLines={4}
               />
+                <View style={{height:300}}>
+              <Text style={styles.reviewTextStyle}> Please select 3 tags that best describe the restaurant!</Text>
+              <ScrollView nestedScrollEnabled={true}>
+                <View style={styles.tagContainer}>
+                {makeButtons()}
+                </View>
+              </ScrollView>
+            </View>
             {uploading ? (
               <StatusWrapper>
                 <Text>{transferred}% Completed</Text>
