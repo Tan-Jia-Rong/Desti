@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Button, Image} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button, Image, Touchable, TouchableOpacity} from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location"
 import { useEffect, useRef, useState } from 'react';
@@ -240,16 +240,16 @@ const MapScreen = ({navigation}) => {
       {coords !== null && renderPolyLine()}
     </MapView>
 
-    <Button
-      title='Get Directions!'
-      style={{
-        position: 'absolute',
-        top: '95%',
-        alignSelf: 'center'
-      }}
-      onPress={async () => {
-        await mergeCoords();
-      }}/>
+    <TouchableOpacity
+      style={styles.directionContainer}
+      onPress={async () => { await mergeCoords();}}
+    >
+      <Text
+        style={styles.directionText}
+      >
+        Directions
+      </Text>
+    </TouchableOpacity>
   </View>
   )}
 }
@@ -266,5 +266,20 @@ const styles = StyleSheet.create({
   markerStyle: {
     width: 50,
     height: 50,
+  },
+  directionContainer: {
+    position: 'absolute',
+    top: '90%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    height: 50,
+    width: 150,
+    backgroundColor: '#4287f5',
+    borderRadius: 50,
+  },
+  directionText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center'
   }
 });

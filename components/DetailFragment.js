@@ -2,178 +2,193 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { storage, db } from "../firebase";
 import { collection, getDocs, query, doc, getDoc, deleteDoc, where, orderBy } from "firebase/firestore";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const DetailFragment = ({address, phoneNumber, openingArr, priceLevel, ratings, location, navigation, name, placeId}) => {
-    const [destination, setDestination] = useState(location);
-    const [reviews, setReviews] = useState([]);
-    const [ourRating, setOurRating] = useState(null);
-    const status = openingArr === undefined ? "Not Applicable" : openingArr.open_now;
-    const openingDays = openingArr === undefined ? "Not Applicable" : openingArr.weekday_text;
-    const [bookmarkStatus, setBookmarkStatus] = useState(false);
+const renderTags = (tagArr) => {
+    return (
+        tagArr.map((tag) => (
+            <Text style={styles.tagText} key={tag}> • {tag} </Text>
+    )))
+}
 
-    const fetchReviews = async () => {
-        try {
-            const restaurantRef = doc(db, 'Restaurants', placeId);
-            const restaurantSnap = await getDoc(restaurantRef);
-
-            // If there is at least one review done by our app users
-            if (restaurantSnap.exists()) {
-                const {averageRating, postsThatReviewed} = restaurantSnap.data();
-                setOurRating(averageRating);
-
-                const reviewArr = [];
-                const q = query(collection(db, 'Posts'), orderBy('postTime', 'desc'));
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((doc) => {
-                    const { comments, likes, postImg, postText, postTime, rating, userId } = doc.data();
-                    if (postsThatReviewed.includes(doc.id)) {
-                        reviewArr.push({
-                            id: doc.id,
-                        });
-                    }
-                }, []);
-
-                setReviews(reviewArr);
-            // Else if there is not even one review done by our app users    
-            } else {
-
-            }
-          } catch(e) {
-            console.log(e);
-          }
+const renderOpeningDays = (openingDays) => {
+    if (openingDays === "Not Applicable") {
+        return (<Text> {openingDays} </Text>)
     }
-
-    // To do: Fetch Bookmark and check if restaurant exist in user's bookmark and update bookmark status
-    const fetchBookmark = async () => {
-        try {
-            // To check if already bookedmarked in
-            const bookmarkArr = [];
-            const q = query(collection(db, 'Bookmarks'));
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                const { place_id, name, image } = doc.data();
-                if (place_id === placeId) setBookmarkStatus(true);
-            }, []);   
-        } catch(e) {
-            console.log(e);
-        }
-    }
-
-    // Update bookmark on user's database
-    const updateBookmark = async () => {
-    }
-
-    // To-do: update BookmarkStatus
-    const onBookmarkPress = async () => {
-        await updateBookmark();
-        setBookmarkStatus(!bookmarkStatus);
-
-    }
-
-    // FetchBookmark also
-    useEffect(() => {
-        // fetchBookmark()
-        fetchReviews();
-    }, [])
 
     return (
-        <View style={{flex: 1}}>
-            <View style={styles.locationContainer}>
-                <Text>{address}</Text>
-                <Text>Phone: {phoneNumber ? phoneNumber : "Not Applicable"}</Text>
-            </View>
-            <View style={styles.container}>
-                <View style={styles.leftContainer}>
-                    <Text>Pricing: {priceLevel ? priceLevel + " / 5" : "Not Applicable"}</Text>
-                    {reviews.length == 0 ? 
-                     <Text>Rating: {ratings} / 5.0</Text> :
-                     <Text>Rating: {ourRating} / 5.0</Text>}
-                    <Text>Status: {status === undefined ? "Not Applicable"
-                                    : status ? "Open" : "Closed"} </Text>
-                </View>
-                
-                <ScrollView style={styles.rightContainer}>
-                    
-                    <Text>Opening Hours</Text>
-                    {
-                        openingDays === "Not Applicable" 
-                        ? <Text> {openingDays} </Text>
-                        : openingDays.map(openingHours => {
-                        return <Text key={openingHours}>{openingHours}</Text>;
-                    })}
-                    
-                </ScrollView>
-            </View>
-            <View style={styles.buttonMainContainer}>
-                <TouchableOpacity
-                    style={styles.buttonLeftContainer}
-                    onPress={() => {
-                        navigation.navigate("Map", { destination, address, name })}}
-                >
-                    <Text style={styles.buttonText}> Get Direction </Text>
-                </TouchableOpacity>
+        openingDays.map(openingHours => (
+                <Text key={openingHours}>{openingHours}</Text>
+    )))
+}
 
+const RestaurantFragment = ({restaurantName, tagArr}) => {
+    return (
+    <View style={styles.sectionContainer}>
+        <View style={styles.descriptionContainer}>
+            <Text style={styles.boldText}>
+                {restaurantName}
+            </Text>
+        </View>
+        <View style={styles.descriptionContainer}>
+            {renderTags(tagArr)}
+        </View>
+    </View>
+
+    )
+}
+
+const OverviewFragment = ({address, openingArr, priceLevel, ratings, phoneNumber}) => {
+        const status = openingArr === undefined ? "Not Applicable" : openingArr.open_now;
+        const openingDays = openingArr === undefined ? "Not Applicable" : openingArr.weekday_text;
+        const [display, setDisplay] = useState(false);
+    return (
+        <View style={styles.sectionContainer}>
+            <View style = {styles.descriptionContainer}>
+                <Text style={styles.normalText}> 
+                    <MaterialCommunityIcons 
+                        name='map-marker'
+                        size={18}
+                    />
+                    {address} 
+                </Text>
+            </View>
+            <View style = {styles.descriptionContainer}>
+                <MaterialCommunityIcons 
+                    name='clock-outline'
+                    size={18}
+                />
                 <TouchableOpacity
-                    style={styles.buttonRightContainer}
-                    onPress={onBookmarkPress}
+                    onPress={() => setDisplay(!display)}
                 >
-                    <Text style={styles.buttonText}> {bookmarkStatus ? "Remove Bookmark" : "Bookmark"} </Text>
+                    {status === undefined ? <Text> Not Applicable </Text>
+                    :status ? <Text style={styles.openText}> Open </Text>
+                            : <Text style={styles.closeText}> Closed </Text>
+                    }
                 </TouchableOpacity>
+            </View>
+            {display ? 
+            < View style={styles.openingDaysContainer}>
+                    {renderOpeningDays(openingDays)}
+            </View> : null }
+            <View style = {styles.descriptionContainer}>
+                <MaterialCommunityIcons 
+                    name='currency-usd'
+                    size={18}
+                />
+                <Text style={styles.normalText}> 
+                    {priceLevel ? " " + priceLevel + " / 5"
+                                : "Not Applicable"} 
+                </Text>
+            </View>
+            <View style = {styles.descriptionContainer}>
+                <MaterialCommunityIcons 
+                    name='star'
+                    size={18}
+                />
+                <Text style={styles.normalText}> {ratings} / 5.0 </Text>
+            </View>
+            <View style = {styles.descriptionContainer}>
+                <MaterialCommunityIcons 
+                    name='phone'
+                    size={18}
+                />
+                <Text style={styles.normalText}> {phoneNumber} </Text>
             </View>
         </View>
-    );
+    )
+}
+
+const DetailFragment = ({address, phoneNumber, openingArr, priceLevel, ratings, restaurantName, tagArr}) => {
+    return (
+        <View style={styles.container}>
+            <RestaurantFragment
+                restaurantName={restaurantName}
+                tagArr={tagArr}
+            />
+            <OverviewFragment
+                address={address}
+                openingArr={openingArr}
+                priceLevel={priceLevel}
+                ratings={ratings}
+                phoneNumber={phoneNumber}
+            />
+        </View>
+    )
 }
 
 export default DetailFragment;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, 
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        justifyContent: 'space-around',
+      flex: 1, 
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      width:'100%',
+      padding: 1,
+      backgroundColor: '#ebebeb'
     },
-    locationContainer: {
-        flex: 0.2,
+    sectionContainer: {
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        padding: 1,
         width: '100%',
-        alignItems: 'flex-start',
-        paddingLeft: 20,
-        marginBottom: 20
+        backgroundColor: 'white',
+        marginBottom: 5
     },
-    leftContainer: {
-        height: '100%',
-        width: '50%',
+    descriptionContainer: {
+      flexWrap: 'wrap',
+      flexDirection: 'row',
+      backgroundColor: '#fff',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      marginBottom: 5,
+    },
+    openingDaysContainer: {
+        flexWrap: 'wrap',
+        backgroundColor: '#fff',
         alignItems: 'flex-start',
-        justifyContent: 'space-evenly',
-        paddingLeft: 20,
+        justifyContent: 'flex-start',
+        marginBottom: 5,
+        marginLeft: 20
+      },
+    leftContainer: {
+      flex: 0.33,
+      alignItems: 'flex-end',
+      justifyContent: 'flex-start',
     },
     rightContainer: {
-        flex: 1,
-        width: '50%',
-        flexDirection: 'row'
+      flex: 1,
+      marginRight: 2,
+      alignItems: 'flex-start',
+      justifyContent: 'center',
     },
-    buttonMainContainer: {
-        flex: 0.15,
-        flexDirection: 'row',
-        backgroundColor: '#2e64e5',
-        marginTop: 5
+    boldText: {
+      fontSize: 16,
+      fontWeight: 'bold',
     },
-    buttonLeftContainer: {
-        width: "50%",
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRightWidth: 2,
-        borderRightColor: 'black',
+    normalText: {
+      fontSize: 14,
+      fontWeight: 'normal',
     },
-    buttonRightContainer: {
-        width: "50%",
-        alignItems: 'center',
-        justifyContent: 'center',
+    tagText: {
+        color: 'grey'
     },
-    buttonText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#ffffff',
+    missingText: {
+        fontSize: 14,
+        fontWeight: 'normal',
+        color: 'grey'
     },
-
-})
+    openText: {
+        fontSize: 14,
+        fontWeight: 'normal',
+        color: '#30ba50'
+    },
+    closeText: {
+        fontSize: 14,
+        fontWeight: 'normal',
+        color: '#ab2b31'
+    }
+  
+});
