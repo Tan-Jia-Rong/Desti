@@ -8,7 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const renderTags = (tagArr) => {
     return (
         tagArr.map((tag) => (
-            <Text style={styles.tagText}> • {tag} </Text>
+            <Text style={styles.tagText} key={tag}> • {tag} </Text>
     )))
 }
 

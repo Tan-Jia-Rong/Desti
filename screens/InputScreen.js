@@ -53,12 +53,6 @@ const InputScreen = ({navigation}) => {
           type: 'restaurant'
         }}
       />
-      <TouchableOpacity style={styles.addRestaurantButton}>
-        <Text style={styles.addRestaurantText}> 
-          Can't find the restaurant you are looking for?
-        </Text>
-        <Text style={styles.addRestaurantText}> Add it here! </Text>
-      </TouchableOpacity>
     </View>
   );
 };
