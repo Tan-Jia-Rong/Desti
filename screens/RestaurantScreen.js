@@ -30,7 +30,7 @@ const RestaurantScreen = ({navigation, route}) => {
     const [loading, setLoading] = useState(true);
     const [photo, setPhoto] = useState(null);
     const [bookmarkStatus, setBookmarkStatus] = useState(false);
-    const [tags, setTags] = useState(['Thai', 'Cupcake', 'IceCream'])
+    const [tags, setTags] = useState([])
     
 
     // To do: Fetch Bookmark and check if restaurant exist in user's bookmark and update bookmark status
@@ -85,8 +85,52 @@ const RestaurantScreen = ({navigation, route}) => {
           }
     }
 
+    const fetchTags = async () => {
+        console.log("placeId is: " + placeId)
+        const restaurantTagsRef = doc(db, 'RestaurantTags', placeId);
+        const restaurantTagsSnap = await getDoc(restaurantTagsRef);
+
+        if (restaurantTagsSnap.exists()) {
+            const obj = restaurantTagsSnap.data();
+            let firstLargest = 0;
+            let firstLargestTag = ''
+            let secondLargest = 0;
+            let secondLargestTag = ''
+            let thirdLargest = 0;
+            let thirdLargestTag = ''
+            // Get the top three tags of the restaurant
+            for (let i = 0; i < Object.entries(obj).length; i++) {
+                if (Object.entries(obj)[i][1]> firstLargest) {
+                    thirdLargest = secondLargest;
+                    thirdLargestTag = secondLargestTag;
+                    secondLargest = firstLargest;
+                    secondLargestTag = firstLargestTag
+                    firstLargest = Object.entries(obj)[i][1];
+                    firstLargestTag = Object.entries(obj)[i][0];
+                  } else if (Object.entries(obj)[i][1] > secondLargest) {
+                    thirdLargest = secondLargest;
+                    thirdLargestTag = secondLargestTag;
+                    secondLargest = Object.entries(obj)[i][1];
+                    secondLargestTag =  Object.entries(obj)[i][0];
+                  } else if (Object.entries(obj)[i][1] > thirdLargest) {
+                    thirdLargest = Object.entries(obj)[i][1];
+                    thirdLargestTag = Object.entries(obj)[i][0];
+                  }
+            }
+            console.log("First largest tag is: " + firstLargestTag + " with a count of " + firstLargest);
+            console.log("Second largest tag is: " + secondLargestTag + " with a count of " + secondLargest);
+            console.log("Third largest tag is: " + thirdLargestTag + " with a count of " + thirdLargest);
+            const arr = [firstLargestTag, secondLargestTag, thirdLargestTag];
+            arr.sort();
+            setTags(arr);
+        }
+    }
+
+
+
     // FetchBookmark also
     useEffect(() => {
+        fetchTags();
         // fetchBookmark()
         fetchReviews();
     }, [])
