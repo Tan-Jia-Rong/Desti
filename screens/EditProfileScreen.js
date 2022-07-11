@@ -7,9 +7,10 @@ import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db, storage } from "../firebase";
+import { auth, db, storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { updateEmail } from "firebase/auth";
 
 
 const EditProfileScreen = ({ navigation }) => {
@@ -177,7 +178,11 @@ const EditProfileScreen = ({ navigation }) => {
       userName: userData.userName,
       email: userData.email,
       userImg: imageUrl
-    }).then(() => {
+    })
+    .then(() => {
+      updateEmail(auth.currentUser, userData.email)
+    })
+    .then(() => {
       console.log('User updated!');
       Alert.alert(
         'Profile Updated',
