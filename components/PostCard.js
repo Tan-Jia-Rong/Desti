@@ -7,6 +7,8 @@ import { TouchableOpacity, View, Dimensions, Text } from 'react-native';
 import { db } from "../firebase";
 import StarRating from "react-native-star-rating-widget";
 import { useFocusEffect } from '@react-navigation/native';
+import { apiKey } from '@env';
+import { useNavigation } from '@react-navigation/native';
 import { Container, 
     Card, 
     UserInfo, 
@@ -27,6 +29,7 @@ const PostCard = ({ item, onDelete, onPress }) => {
     const [rating, setRating] = useState(item.rating);
     const componentMounted = useRef(true); 
     const windowWidth = Dimensions.get('window').width;
+    const navigation = useNavigation();
 
     // Get the user data from firecloud
   const getUser = async () => {
@@ -41,6 +44,25 @@ const PostCard = ({ item, onDelete, onPress }) => {
   useFocusEffect(React.useCallback(() => {
     getUser();
   }, []));
+
+  // Fetches places details using placeId
+  // Returns detailed results of a single restaurant
+  const handlePlaceId = async (place_id) => {
+    const url = 'https://maps.googleapis.com/maps/api/place/details/json?';
+    const placeid = `place_id=${place_id}`;
+    const key = `&key=${apiKey}`;
+    const placeUrl = url + placeid + key;
+    const result = await fetch(placeUrl).then(response => response.json());
+    return result;
+  }
+
+  const getRestaurantDetails = async (place_id) => {
+    const data = await handlePlaceId(place_id);
+    const result = data.result;
+
+    console.log("Hi result is: " +  result)
+    return result;
+}
 
     let likeIcon = item.liked? 'heart' : 'heart-outline';
     let likeIconColor = item.liked? '#2e64e5' : '#333';
@@ -77,7 +99,11 @@ const PostCard = ({ item, onDelete, onPress }) => {
         </UserInfo>
         {item.restaurant != null ? 
           <View style={{justifyContent:'center', alignItems:'center'}}>
-           <Text style={{fontSize:14, fontWeight:'bold'}}>{item.restaurant}</Text> 
+           <Text style={{fontSize:14, fontWeight:'bold'}} onPress={async () => {
+            const result = await getRestaurantDetails(item.restaurantPlaceId);
+            navigation.navigate("RestaurantScreen", { result });
+            navigation.navigate("RestaurantScreen", { result });
+           }}>{item.restaurant}</Text> 
             <View style={{paddingLeft:0}}>
           <StarRating
             rating={rating}

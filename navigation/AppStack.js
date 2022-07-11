@@ -115,6 +115,25 @@ const FeedsStack = ({navigation}) => {
                 name="Following"
                 component={FollowingScreen}
             />
+        
+        <Stack.Screen
+                name="RestaurantScreen"
+                component={RestaurantScreen}
+                options={({route}) => (
+                    // Logic Flow for checking if restaurant exist
+                    route.params.result === null 
+                    ? {headerTitle: "Restaurant Page"} 
+                    : {headerTitle: route.params.result.name,
+                        headerBackTitleVisible: false,
+                        headerTitleAlign: 'center',
+                        headerStyle: {
+                        backgroundColor: '#fff',
+                        shadowColor: '#fff',
+                        elevation: 0
+                        }
+                      }
+                )}
+            />
         </Stack.Navigator>
     )
 }
