@@ -4,10 +4,13 @@ import { storage, db } from "../firebase";
 import { collection, getDocs, query, doc, getDoc, deleteDoc, where, orderBy, arrayRemove, updateDoc } from "firebase/firestore";
 import  PostCard  from './PostCard';
 import { ref, deleteObject } from "firebase/storage";
+import { StyleSheetManager } from 'styled-components';
 
 const RestaurantReviewFragment = ({ navigation, placeId }) => {
-    const [reviews, setReviews] = useState([]);
+    const [reviews, setReviews] = useState(null);
     const [deleted, setDeleted] = useState(false);
+    const [reviewCount, setReviewCount] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     const fetchReviews = async () => {
         try {
@@ -39,9 +42,11 @@ const RestaurantReviewFragment = ({ navigation, placeId }) => {
                 }, []);
 
                 setReviews(reviewArr);
+                setReviewCount(reviewArr.length);
+                setLoading(false);
             // Else if there is not even one review done by our app users    
             } else {
-
+              setLoading(false);
             }
           } catch(e) {
             console.log(e);
@@ -128,43 +133,48 @@ const RestaurantReviewFragment = ({ navigation, placeId }) => {
     );
   }
 
-    return (
+  while(loading) return (
     <View style={styles.container}>
         <View style={styles.headerContainer}>
             <Text style={styles.headerText}> Reviews </Text>
         </View>
-        <View style={styles.reviewPhotoContainer}>
-            {reviews.length >= 1 ? 
-             <PostCard item={reviews[0]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[0].userId})}/>: 
-            <Image
-            source={{uri: 'http://citiusmag.com/wp-content/uploads/2018/04/never-gonna-give-you-up-gif-3.gif'}}
-            style={styles.imageContainer}
-            />}
-            {reviews.length >= 2 ? 
-             <PostCard item={reviews[1]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[1].userId})}/>: 
-            <Image
-            source={{uri: 'http://citiusmag.com/wp-content/uploads/2018/04/never-gonna-give-you-up-gif-3.gif'}}
-            style={styles.imageContainer}
-            />}
-           {reviews.length >= 3 ? 
-             <PostCard item={reviews[2]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[2].userId})}/>: 
-            <Image
-            source={{uri: 'http://citiusmag.com/wp-content/uploads/2018/04/never-gonna-give-you-up-gif-3.gif'}}
-            style={styles.imageContainer}
-            />}
-            {reviews.length >= 4 ? 
-             <PostCard item={reviews[3]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[3].userId})}/>: 
-            <Image
-            source={{uri: 'http://citiusmag.com/wp-content/uploads/2018/04/never-gonna-give-you-up-gif-3.gif'}}
-            style={styles.imageContainer}
-            />}
-            {reviews.length >= 5 ? 
-             <PostCard item={reviews[4]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[4].userId})}/>: 
-            <Image
-            source={{uri: 'http://citiusmag.com/wp-content/uploads/2018/04/never-gonna-give-you-up-gif-3.gif'}}
-            style={styles.imageContainer}
-            />}
+        <Text style={styles.noReviewText}> Loading... </Text>
+    </View>
+  )
+
+  return (
+    <View style={styles.container}>
+        <View style={styles.headerContainer}>
+            <Text style={styles.headerText}> Reviews </Text>
         </View>
+        { reviewCount > 0 ? 
+        <View style={styles.reviewPhotoContainer}>
+            {reviewCount >= 1 ? 
+             <PostCard item={reviews[0]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[0].userId})}/> 
+              : null }
+            {reviewCount >= 2 ? 
+             <PostCard item={reviews[1]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[1].userId})}/>
+             : null }
+           {reviewCount >= 3 ? 
+             <PostCard item={reviews[2]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[2].userId})}/>
+             : null }
+            {reviewCount >= 4 ? 
+             <PostCard item={reviews[3]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[3].userId})}/>
+             : null }
+            {reviewCount >= 5 ? 
+             <PostCard item={reviews[4]} onDelete={handleDelete} onPress={() => navigation.navigate("Others Profile", {userId: reviews[4].userId})}/>
+             : null }
+        </View> :
+        <View style={styles.reviewPhotoContainer}>
+          <Image 
+            style={styles.imageContainer}
+            source={require('../assets/personalizedIcon.png')}
+          />
+          <Text style={styles.noReviewText}>
+            There is currently no Review
+          </Text>
+        </View>
+        }
     </View>
     )
 }
@@ -192,12 +202,19 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 5
+        padding: 5,
+        marginBottom: 70
     },
     imageContainer: {
         height: 300,
         width: '100%',
         marginBottom: 5
-    }
-
+    },
+    noReviewText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: "grey",
+      textAlign: 'center',
+      paddingTop: 5
+    },
 })

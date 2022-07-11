@@ -94,7 +94,7 @@ const OverviewFragment = ({address, openingArr, priceLevel, ratings, phoneNumber
                     name='phone'
                     size={18}
                 />
-                <Text style={styles.normalText}> {phoneNumber} </Text>
+                <Text style={styles.normalText}> {phoneNumber ? phoneNumber : "Not Applicable"} </Text>
             </View>
         </View>
     )

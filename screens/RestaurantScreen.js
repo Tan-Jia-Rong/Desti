@@ -120,7 +120,9 @@ const RestaurantScreen = ({navigation, route}) => {
             console.log("First largest tag is: " + firstLargestTag + " with a count of " + firstLargest);
             console.log("Second largest tag is: " + secondLargestTag + " with a count of " + secondLargest);
             console.log("Third largest tag is: " + thirdLargestTag + " with a count of " + thirdLargest);
-            const arr = [firstLargestTag, secondLargestTag, thirdLargestTag];
+            let arr = [firstLargestTag, secondLargestTag, thirdLargestTag];
+            // Filter out empty tags
+            arr = arr.filter(c => c !== '');
             arr.sort();
             setTags(arr);
         }
@@ -216,23 +218,25 @@ const RestaurantScreen = ({navigation, route}) => {
                 </View>
                 </View>
             </ScrollView>
+            
+            <View style={{width:'100%'}}>
+                <TouchableOpacity
+                    style={styles.buttonLeftContainer}
+                    onPress={() => {
+                        navigation.navigate("Map", { destination, address, name })}}
+                >
+                    <MaterialCommunityIcons name="directions" size={30} color={"white"}/>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                style={styles.buttonLeftContainer}
-                onPress={() => {
-                    navigation.navigate("Map", { destination, address, name })}}
-            >
-                <MaterialCommunityIcons name="directions" size={30} color={"white"}/>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={styles.buttonRightContainer}
-                onPress={onBookmarkPress}
-            >
-            {bookmarkStatus ? 
-                <MaterialCommunityIcons name='bookmark-off' size={30} color={"white"}/> : 
-                <MaterialCommunityIcons name='bookmark-plus' size={30} color={"white"}/> }
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.buttonRightContainer}
+                    onPress={onBookmarkPress}
+                >
+                {bookmarkStatus ? 
+                    <MaterialCommunityIcons name='bookmark-off' size={30} color={"white"}/> : 
+                    <MaterialCommunityIcons name='bookmark-plus' size={30} color={"white"}/> }
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
