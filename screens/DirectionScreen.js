@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, Button} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity} from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location"
 import { useEffect, useState } from 'react';
@@ -42,13 +42,14 @@ const DirectionScreen = ({route, navigation}) => {
     }
   }
 
-  const mergeCoords = () => {
+  const mergeCoords = async () => {
     const hasStartAndEnd = location != null && destination !== null;
 
     if(hasStartAndEnd) {
       const concatStart = `${location.coords.latitude},${location.coords.longitude}`;
       const concatEnd = `${destination.lat},${destination.lng}`
-      getDirections(concatStart,concatEnd);
+      await getDirections(concatStart,concatEnd);
+      return;
     }
   }
 
@@ -83,7 +84,7 @@ const DirectionScreen = ({route, navigation}) => {
           console.log('update location!', location.coords.latitude, location.coords.longitude)
           setLocation(location);
 
-          mergeCoords()
+          await mergeCoords()
         }
       )
     })();
@@ -141,16 +142,16 @@ const DirectionScreen = ({route, navigation}) => {
       {coords !== null &&  renderPolyLine(coords)}
     </MapView>
 
-    <Button
-      title='Get Directions!'
-      style={{
-        position: 'absolute',
-        top: '95%',
-        alignSelf: 'center'
-      }}
-      onPress={() => {
-        mergeCoords();
-      }}/>
+    <TouchableOpacity
+      style={styles.directionContainer}
+      onPress={async () => { await mergeCoords();}}
+    >
+      <Text
+        style={styles.directionText}
+      >
+        Directions
+      </Text>
+    </TouchableOpacity>
   </View>
   )
 }
@@ -164,4 +165,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  directionContainer: {
+    position: 'absolute',
+    top: '90%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    height: 50,
+    width: 150,
+    backgroundColor: '#4287f5',
+    borderRadius: 50,
+  },
+  directionText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center'
+  }
 });

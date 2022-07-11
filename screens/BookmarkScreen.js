@@ -1,5 +1,13 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, ScrollView} from "react-native"
+import * as React from 'react';
+import { useState } from 'react';
+import { Text, View, Image, StyleSheet, FlatList, Button, Dimensions } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
 import { apiKey } from '@env';
+import { NavigationContainer } from '@react-navigation/native';
+
+const HEIGHT = Dimensions.get('window').height;
+const WIDTH = Dimensions.get('window').width;
 
 // Fetches places details using placeId
 const handlePlaceId = async (place_id) => {
@@ -12,66 +20,130 @@ const handlePlaceId = async (place_id) => {
 }
 
 
-
-const BookmarkScreen = ({navigation, route}) => {
-
   // Definition of Bookmark
   // 1. place_id
   // 2. name
   // 3. image
 
-  // Array of Bookmarks to be taken from storage
-  const arr = [];
+const fakeData = [
+  {
+    place_id: "ChIJ1f9Gi8YV2jERWukfruuoJNw" ,
+    name: "This shall be macdonalds",
+    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
+  },
+  {
+    place_id: "2" ,
+    name: "Fake Data 1",
+    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
+  },
+  {
+    place_id: "3" ,
+    name: "Fake data 2",
+    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
+  },
+  {
+    place_id: "4" ,
+    name: "Fake data 3",
+    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
+  },
+  {
+    place_id: "5" ,
+    name: "Fake data 4",
+    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
+  },
+];
 
-  // To be used in return to return list of bookmark
-  const renderBookmark = (bookmarks) => {
-    return (
-      bookmarks.map((bookmark) => (
-        <Bookmark
-          name={bookmark.name}
-          place_id={bookmark.place_id}
-          image={bookmark.image}
-        />
-      ))
-    )
-  } 
 
-  const Bookmark =  ({place_id, name, image}) => {
+const BookmarkScreen = ({navigation}) => {
+  const [listData, setListData] = useState(fakeData);
+  let row: Array<any> = [];
+  let prevOpenedRow;
+
+  const renderItem = ({ item, index }, onClick) => {
+    //
+    const closeRow = (index) => {
+      console.log('closerow');
+      if (prevOpenedRow && prevOpenedRow !== row[index]) {
+        prevOpenedRow.close();
+      }
+      prevOpenedRow = row[index];
+    };
+
+    const renderRightActions = (progress, dragX, onClick) => {
+      return (
+        <View
+          style={{
+            margin: 0,
+            alignContent: 'center',
+            justifyContent: 'center',
+            width: 100,
+            backgroundColor: '#ff4d4d'
+          }}>
+          <Button 
+            color='white'
+            onPress={onClick} 
+            title="DELETE">
+          </Button>
+        </View>
+      );
+    };
+
     return (
-      <TouchableOpacity 
-        style={styles.bookmarkContainer}
-        onPress={async () => {
-          const data = await handlePlaceId(place_id)
-          const result = data.result
-          navigation.navigate("RestaurantScreen", {result});
-        }}
+      <GestureHandlerRootView
       >
-          <Text style={styles.bookmarkText}> {name} </Text>
-
-          <Image 
-            style={styles.bookmarkImage}
-            source={{uri: image}}
-          />
-      </TouchableOpacity>
+        <Swipeable
+          renderRightActions={(progress, dragX) =>
+            renderRightActions(progress, dragX, onClick)
+          }
+          onSwipeableOpen={() => closeRow(index)}
+          ref={(ref) => (row[index] = ref)}
+          rightOpenValue={-100}
+          >
+            <TouchableOpacity
+              style={styles.bookmarkContainerInner}
+              onPress={async () => {
+                const data = await handlePlaceId(item.place_id)
+                const result = data.result
+                result ? navigation.navigate("RestaurantScreen", {result})
+                       : null;
+              }}
+            >
+              <Text style={styles.bookmarkText}>{item.name}</Text>
+              <Image
+                source={{uri: item.image}}
+                style={styles.bookmarkImage}
+              />
+          </TouchableOpacity>
+        </Swipeable>
+      </GestureHandlerRootView>
     );
+  };
 
-  }
+  // To Do : Update to delete from database
+  const deleteItem = ({ item, index }) => {
+    console.log(item, index);
+    let a = listData;
+    a.splice(index, 1);
+    console.log(a);
+    setListData([...a]);
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-        <Bookmark
-          place_id={"ChIJ1f9Gi8YV2jERWukfruuoJNw"}
-          name={"This shall be macdonalds"}
-          image={"https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"}
-        />
-        <Bookmark
-          place_id={"ChIJ1f9Gi8YV2jERWukfruuoJNw"}
-          name={"This shall be macdonalds"}
-          image={"https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"}
-        />
-    </ScrollView>
+    <View style={styles.container}>
+      <FlatList
+        data={listData}
+        style={styles.bookmarkContainerOuter}
+        renderItem={(v) =>
+          renderItem(v, () => {
+            console.log('Pressed', v);
+            deleteItem(v);
+          })
+        }
+        keyExtractor={(item) => item.place_id}></FlatList>
+    </View>
   );
 }
+
 
 export default BookmarkScreen;
 
@@ -86,26 +158,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#333333'
   },
-  bookmarkContainer: {
+  bookmarkContainerOuter: {
     height: '15%', 
     width:'100%',
-    flexDirection: 'row',
+  },
+  bookmarkContainerInner: {
+    flex: 1, 
+    flexDirection:'row', 
+    height: HEIGHT /8,
     paddingBottom: 1,
     marginBottom: 1,
     borderBottomWidth: 1,
-    borderBottomColor: 'black'
+    borderBottomColor: 'black',
   },
   bookmarkText: {
-    flex: 1,
+    flex: 0.7,
     flexWrap: 'wrap',
-    width: '70%',
     alignItems: 'flex-start',
     justifyContent: 'center'
   },
   bookmarkImage: {
-    height: '100%',
-    width: '30%',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end'
+    flex: 0.3,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start'
   }
 })
