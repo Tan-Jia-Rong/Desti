@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react"
-import { Text, View, StyleSheet, Image, ActivityIndicator, Alert } from "react-native"
+import { Text, View, StyleSheet, Image, ActivityIndicator, Alert, Dimensions } from "react-native"
 import { FormButton } from "../components"
 import { AuthContext } from "../navigation/AuthProvider"
 import { storage, db } from "../firebase";
@@ -14,6 +14,8 @@ const RouletteScreen = ({navigation}) => {
   const [location, setLocation] = useState(null);
   const [runningAlgo, setRunningAlgo] = useState(false);
   const [loadingIndicatorText, setLoadingIndicatorText] = useState('');
+  const windowWidth = Dimensions.get('window').width;
+  const windowHeight = Dimensions.get('window').height;
 
   
     // Returns result of 20 nearest restaurant
@@ -183,22 +185,24 @@ const RouletteScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{fontSize: 30, color: '#333333', paddingBottom: 60, fontWeight: 'bold'}}>Unsure of what to eat?</Text>
+      <Text style={{fontSize: 20, color: '#333333', fontWeight: 'bold'}}>Unsure of what to eat?</Text>
         <Image 
-        style={{width: 400, height: 250}}
+        style={{width: windowWidth * 0.85, height: windowHeight * 0.5}}
         source={require('../assets/personalizedIcon.png')}
         />
-        <Text style={{fontSize: 30, color: '#333333', paddingTop: 60, fontWeight: 'bold'}}>Let us decide for you!</Text>
+        <Text style={{fontSize: 20, color: '#333333', fontWeight: 'bold', justifyContent: 'center', textAlign: 'center'}}>Use our smart personalized algorithm!</Text>
         {runningAlgo ? (
           <View style={{justifyContent: "center", alignItems: "center"}}>
            <Text>{loadingIndicatorText}</Text>
            <ActivityIndicator size='large' color='#0000ff' />
           </View> 
         ) : (
-          <FormButton 
-          buttonTitle='Get Personalized Recommendation'
-          onPress={getPersonalizedRecommendation}
-        />
+          <View style={{justifyContent: 'center', alignItems: 'center', alignSelf:'center'}}>
+            <FormButton 
+              buttonTitle='Get Personalized Recommendation'
+              onPress={getPersonalizedRecommendation}
+            />
+        </View>
         )
         }
     </View>
@@ -213,7 +217,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   text: {
     fontSize: 20,

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react"
-import { Text, View, StyleSheet, Image, KeyboardAvoidingView, Platform, Dimensions, Alert, ActivityIndicator, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { Text, View, StyleSheet, Image, KeyboardAvoidingView, Platform, Dimensions, Alert, ActivityIndicator, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ImageBackground } from "react-native";
 import { AuthContext } from "../navigation/AuthProvider"
 import { InputWrapper, InputField, AddImage, StatusWrapper, SubmitBtn, SubmitBtnText } from '../styles/AddReview';
 import ActionButton from "react-native-action-button";
@@ -17,9 +17,9 @@ import { FormButton, TagButton } from "../components";
 
 const AddReviewScreen = ({navigation, route}) => {
   // Available tags: displayed in line 323
-  const tags = ["Asian","Beef", "Bars", "Burger", "Breakfast", "Buffet", "Cafes", "Chicken", "Chinese", "Desserts", 
-                  "Drink", "Dinner", "French", "Fried", "Italian", "Indian", "Halal", "Healthy",
-                  "HotPot", "Japanese", "Korean", "Late Night", "LightBites","Malay", "Mexican", "Mookata", "Mutton",
+  const tags = ["Asian","Bars", "Beef", "Breakfast", "Buffet", "Burger", "Cafes", "Chicken", "Chinese", "Desserts", 
+                  , "Dinner", "Drink", "French", "Fried", "Indian", "Italian",  "Halal", "Healthy",
+                  "HotPot", "Japanese", "Korean", "LightBites","Malay", "Mexican", "Mookata", "Mutton",
                   "Pasta", "Pizza", "Pork", "Ramen", "Salad", "SeaFood", "Spanish", "Steak", "Supper", "Sushi", "Takeaway", "Thai", "Turkish",
                   "Vegetarian", "Western"];
   const {user, logout} = useContext(AuthContext);
@@ -36,6 +36,7 @@ const AddReviewScreen = ({navigation, route}) => {
   const [selected, setSelected] = useState([]);
   console.log(selected);
   const [tagName, setTagName] = useState('');
+  const windowWidth = Dimensions.get('window').width;
 
   // Ask for permissions to access user's camera and media gallery
   useEffect(() => {
@@ -429,7 +430,61 @@ const AddReviewScreen = ({navigation, route}) => {
       <ScrollView>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <InputWrapper>
-            {image === null ? <AddImage source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} /> : <AddImage source={{uri: image}} />}
+            <TouchableOpacity onPress={() => Alert.alert(
+              "Method of Upload",
+              "Choose one", 
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel"
+                },
+                {
+                  text: "Take Photo",
+                  onPress: takePhotoFromCamera
+                },
+                { 
+                  text: "Choose Photo", 
+                  onPress: choosePhotoFromLibrary
+                }
+              ],
+              { cancelable: false }
+            )}>
+                {image === null ? 
+                  <ImageBackground 
+                  source={{uri: 'https://www.firstbenefits.org/wp-content/uploads/2017/10/placeholder.png'}} 
+                  style={{ 
+                    width: windowWidth,
+                    height: 250,
+                    marginBottom: 15}}
+                  >
+                  <View style={{
+                    flex:1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                  <Icon 
+                    name="camera" 
+                    size={35}
+                    color="#fff"
+                    style={{
+                      opacity: 0.7,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 1,
+                      borderColor: '#fff',
+                      borderRadius: 10
+                    }}/>
+                  </View>
+              </ImageBackground>: 
+                  <Image 
+                    source={{uri: image}} 
+                    style={{ 
+                      width: windowWidth,
+                      height: 250,
+                      marginBottom: 15}}/>
+                }
+            </TouchableOpacity>
             <View style={{flex: 1, justifyContent: 'center'}}>
             <StarRating
               rating={rating}
@@ -476,21 +531,6 @@ const AddReviewScreen = ({navigation, route}) => {
           </InputWrapper>
         </TouchableWithoutFeedback>
       </ScrollView>
-
-      <ActionButton buttonColor="#2e64e5">
-        <ActionButton.Item
-          buttonColor="#9b59b6"
-          title="Take Photo"
-          onPress={takePhotoFromCamera}>
-          <Icon name="camera-outline" style={styles.actionButtonIcon} />
-        </ActionButton.Item>
-        <ActionButton.Item
-          buttonColor="#3498db"
-          title="Choose Photo"
-          onPress={choosePhotoFromLibrary}>
-          <Icon name="md-images-outline" style={styles.actionButtonIcon} />
-        </ActionButton.Item>
-      </ActionButton>
     </KeyboardAvoidingView>
   );
 }
@@ -505,10 +545,9 @@ const styles = StyleSheet.create({
   },
   tagContainer: {
     height:"30%",
-    width:"100%",
+    width: "100%",
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 20
+    flexWrap: 'wrap'
   },
   actionButtonIcon: {
     fontSize: 20,
