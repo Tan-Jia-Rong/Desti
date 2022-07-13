@@ -6,3 +6,4 @@ export { default as UserProfileButton } from './UserProfileButton';
 export { default as DetailFragment } from './DetailFragment';
 export { default as RestaurantReviewFragment } from './RestaurantReviewFragment';
 export { default as TagButton } from './TagButton';
+export { default as RestaurantProfileButton } from './RestaurantProfileButton';

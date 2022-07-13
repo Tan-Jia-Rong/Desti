@@ -9,7 +9,7 @@ import { ProfileScreen, MapScreen, RestaurantScreen,
     RouletteScreen, FeedsScreen, AddReviewScreen, 
     EditProfileScreen, SearchUsersScreen, OthersProfileScreen, 
     FollowersScreen, FollowingScreen, InputScreen, 
-    DirectionScreen, RestaurantGetScreen, BookmarkScreen} from "../screens";
+    DirectionScreen, RestaurantGetScreen, BookmarkScreen, ListOfRestaurantsScreen} from "../screens";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -247,6 +247,14 @@ const RestaurantStack = ({route, navigation}) => {
                 options={{
                     headerTitle: "Restaurant Search"
                 }}
+            />
+
+            <Stack.Screen
+              name="ListOfRestaurantsScreen"
+              component={ListOfRestaurantsScreen}
+              options={{
+                headerTitle: "Returned results"
+            }}
             />
 
             <Stack.Screen

@@ -303,7 +303,8 @@ const AddReviewScreen = ({navigation, route}) => {
           const restaurantReference = await setDoc(restaurantRef, {
             name: route.params.restaurantResult.name,
             averageRating: rating,
-            postsThatReviewed: [docReference.id]
+            postsThatReviewed: [docReference.id],
+            priceLevel: -1
           })
 
           // Set RestaurantTags collection

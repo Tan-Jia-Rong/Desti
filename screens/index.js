@@ -14,4 +14,5 @@ export { default as FollowingScreen } from './FollowingScreen';
 export { default as InputScreen } from './InputScreen';
 export { default as DirectionScreen } from './DirectionScreen';
 export { default as RestaurantGetScreen } from './RestaurantGetScreen';
-export { default as BookmarkScreen} from './BookmarkScreen'
+export { default as BookmarkScreen } from './BookmarkScreen';
+export { default as ListOfRestaurantsScreen} from './ListOfRestaurantsScreen';

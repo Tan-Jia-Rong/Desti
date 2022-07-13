@@ -22,7 +22,7 @@ const InputScreen = ({navigation}) => {
   console.log(selected);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [rating, setRating] = useState(0);
-  const [priceLevel, setPriceLevel] = useState(0);
+  const [priceLevel, setPriceLevel] = useState(5);
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
@@ -174,7 +174,7 @@ const InputScreen = ({navigation}) => {
           <View style={{justifyContent: 'center', alignItems: 'center', alignSelf:'center', flex: 1}}>
             <FormButton 
               buttonTitle='Search Restaurants'
-              onPress={() => {}}
+              onPress={() => navigation.navigate("ListOfRestaurantsScreen", {rating: rating, priceLevel: priceLevel, selected: selected})}
             />
         </View>
       </View> 
