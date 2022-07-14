@@ -1,17 +1,23 @@
 import { useState, useEffect, useContext } from "react";
-import { StyleSheet, View, Text, TextInput, FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, View, Text, TextInput, FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native';
 import { storage, db } from "../firebase";
-import { collection, query, where, getDocs, doc, getDoc, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, orderBy, setDoc } from "firebase/firestore";
 import { FormInput, RestaurantProfileButton } from '../components';
 import { AuthContext } from "../navigation/AuthProvider";
 import { apiKey } from '@env';
 
 const ListOfRestaurantsScreen = ({ navigation, route }) => {
+  const tags = ["Asian","Bars", "Beef", "Breakfast", "Buffet", "Burger", "Cafes", "Chicken", "Chinese", "Desserts", 
+  , "Dinner", "Drink", "French", "Fried", "Indian", "Italian",  "Halal", "Healthy",
+  "HotPot", "Japanese", "Korean", "LightBites","Malay", "Mexican", "Mookata", "Mutton",
+  "Pasta", "Pizza", "Pork", "Ramen", "Salad", "SeaFood", "Spanish", "Steak", "Supper", "Sushi", "Takeaway", "Thai", "Turkish",
+  "Vegetarian", "Western"];
     const rating = route.params.rating;
     const userPriceLevel = route.params.priceLevel;
     // Selected is an array of tags
     const selected = route.params.selected;
     const [restaurants, setRestaurants] = useState([]);
+    const [fetchingRestaurants, setFetchingRestaurants] = useState(true);
 
     useEffect(() => {
     fetchRestaurants();
@@ -19,19 +25,70 @@ const ListOfRestaurantsScreen = ({ navigation, route }) => {
 
     const fetchRestaurants = async () => {
         try {
+            // First, filter by rating
             const q = query(collection(db, "Restaurants"), where("averageRating", ">=", route.params.rating));
             const querySnapshot = await getDocs(q);
             const arr = [];
-            querySnapshot.forEach((doc) => {
-                const { priceLevel, name } = doc.data();
+            // Can't use forEach loop here due to it being not compatible with async operations
+            for (let i = 0; i < querySnapshot.docs.length; i++) {
+                const { priceLevel, name } = querySnapshot.docs[i].data();
+                // Second, filter by price level
                 if (userPriceLevel >= priceLevel) {
-                    arr.push({
-                        id: doc.id,
-                        name
-                    })
-                }
-            });
 
+                  // Lastly, filter by tags
+                  if (selected.length !== 0) {
+                    const restaurantTagsRef = doc(db, 'RestaurantTags', querySnapshot.docs[i].id);
+                    const restaurantTagsSnap = await getDoc(restaurantTagsRef);
+  
+                    if (restaurantTagsSnap.exists()) {
+                      const obj = restaurantTagsSnap.data();
+                      let firstLargest = 0;
+                      let firstLargestTag = ''
+                      let secondLargest = 0;
+                      let secondLargestTag = ''
+                      let thirdLargest = 0;
+                      let thirdLargestTag = ''
+  
+                        for (let i = 0; i < Object.entries(obj).length; i++) {
+                          if (Object.entries(obj)[i][1]> firstLargest) {
+                            thirdLargest = secondLargest;
+                            thirdLargestTag = secondLargestTag;
+                            secondLargest = firstLargest;
+                            secondLargestTag = firstLargestTag
+                            firstLargest = Object.entries(obj)[i][1];
+                            firstLargestTag = Object.entries(obj)[i][0];
+                          } else if (Object.entries(obj)[i][1] > secondLargest) {
+                            thirdLargest = secondLargest;
+                            thirdLargestTag = secondLargestTag;
+                            secondLargest = Object.entries(obj)[i][1];
+                            secondLargestTag =  Object.entries(obj)[i][0];
+                          } else if (Object.entries(obj)[i][1] > thirdLargest) {
+                            thirdLargest = Object.entries(obj)[i][1];
+                            thirdLargestTag = Object.entries(obj)[i][0];
+                          }
+                        }
+                      selected.every(item => {
+                        if (item === firstLargestTag || item === secondLargestTag || item === thirdLargestTag) {
+                          arr.push({
+                            id: querySnapshot.docs[i].id,
+                            name
+                        });
+                        return false;
+                        } else {
+                          return true;
+                        } 
+                      });
+                    }
+                  } else {
+                    arr.push({
+                      id: querySnapshot.docs[i].id,
+                      name
+                  });
+                }
+              }
+            };
+
+            console.log("arr is: " + arr);
             arr.sort((a, b) => {
                 if (a.name <= b.name) {
                     return -1;
@@ -40,6 +97,7 @@ const ListOfRestaurantsScreen = ({ navigation, route }) => {
                 }
             })
             setRestaurants(arr);
+            setFetchingRestaurants(false);
         } catch(e) {
             console.log(e);
         }
@@ -64,6 +122,13 @@ const ListOfRestaurantsScreen = ({ navigation, route }) => {
 
 
     return (
+      <View>
+      {fetchingRestaurants ? (
+        <View style={{justifyContent: "center", alignItems: "center"}}>
+           <Text>Fetching restaurants...</Text>
+           <ActivityIndicator size='large' color='#0000ff' />
+        </View>
+      ) : (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View>
           <View styles={styles.inner}>
@@ -74,10 +139,12 @@ const ListOfRestaurantsScreen = ({ navigation, route }) => {
             data={restaurants}
             renderItem={({item}) => <RestaurantProfileButton item={item} onPress={() => handleOnPress(item.id)}/>}
           />
-
         </View>
       </View>
     </TouchableWithoutFeedback>
+      )
+      }
+    </View>
     )
 }
 
