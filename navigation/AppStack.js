@@ -313,6 +313,31 @@ const RestaurantStack = ({route, navigation}) => {
                 name="Following"
                 component={FollowingScreen}
             />
+
+            <Stack.Screen
+                name="AddReviews"
+                component={AddReviewScreen}
+                options={{
+                    headerTitle: "Add Review",
+                    headerTitleAlign: 'center'
+                }}
+            />
+
+            <Stack.Screen
+                name="Home"
+                component={FeedsScreen}
+                options={{
+                    headerRight: () => (
+                        <View style={{marginRight: 10}}>
+                            <Ionicons 
+                            name="add-circle-outline" 
+                            size={25}
+                            onPress={() => navigation.navigate("AddReviews")}
+                            />
+                        </View>
+                    )
+                }}
+            />
         </Stack.Navigator>
     )
 }
@@ -385,6 +410,31 @@ const MapStack = ({route, navigation}) => {
             <Stack.Screen
                 name="Following"
                 component={FollowingScreen}
+            />
+
+<Stack.Screen
+                name="AddReviews"
+                component={AddReviewScreen}
+                options={{
+                    headerTitle: "Add Review",
+                    headerTitleAlign: 'center'
+                }}
+            />
+
+            <Stack.Screen
+                name="Home"
+                component={FeedsScreen}
+                options={{
+                    headerRight: () => (
+                        <View style={{marginRight: 10}}>
+                            <Ionicons 
+                            name="add-circle-outline" 
+                            size={25}
+                            onPress={() => navigation.navigate("AddReviews")}
+                            />
+                        </View>
+                    )
+                }}
             />
         </Stack.Navigator>
     )

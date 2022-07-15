@@ -414,17 +414,17 @@ const AddReviewScreen = ({navigation, route}) => {
     })
   }
 
-  if (hasCameraPermission === false && hasGalleryPermission === false) {
-    return <Text>No permission access to camera and photo gallery</Text>
-  }
+  // if (hasCameraPermission === false && hasGalleryPermission === false) {
+  //   return <Text>No permission access to camera and photo gallery</Text>
+  // }
 
-  if (hasCameraPermission === false ) {
-    return <Text>No permission access to camera</Text>
-  }
+  // if (hasCameraPermission === false ) {
+  //   return <Text>No permission access to camera</Text>
+  // }
 
-  if (hasGalleryPermission === false) {
-    return <Text>No permission access to photo gallery</Text>
-  }
+  // if (hasGalleryPermission === false) {
+  //   return <Text>No permission access to photo gallery</Text>
+  // }
 
   return (
     <KeyboardAvoidingView style={{flex:1, backgroundColor: '#2e64e515'}} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}>

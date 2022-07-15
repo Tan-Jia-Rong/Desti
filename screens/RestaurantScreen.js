@@ -227,6 +227,12 @@ const RestaurantScreen = ({navigation, route}) => {
                 >
                     <MaterialCommunityIcons name="directions" size={30} color={"white"}/>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.buttonMidContainer}
+                    onPress={() => { navigation.navigate("AddReviews")}}
+                >
+                    <Text style={styles.reviewText}> Add Review </Text>
+                </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.buttonRightContainer}
@@ -269,6 +275,23 @@ const styles = StyleSheet.create({
       width: 50,
       backgroundColor: '#4287f5',
       borderRadius: 50,
+    },
+    buttonMidContainer: {
+        flex: 1,
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        bottom: 20,
+        height: 50,
+        width: 150,
+        backgroundColor: '#4287f5',
+        borderRadius: 50,
+    },
+    reviewText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold'
     },
     buttonRightContainer: {
       flex: 1,
