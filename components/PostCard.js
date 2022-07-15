@@ -24,6 +24,8 @@ import { Container,
 
 
 const PostCard = ({ item, onDelete, onPress }) => {
+    if(item === undefined) return null;
+    console.log(item);
     const {user, logout} = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
     const [rating, setRating] = useState(item.rating);

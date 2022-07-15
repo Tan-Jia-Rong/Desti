@@ -229,7 +229,7 @@ const RestaurantScreen = ({navigation, route}) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.buttonMidContainer}
-                    onPress={() => { navigation.navigate("AddReviews")}}
+                    onPress={() => { navigation.navigate("AddOtherReviews", {result})}}
                 >
                     <Text style={styles.reviewText}> Add Review </Text>
                 </TouchableOpacity>

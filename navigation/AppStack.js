@@ -9,7 +9,7 @@ import { ProfileScreen, MapScreen, RestaurantScreen,
     RouletteScreen, FeedsScreen, AddReviewScreen, 
     EditProfileScreen, SearchUsersScreen, OthersProfileScreen, 
     FollowersScreen, FollowingScreen, InputScreen, 
-    DirectionScreen, RestaurantGetScreen, BookmarkScreen, ListOfRestaurantsScreen} from "../screens";
+    DirectionScreen, RestaurantGetScreen, BookmarkScreen, ListOfRestaurantsScreen, AddReviewOtherScreen, RestaurantOtherScreen} from "../screens";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -315,27 +315,11 @@ const RestaurantStack = ({route, navigation}) => {
             />
 
             <Stack.Screen
-                name="AddReviews"
-                component={AddReviewScreen}
+                name="AddOtherReviews"
+                component={AddReviewOtherScreen}
                 options={{
                     headerTitle: "Add Review",
                     headerTitleAlign: 'center'
-                }}
-            />
-
-            <Stack.Screen
-                name="Home"
-                component={FeedsScreen}
-                options={{
-                    headerRight: () => (
-                        <View style={{marginRight: 10}}>
-                            <Ionicons 
-                            name="add-circle-outline" 
-                            size={25}
-                            onPress={() => navigation.navigate("AddReviews")}
-                            />
-                        </View>
-                    )
                 }}
             />
         </Stack.Navigator>
@@ -355,6 +339,7 @@ const MapStack = ({route, navigation}) => {
                     headerTitle: "Map"
                 }}
             />
+            
             <Stack.Screen
                 name="RestaurantScreen"
                 component={RestaurantScreen}
@@ -412,28 +397,12 @@ const MapStack = ({route, navigation}) => {
                 component={FollowingScreen}
             />
 
-<Stack.Screen
-                name="AddReviews"
-                component={AddReviewScreen}
+            <Stack.Screen
+                name="AddOtherReviews"
+                component={AddReviewOtherScreen}
                 options={{
                     headerTitle: "Add Review",
                     headerTitleAlign: 'center'
-                }}
-            />
-
-            <Stack.Screen
-                name="Home"
-                component={FeedsScreen}
-                options={{
-                    headerRight: () => (
-                        <View style={{marginRight: 10}}>
-                            <Ionicons 
-                            name="add-circle-outline" 
-                            size={25}
-                            onPress={() => navigation.navigate("AddReviews")}
-                            />
-                        </View>
-                    )
                 }}
             />
         </Stack.Navigator>

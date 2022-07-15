@@ -7,6 +7,7 @@ export { default as RouletteScreen } from './RouletteScreen';
 export { default as MapScreen } from './MapScreen';
 export { default as FeedsScreen } from './FeedsScreen';
 export { default as AddReviewScreen } from './AddReviewScreen';
+export { default as AddReviewOtherScreen } from './AddReviewOtherScreen';
 export { default as SearchUsersScreen } from './SearchUsersScreen';
 export { default as OthersProfileScreen } from './OthersProfileScreen';
 export { default as FollowersScreen } from './FollowersScreen';
