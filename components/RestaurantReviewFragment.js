@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, {useCallback, useState, useEffect, useContext } from "react";
 import { StyleSheet, Text, View, Image, Alert} from "react-native";
 import { storage, db } from "../firebase";
 import { collection, getDocs, query, doc, getDoc, deleteDoc, where, orderBy, arrayRemove, updateDoc } from "firebase/firestore";
 import  PostCard  from './PostCard';
 import { ref, deleteObject } from "firebase/storage";
 import { StyleSheetManager } from 'styled-components';
+import { useFocusEffect } from "@react-navigation/native";
 
 const RestaurantReviewFragment = ({ navigation, placeId }) => {
     const [reviews, setReviews] = useState(null);
@@ -53,9 +54,11 @@ const RestaurantReviewFragment = ({ navigation, placeId }) => {
           }
     }
 
-    useEffect(() => {
-        fetchReviews();
-    }, [])
+  // useFocusEffect ensures that restaurant screen refreshes everytime I visit it
+  useFocusEffect(React.useCallback(() => {
+    fetchReviews();
+  }, []));
+
 
     useEffect(() => {
         fetchReviews();
