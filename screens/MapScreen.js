@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Button, Image, Touchable, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Button, Image, Touchable, TouchableOpacity, Platform} from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location"
 import { useEffect, useRef, useState } from 'react';
@@ -28,6 +28,8 @@ const MapScreen = ({navigation}) => {
 
   const getnSetBoundaries = () => {
     if (mapRef === null) return;
+
+    if(Platform.OS === "ios") return;
 
     mapRef.setMapBoundaries({latitude: location.coords.latitude + 0.02, longitude: location.coords.longitude + 0.02},
                             {latitude: location.coords.latitude - 0.02, longitude: location.coords.longitude - 0.02})
