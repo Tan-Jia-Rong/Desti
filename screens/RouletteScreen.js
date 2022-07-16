@@ -167,7 +167,7 @@ const RouletteScreen = ({navigation}) => {
       }
 
         if (maxSumRestaurantPlaceId == '') {
-          console.log("No nearby restaurants has fitting requirments yet")
+          Alert.alert("Nearby restaurants not enough data");
           setRunningAlgo(false);
         } else {
           console.log("Final is: " + maxSumRestaurantPlaceId)
