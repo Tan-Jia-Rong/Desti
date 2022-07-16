@@ -78,7 +78,7 @@ const RestaurantScreen = ({navigation, route}) => {
       // Else if the user does not have currently have a bookmark collection
       } else {
         await setDoc(bookmarkRef, {
-            [placeId]: true
+            [placeId]: photo
         })
      }
     }
