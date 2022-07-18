@@ -134,6 +134,15 @@ const FeedsStack = ({navigation}) => {
                       }
                 )}
             />
+
+            <Stack.Screen
+                name="AddOtherReviews"
+                component={AddReviewOtherScreen}
+                options={{
+                    headerTitle: "Add Review",
+                    headerTitleAlign: 'center'
+                }}
+            />
         </Stack.Navigator>
     )
 }
