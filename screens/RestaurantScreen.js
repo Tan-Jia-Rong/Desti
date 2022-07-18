@@ -1,5 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState, useEffect, useContext } from "react";
+import React, {useCallback, useState, useEffect, useContext } from "react";
 import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import {  apiKey } from "@env";
 import { storage, db } from "../firebase";
@@ -100,7 +100,9 @@ const RestaurantScreen = ({navigation, route}) => {
             // If there is at least one review done by our app users
             if (restaurantSnap.exists()) {
                 const {averageRating, postsThatReviewed} = restaurantSnap.data();
-                setOurRating(averageRating.toFixed(1));
+                if (averageRating !== null) {
+                    setOurRating(averageRating.toFixed(1));
+                }
 
                 const reviewArr = [];
                 const q = query(collection(db, 'Posts'), orderBy('postTime', 'desc'));
@@ -167,16 +169,10 @@ const RestaurantScreen = ({navigation, route}) => {
         }
     }
 
-
-
-    // FetchBookmark also
     useEffect(() => {
-        fetchTags();
         fetchBookmark();
-        fetchReviews();
-    }, [])
+    }, []);
     
-    // To-do: update BookmarkStatus
     const onBookmarkPress = async () => {
         setRenderBookmarkStatus(!renderBookmarkStatus);
         await updateBookmark();
@@ -217,6 +213,8 @@ const RestaurantScreen = ({navigation, route}) => {
     // updateRestaurant with changed values
     useFocusEffect(React.useCallback(() => {
         updateRestaurant();
+        fetchTags();
+        fetchReviews();
       }, []));
 
     // If result is invalid

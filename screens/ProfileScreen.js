@@ -134,7 +134,7 @@ const ProfileScreen = ({ navigation, route }) => {
         // Divison by zero case
         if (postsThatReviewed.length - 1 === 0) {
           await updateDoc(restaurantRef, {
-            averageRating: 0
+            averageRating: null
           })
     
           await updateDoc(restaurantRef, {

@@ -220,7 +220,8 @@ const AddReviewOtherScreen = ({navigation, route}) => {
         
         // update Restaurants collection
         await updateDoc(restaurantRef, {
-          averageRating: ((averageRating * postsThatReviewed.length) + rating)/(postsThatReviewed.length + 1)
+          averageRating: averageRating === null ? (rating)/(postsThatReviewed.length + 1)
+                                                     : ((averageRating * postsThatReviewed.length) + rating)/(postsThatReviewed.length + 1)
         })
 
         // update Restaurants collection

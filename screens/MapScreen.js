@@ -8,6 +8,8 @@ import { apiKey } from '@env';
 import DestiMarker from '../assets/DestiMarker.png'
 import DestiNewMarker from '../assets/DestiNewMarker.png'
 import { async } from '@firebase/util';
+import { storage, db } from "../firebase";
+import { collection, addDoc, Timestamp, doc, setDoc, updateDoc, getDoc, arrayUnion, increment, query, where, getDocs } from "firebase/firestore";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -23,6 +25,7 @@ const MapScreen = ({navigation}) => {
   const [time, setTime] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [restaurantList, setRestaurantList] = useState([]);
+  const [restaurantListWithOurRatings, setRestaurantListWithOurRatings] = useState([]);
   const [coords, setCoords] = useState(null);
   const [result, setResult] = useState([]);
 
@@ -114,7 +117,7 @@ const MapScreen = ({navigation}) => {
   // Renders markers of nearby restaurants <- capped at 20 restaurant as per google api
   const renderMarkers = (restaurantList) => {
     return (
-      restaurantList.map((item) => (
+      restaurantList.map(item => (
         <Marker
           title={item.name}
           description= {'Rating ' + item.rating + ' / 5.0'}
@@ -184,6 +187,24 @@ const MapScreen = ({navigation}) => {
           console.log("Finding nearby restaurant");
           let restaurantList = await handleRestaurantSearch(location.coords.latitude, location.coords.longitude);
           setRestaurantList(restaurantList.results);
+          let updatedRestaurantList = restaurantList.results.map(async item => {
+            const restaurantRef = doc(db, "Restaurants", item.place_id);
+            const restaurantSnap = await getDoc(restaurantRef);
+      
+            if (restaurantSnap.exists()) {
+              const { averageRating } = restaurantSnap.data();
+              if (averageRating === null) {
+                return item;
+              } else {
+                return {...item, rating: averageRating.toFixed(1) }
+              }
+            } else {
+              return item;
+            }
+          })
+          const finalList = await Promise.all(updatedRestaurantList);
+      
+          setRestaurantListWithOurRatings(finalList);
         }
       )
 
@@ -237,7 +258,7 @@ const MapScreen = ({navigation}) => {
         }}
       >
 
-      {renderMarkers(restaurantList)}
+      {renderMarkers(restaurantListWithOurRatings)}
 
       {coords !== null && renderPolyLine()}
     </MapView>
