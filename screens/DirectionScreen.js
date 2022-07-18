@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image} from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location"
 import { useEffect, useState } from 'react';
+import DestiMarker from '../assets/DestiMarker.png'
 import Polyline from '@mapbox/polyline'
 import { apiKey } from '@env'
 const { width, height } = Dimensions.get('screen');
@@ -137,7 +138,12 @@ const DirectionScreen = ({route, navigation}) => {
             latitude: destination.lat,
             longitude: destination.lng
           }}
-        />
+      >
+        <Image
+            source={DestiMarker}
+            style={styles.markerStyle}
+          />
+      </Marker>
 
       {coords !== null &&  renderPolyLine(coords)}
     </MapView>
@@ -179,5 +185,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     textAlign: 'center'
+  },
+  markerStyle: {
+    width: 50,
+    height: 50,
   }
 });

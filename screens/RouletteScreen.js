@@ -163,12 +163,18 @@ const RouletteScreen = ({navigation}) => {
             maxSumRestaurantPlaceId = restaurantArr[i];
             console.log("Updated maxSumPlaceId to be: " + maxSumRestaurantPlaceId)
           }
+        } else {
+          
         }
       }
 
         if (maxSumRestaurantPlaceId == '') {
-          console.log("No nearby restaurants has fitting requirments yet")
+          alert("No nearby restaurants has fitting requirments yet... But we found a restaurant for you!")
+          const random = Math.floor(Math.random(20));
+          maxSumRestaurantPlaceId = restaurantArr[random];
+          const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
           setRunningAlgo(false);
+          navigation.navigate("Restaurant Screen", { result });
         } else {
           console.log("Final is: " + maxSumRestaurantPlaceId)
           const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
