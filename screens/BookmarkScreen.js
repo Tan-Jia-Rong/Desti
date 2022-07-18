@@ -21,8 +21,6 @@ const WIDTH = Dimensions.get('window').width;
 const BookmarkScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const [listData, setListData] = useState([]);
-  const [photo, setPhoto] = useState([]);
-  const [photoIndex, setPhotoIndex] = useState(0);
   let row: Array<any> = [];
   let prevOpenedRow;
 
@@ -44,12 +42,10 @@ const BookmarkScreen = ({navigation}) => {
     if (bookmarkSnap.exists()) {
       const obj = bookmarkSnap.data();
       for (let i = 0; i < Object.entries(obj).length; i++) {
-        const data = await handlePlaceId( Object.entries(obj)[i][0]);
-        const result = data.result;
         arr.push({
-          photo: Object.entries(obj)[i][1],
+          photo: Object.entries(obj)[i][1].photo,
           placeId: Object.entries(obj)[i][0],
-          name: result.name
+          name:  Object.entries(obj)[i][1].name
         });
       }
       arr.sort((a, b) => {

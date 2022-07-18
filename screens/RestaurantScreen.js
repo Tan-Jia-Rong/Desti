@@ -32,6 +32,7 @@ const RestaurantScreen = ({navigation, route}) => {
     const [loading, setLoading] = useState(true);
     const [photo, setPhoto] = useState(null);
     const [bookmarkStatus, setBookmarkStatus] = useState(false);
+    const [renderBookmarkStatus, setRenderBookmarkStatus] = useState(false);
     const [tags, setTags] = useState([])
     
 
@@ -46,11 +47,13 @@ const RestaurantScreen = ({navigation, route}) => {
             for (const property in obj) {
                 // If user has already bookmarked current restaurant
                 if (property === placeId) {
+                    setRenderBookmarkStatus(true);
                     setBookmarkStatus(true);
                     break;
                 }
             } 
         } else {
+            setRenderBookmarkStatus(false);
             setBookmarkStatus(false);
         }
     }
@@ -65,7 +68,10 @@ const RestaurantScreen = ({navigation, route}) => {
         // If user does not have current restaurant bookmarked yet, we add it into his collection
         if (!bookmarkStatus) {
             setDoc(bookmarkRef, {
-                [placeId]: photo
+                [placeId]: {
+                    name: name,
+                    photo: photo
+                }
             }, {
                 merge: true
             });
@@ -78,7 +84,10 @@ const RestaurantScreen = ({navigation, route}) => {
       // Else if the user does not have currently have a bookmark collection
       } else {
         await setDoc(bookmarkRef, {
-            [placeId]: photo
+            [placeId]: {
+                name: name,
+                photo: photo
+            }
         })
      }
     }
@@ -169,6 +178,7 @@ const RestaurantScreen = ({navigation, route}) => {
     
     // To-do: update BookmarkStatus
     const onBookmarkPress = async () => {
+        setRenderBookmarkStatus(!renderBookmarkStatus);
         await updateBookmark();
         setBookmarkStatus(!bookmarkStatus);
     }
@@ -268,7 +278,7 @@ const RestaurantScreen = ({navigation, route}) => {
                     style={styles.buttonRightContainer}
                     onPress={onBookmarkPress}
                 >
-                {bookmarkStatus ? 
+                {renderBookmarkStatus ? 
                     <MaterialCommunityIcons name='bookmark-off' size={30} color={"white"}/> : 
                     <MaterialCommunityIcons name='bookmark-plus' size={30} color={"white"}/> }
                 </TouchableOpacity>
