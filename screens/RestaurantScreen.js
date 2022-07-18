@@ -1,12 +1,13 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import {  apiKey } from "@env";
 import { storage, db } from "../firebase";
-import { collection, getDocs, query, doc, getDoc, deleteDoc, where, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, doc, getDoc, deleteDoc, where, orderBy, setDoc, updateDoc, deleteField } from "firebase/firestore";
 import { DetailFragment, RestaurantReviewFragment} from "../components"
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Dimensions } from "react-native";
+import { AuthContext } from "../navigation/AuthProvider";
 
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
@@ -24,6 +25,7 @@ const RestaurantScreen = ({navigation, route}) => {
     const placeId = result.place_id;
 
     // Other variables
+    const {user} = useContext(AuthContext);
     const [errormsg, setErrorMsg] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [ourRating, setOurRating] = useState(null);
@@ -35,22 +37,50 @@ const RestaurantScreen = ({navigation, route}) => {
 
     // To do: Fetch Bookmark and check if restaurant exist in user's bookmark and update bookmark status
     const fetchBookmark = async () => {
-    try {
-        // To check if already bookedmarked in
-        const bookmarkArr = [];
-        const q = query(collection(db, 'Bookmarks'));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            const { place_id, name, image } = doc.data();
-            if (place_id === placeId) setBookmarkStatus(true);
-        }, []);   
-    } catch(e) {
-        console.log(e);
-    }
+        const bookmarkRef = doc(db, "userBookmarks", user.uid);
+        const bookmarkSnap = await getDoc(bookmarkRef);
+
+        // If user already has a bookmark collection 
+        if (bookmarkSnap.exists()) {
+            const obj = bookmarkSnap.data();
+            for (const property in obj) {
+                // If user has already bookmarked current restaurant
+                if (property === placeId) {
+                    setBookmarkStatus(true);
+                    break;
+                }
+            } 
+        } else {
+            setBookmarkStatus(false);
+        }
     }
   
     // Update bookmark on user's database
     const updateBookmark = async () => {
+     const bookmarkRef = doc(db, "userBookmarks", user.uid);
+     const bookmarkSnap = await getDoc(bookmarkRef);
+
+      // If user already has a bookmark collection 
+      if (bookmarkSnap.exists()) {
+        // If user does not have current restaurant bookmarked yet, we add it into his collection
+        if (!bookmarkStatus) {
+            setDoc(bookmarkRef, {
+                [placeId]: photo
+            }, {
+                merge: true
+            });
+        // Else if the user already has current restaurant bookmarked, we remove it from his collection    
+        } else {
+            await updateDoc(bookmarkRef, {
+                [placeId]: deleteField()
+            });
+        }
+      // Else if the user does not have currently have a bookmark collection
+      } else {
+        await setDoc(bookmarkRef, {
+            [placeId]: photo
+        })
+     }
     }
 
     const fetchReviews = async () => {
@@ -133,7 +163,7 @@ const RestaurantScreen = ({navigation, route}) => {
     // FetchBookmark also
     useEffect(() => {
         fetchTags();
-        // fetchBookmark()
+        fetchBookmark();
         fetchReviews();
     }, [])
     

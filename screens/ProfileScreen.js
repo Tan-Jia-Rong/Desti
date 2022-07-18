@@ -283,7 +283,7 @@ const ProfileScreen = ({ navigation, route }) => {
       }
       <Text style = {styles.userName}>{userData ? userData.userName : 'Placeholder username'}</Text>
       {/* <Text>{route.params ? route.params.userId : user.uid}</Text> */}
-      <Text style = {styles.aboutUser}>Placeholder user information</Text>
+      
 
       <View style={styles.userBtnWrapper}>
         {route.params ? (

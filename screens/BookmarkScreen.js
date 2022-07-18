@@ -1,63 +1,75 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Text, View, Image, StyleSheet, FlatList, Button, Dimensions } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
 import { apiKey } from '@env';
 import { NavigationContainer } from '@react-navigation/native';
-
-const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
-
-// Fetches places details using placeId
-const handlePlaceId = async (place_id) => {
-  const url = 'https://maps.googleapis.com/maps/api/place/details/json?';
-  const placeid = `place_id=${place_id}`;
-  const key = `&key=${apiKey}`;
-  const placeUrl = url + placeid + key;
-  const result = await fetch(placeUrl).then(response => response.json());
-  return result;
-}
-
+import { AuthContext } from "../navigation/AuthProvider";
+import { collection, addDoc, Timestamp, doc, setDoc, updateDoc, getDoc, arrayUnion, increment, query, where, getDocs, deleteField } from "firebase/firestore";
+import { storage, db } from "../firebase";
+import { useFocusEffect } from "@react-navigation/native";
 
   // Definition of Bookmark
   // 1. place_id
   // 2. name
   // 3. image
 
-const fakeData = [
-  {
-    place_id: "ChIJ1f9Gi8YV2jERWukfruuoJNw" ,
-    name: "This shall be macdonalds",
-    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
-  },
-  {
-    place_id: "2" ,
-    name: "Fake Data 1",
-    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
-  },
-  {
-    place_id: "3" ,
-    name: "Fake data 2",
-    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
-  },
-  {
-    place_id: "4" ,
-    name: "Fake data 3",
-    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
-  },
-  {
-    place_id: "5" ,
-    name: "Fake data 4",
-    image: "https://animegalaxyofficial.com/wp-content/uploads/2021/04/solo-leveling-anime-adaptation.jpg"
-  },
-];
-
+const HEIGHT = Dimensions.get('window').height;
+const WIDTH = Dimensions.get('window').width;
 
 const BookmarkScreen = ({navigation}) => {
-  const [listData, setListData] = useState(fakeData);
+  const {user} = useContext(AuthContext);
+  const [listData, setListData] = useState([]);
+  const [photo, setPhoto] = useState([]);
+  const [photoIndex, setPhotoIndex] = useState(0);
   let row: Array<any> = [];
   let prevOpenedRow;
+
+  // Fetches places details using placeId
+  const handlePlaceId = async (place_id) => {
+    const url = 'https://maps.googleapis.com/maps/api/place/details/json?';
+    const placeid = `place_id=${place_id}`;
+    const key = `&key=${apiKey}`;
+    const placeUrl = url + placeid + key;
+    const result = await fetch(placeUrl).then(response => response.json());
+    return result;
+  }
+
+  const fetchBookmarks = async () => {
+    const bookmarkRef = doc(db, "userBookmarks", user.uid);
+    const bookmarkSnap = await getDoc(bookmarkRef);
+    const arr = [];
+
+    if (bookmarkSnap.exists()) {
+      const obj = bookmarkSnap.data();
+      for (let i = 0; i < Object.entries(obj).length; i++) {
+        const data = await handlePlaceId( Object.entries(obj)[i][0]);
+        const result = data.result;
+        arr.push({
+          photo: Object.entries(obj)[i][1],
+          placeId: Object.entries(obj)[i][0],
+          name: result.name
+        });
+      }
+      arr.sort((a, b) => {
+        if (a.name <= b.name) {
+          return -1;
+        } else {
+          return 1;
+        }
+      })
+      console.log(arr);
+      setListData(arr);
+    } else {
+      setListData([]);
+    }
+  }
+
+   // useFocusEffect ensures that bookmark screen refreshes everytime I visit it
+   useFocusEffect(React.useCallback(() => {
+    fetchBookmarks();
+  }, []));
 
   const renderItem = ({ item, index }, onClick) => {
     //
@@ -80,7 +92,7 @@ const BookmarkScreen = ({navigation}) => {
             backgroundColor: '#ff4d4d'
           }}>
           <Button 
-            color='white'
+            color='blue'
             onPress={onClick} 
             title="DELETE">
           </Button>
@@ -102,7 +114,7 @@ const BookmarkScreen = ({navigation}) => {
             <TouchableOpacity
               style={styles.bookmarkContainerInner}
               onPress={async () => {
-                const data = await handlePlaceId(item.place_id)
+                const data = await handlePlaceId(item.placeId)
                 const result = data.result
                 result ? navigation.navigate("RestaurantScreen", {result})
                        : null;
@@ -110,7 +122,7 @@ const BookmarkScreen = ({navigation}) => {
             >
               <Text style={styles.bookmarkText}>{item.name}</Text>
               <Image
-                source={{uri: item.image}}
+                source={{uri: item.photo}}
                 style={styles.bookmarkImage}
               />
           </TouchableOpacity>
@@ -120,12 +132,20 @@ const BookmarkScreen = ({navigation}) => {
   };
 
   // To Do : Update to delete from database
-  const deleteItem = ({ item, index }) => {
+  const deleteItem = async ({ item, index }) => {
+    const bookmarkRef = doc(db, "userBookmarks", user.uid);
+    const bookmarkSnap = await getDoc(bookmarkRef);
     console.log(item, index);
     let a = listData;
     a.splice(index, 1);
     console.log(a);
     setListData([...a]);
+    if (bookmarkSnap.exists()) {
+      const placeId = item.placeId;
+      await updateDoc(bookmarkRef, {
+        [placeId]: deleteField()
+    });
+    }
   };
 
   return (
@@ -139,7 +159,7 @@ const BookmarkScreen = ({navigation}) => {
             deleteItem(v);
           })
         }
-        keyExtractor={(item) => item.place_id}></FlatList>
+        keyExtractor={(item) => item.placeId}></FlatList>
     </View>
   );
 }
