@@ -19,13 +19,15 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.orbitals.Desti",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
       "package": "com.orbitals.Desti",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "config": {

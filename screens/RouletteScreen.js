@@ -138,51 +138,56 @@ const RouletteScreen = ({navigation}) => {
       console.log("thirdLargest is : " + thirdLargest + " and its tag is: " + thirdLargestTag);
 
       if (firstLargestTag === 'lol' || secondLargestTag === 'lol' || thirdLargestTag === 'lol') {
-        Alert.alert("Not enough personal data\nAdd more restaurant tags in your reviews!");
+        const restaurantArr = await getRestaurantArray(location.coords.latitude, location.coords.longitude);
+        alert("Not enough personal data\nAdd more restaurant tags in your reviews\n\nMeanwhile, here's a random nearby restaurant for you!");
+        const random = Math.floor(Math.random(20));
+        maxSumRestaurantPlaceId = restaurantArr[random];
+        const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
         setRunningAlgo(false);
-        return null;
-      }
+        navigation.navigate("Restaurant Screen", { result });
+      } else {
+        const restaurantArr = await getRestaurantArray(location.coords.latitude, location.coords.longitude);
+        setLoadingIndicatorText("Finding a suitable restaurant near you...");
+        let maxSum = 0;
+        let maxSumRestaurantPlaceId = ''
+        for (let i = 0; i < restaurantArr.length; i++) {
+          const restaurantTagsRef = doc(db, 'RestaurantTags', restaurantArr[i]);
+          const restaurantTagsSnap = await getDoc(restaurantTagsRef);
+          const restaurantRef = doc(db, 'Restaurants', restaurantArr[i]);
+          const restaurantSnap = await getDoc(restaurantRef);
 
-      const restaurantArr = await getRestaurantArray(location.coords.latitude, location.coords.longitude);
-      setLoadingIndicatorText("Finding a suitable restaurant near you...");
-      let maxSum = 0;
-      let maxSumRestaurantPlaceId = ''
-      for (let i = 0; i < restaurantArr.length; i++) {
-        const restaurantTagsRef = doc(db, 'RestaurantTags', restaurantArr[i]);
-        const restaurantTagsSnap = await getDoc(restaurantTagsRef);
-        const restaurantRef = doc(db, 'Restaurants', restaurantArr[i]);
-        const restaurantSnap = await getDoc(restaurantRef);
-
-        if (restaurantTagsSnap.exists() && restaurantSnap.exists()) {
-          const { averageRating } = restaurantSnap.data();
-          const obj = restaurantTagsSnap.data();
-          const calculatedSumForCurrentRestaurant = (obj[firstLargestTag] * 3 + obj[secondLargestTag] * 2 + obj[thirdLargestTag] * 1) * averageRating;
-          console.log("calculated sum is: " + calculatedSumForCurrentRestaurant)
-          if (calculatedSumForCurrentRestaurant > maxSum) {
-            maxSum = calculatedSumForCurrentRestaurant;
-            maxSumRestaurantPlaceId = restaurantArr[i];
-            console.log("Updated maxSumPlaceId to be: " + maxSumRestaurantPlaceId)
+          if (restaurantTagsSnap.exists() && restaurantSnap.exists()) {
+            const { averageRating } = restaurantSnap.data();
+            const obj = restaurantTagsSnap.data();
+            const calculatedSumForCurrentRestaurant = (obj[firstLargestTag] * 3 + obj[secondLargestTag] * 2 + obj[thirdLargestTag] * 1) * averageRating;
+            console.log("calculated sum is: " + calculatedSumForCurrentRestaurant)
+            if (calculatedSumForCurrentRestaurant > maxSum) {
+              maxSum = calculatedSumForCurrentRestaurant;
+              maxSumRestaurantPlaceId = restaurantArr[i];
+              console.log("Updated maxSumPlaceId to be: " + maxSumRestaurantPlaceId)
+            }
+          } else {
+            
           }
-        } else {
-          
+        }
+
+          if (maxSumRestaurantPlaceId == '') {
+            alert("No nearby restaurants has fitting requirments yet...\n\nBut we found a restaurant for you!")
+            const random = Math.floor(Math.random(20));
+            maxSumRestaurantPlaceId = restaurantArr[random];
+            const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
+            setRunningAlgo(false);
+            navigation.navigate("Restaurant Screen", { result });
+          } else {
+            console.log("Final is: " + maxSumRestaurantPlaceId)
+            const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
+            console.log(result);
+            setRunningAlgo(false);
+            navigation.navigate("Restaurant Screen", { result });
         }
       }
 
-        if (maxSumRestaurantPlaceId == '') {
-          alert("No nearby restaurants has fitting requirments yet... But we found a restaurant for you!")
-          const random = Math.floor(Math.random(20));
-          maxSumRestaurantPlaceId = restaurantArr[random];
-          const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
-          setRunningAlgo(false);
-          navigation.navigate("Restaurant Screen", { result });
-        } else {
-          console.log("Final is: " + maxSumRestaurantPlaceId)
-          const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
-          console.log(result);
-          setRunningAlgo(false);
-          navigation.navigate("Restaurant Screen", { result });
-
-        }
+      
       
     } else {
       console.log("No userPref Document");
