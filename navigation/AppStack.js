@@ -301,7 +301,7 @@ const RestaurantStack = ({route, navigation}) => {
             />
 
             <Stack.Screen
-                name="Map"
+                name="Directions"
                 component={DirectionScreen}
             />
 
