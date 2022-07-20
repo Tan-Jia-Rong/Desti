@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useRef, memo } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../navigation/AuthProvider';
 import moment from 'moment';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { TouchableOpacity, View, Dimensions, Text } from 'react-native';
 import { db } from "../firebase";
 import StarRating from "react-native-star-rating-widget";
@@ -19,8 +19,10 @@ import { Container,
     PostText, 
     PostImg, 
     InteractionWrapper, 
-    Interaction, 
-    InteractionText } from "../styles/FeedStyles";
+    InteractionLiked,
+    InteractionUnliked, 
+    InteractionTextLiked,
+    InteractionTextUnliked } from "../styles/FeedStyles";
 
 
 const PostCard = ({ item, onDelete, onPress }) => {
@@ -28,9 +30,12 @@ const PostCard = ({ item, onDelete, onPress }) => {
     const {user, logout} = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
     const [rating, setRating] = useState(item.rating);
+    const [liked, setLiked] = useState(item.likes.includes(user.uid));
+    const [likeText, setLikeText] = useState("Like");
     const componentMounted = useRef(true);
     const windowWidth = Dimensions.get('window').width;
     const navigation = useNavigation();
+    const placeId = item.id;
 
     // Get the user data from firecloud
   const getUser = async () => {
@@ -44,6 +49,7 @@ const PostCard = ({ item, onDelete, onPress }) => {
 
   useFocusEffect(React.useCallback(() => {
     getUser();
+    fetchLikes();
   }, []));
 
   // Fetches places details using placeId
@@ -63,29 +69,61 @@ const PostCard = ({ item, onDelete, onPress }) => {
 
     console.log("Hi result is: " +  result)
     return result;
-}
+  }
 
-    let likeIcon = item.liked? 'heart' : 'heart-outline';
-    let likeIconColor = item.liked? '#2e64e5' : '#333';
+  const fetchLikes = async () => {
+    const postRef = doc(db, 'Posts', item.id);
+    const postSnap = await getDoc(postRef);
 
-    let likeText='';
-    if (item.likes == 1) {
-        likeText = '1 Like';
-    } else if (item.likes > 1) {
-        likeText = item.likes + ' Likes';
+    if (postSnap.exists()) {
+      const { likes } = postSnap.data();
+      setLiked(likes.includes(user.uid));
+      if (likes.length == 1) {
+          setLikeText('1 Like');
+      } else if (likes.length > 1) {
+        setLikeText(likes.length + ' Likes');;
+      } else {
+        setLikeText("Like");
+      }
+      }
+  }
+
+  // Likes the post if previously unliked, vice-versa
+  const handleLike = async () => {
+    setLiked(!liked);
+    const postRef = doc(db, 'Posts', item.id);
+    const postSnap = await getDoc(postRef);
+
+    if (postSnap.exists()) {
+      const { likes } = postSnap.data();
+      // If user liked it alrd, now unlike it
+      if (likes.includes(user.uid)) {
+        if (likes.length > 2) {
+         setLikeText(likes.length - 1 + ' Likes');;
+        } else if (likes.length == 2) {
+         setLikeText("1 Like");
+        } else {
+          setLikeText("Like");
+        }
+        await updateDoc(postRef, {
+          likes: arrayRemove(user.uid)
+        })
+      // Else if user has not liked it, now like it
+      } else {
+        if (likes.length == 0) {
+          setLikeText('1 Like');
+        } else {
+          setLikeText(likes.length + 1 + " Likes");
+        }
+        await updateDoc(postRef, {
+          likes: arrayUnion(user.uid)
+        })
+      }
     } else {
-        likeText = 'Like';
+      console.log("Can't like/unlike post due to no post info");
     }
-
-    let commentText ='';
-    if (item.comments == 1) {
-        commentText = '1 Comment';
-    } else if (item.comments > 1) {
-        commentText = item.comments + ' Comments';
-    } else {
-        commentText = 'Comment';
-    }
-     
+  }
+   
     return (
       <View style={{width:windowWidth * 0.9}}>
       <Card>
@@ -102,7 +140,6 @@ const PostCard = ({ item, onDelete, onPress }) => {
           <View style={{justifyContent:'center', alignItems:'center'}}>
            <Text style={{fontSize:14, fontWeight:'bold'}} onPress={async () => {
             const result = await getRestaurantDetails(item.restaurantPlaceId);
-            navigation.navigate("RestaurantScreen", { result });
             navigation.navigate("RestaurantScreen", { result });
            }}>{item.restaurant}</Text> 
             <View style={{paddingLeft:0}}>
@@ -125,19 +162,29 @@ const PostCard = ({ item, onDelete, onPress }) => {
         <PostText>{item.postText}</PostText>
         <PostImg source={{uri: item.postImg}}/>
         <InteractionWrapper>
-          <Interaction active = {item.liked}>
-            <Ionicons name={likeIcon} size={25} color={likeIconColor}/>
-            <InteractionText active={item.liked}>{likeText}</InteractionText>
-          </Interaction>
-          <Interaction>
-            <Ionicons name='md-chatbubble-outline' size={25} />
-            <InteractionText>{commentText}</InteractionText>
-          </Interaction>
+          {liked ? 
+            <InteractionLiked>
+              <TouchableOpacity onPress={handleLike}>
+               <Ionicons name={'heart'} size={25} color={'#2e64e5'}/>
+             </TouchableOpacity> 
+              <TouchableOpacity onPress={() => navigation.navigate("Likes Screen", {placeId})}>
+                <InteractionTextLiked>{likeText}</InteractionTextLiked>
+              </TouchableOpacity>
+            </InteractionLiked>
+            :
+            <InteractionUnliked>
+              <TouchableOpacity onPress={handleLike}>
+                <Ionicons name={'heart-outline'} size={25} color={'#333'}/>
+              </TouchableOpacity>
+             <TouchableOpacity onPress={() => navigation.navigate("Likes Screen", {placeId})}>
+              <InteractionTextUnliked>{likeText}</InteractionTextUnliked> 
+              </TouchableOpacity>
+            </InteractionUnliked>}
           {user.uid === item.userId ? 
-          <Interaction onPress={() => onDelete(item.id)}>
-          <Ionicons name='md-trash-bin' size ={25} />
-          </Interaction> 
-        : null}
+             <InteractionUnliked onPress={() => onDelete(item.id)}>
+              <Ionicons name='md-trash-bin' size ={25} />
+             </InteractionUnliked> 
+            : null}
         </InteractionWrapper>
       </Card>
       </View>

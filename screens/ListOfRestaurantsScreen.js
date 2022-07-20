@@ -6,6 +6,7 @@ import { FormInput, RestaurantProfileButton } from '../components';
 import { AuthContext } from "../navigation/AuthProvider";
 import { apiKey } from '@env';
 
+// This screen shows a list of restaurants which satisifes the search by filter requirments
 const ListOfRestaurantsScreen = ({ navigation, route }) => {
   const tags = ["Asian","Bars", "Beef", "Breakfast", "Buffet", "Burger", "Cafes", "Chicken", "Chinese", "Desserts", 
   , "Dinner", "Drink", "French", "Fried", "Indian", "Italian",  "Halal", "Healthy",
