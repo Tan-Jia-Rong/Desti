@@ -183,7 +183,7 @@ const AddReviewOtherScreen = ({navigation, route}) => {
       postText: review,
       postImg: imageUrl,
       postTime: Timestamp.fromDate(new Date()),
-      likes: null,
+      likes: [],
       comments: null,
       rating: rating,
       restaurant: null,

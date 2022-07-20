@@ -66,19 +66,33 @@ export const InteractionWrapper = styled.View`
     padding: 15px;
 `;
 
-// Wrapper for either the like or comment button alone
-export const Interaction = styled.TouchableOpacity`
+// Wrapper for either the like button alone
+export const InteractionLiked = styled.TouchableOpacity`
     flex-direction: row;
     justify-content: center;
     border-radius: 5px;
     padding: 2px 5px;
-    background-color: ${props => props.active ? '#2e64e515' : 'transparent'};
+    background-color: '#2e64e515';
 `;
 
-export const InteractionText = styled.Text`
+export const InteractionUnliked = styled.TouchableOpacity`
+flex-direction: row;
+justify-content: center;
+border-radius: 5px;
+padding: 2px 5px;
+background-color: 'transparent';
+`;
+
+export const InteractionTextLiked = styled.Text`
     font-size: 12px;
     font-weight: bold;
-    color: ${props => props.active ? '#2e64e5' : '#333'};
     margin-top: 5px;
     margin-left: 5px;
+`;
+
+export const InteractionTextUnliked = styled.Text`
+font-size: 12px;
+font-weight: bold;
+margin-top: 5px;
+margin-left: 5px;
 `;

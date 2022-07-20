@@ -9,7 +9,7 @@ import { windowHeight, windowWidth } from "../utils/dimensions";
 import { FormButton, TagButton } from "../components";
 
 
-
+// This screen is the initial screen for restaurant stack
 const InputScreen = ({navigation}) => {
   const googlePlaceAutoCompleteRef = useRef(null)
   const tags = ["Asian","Bars", "Beef", "Breakfast", "Buffet", "Burger", "Cafes", "Chicken", "Chinese", "Desserts", 

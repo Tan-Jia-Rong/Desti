@@ -9,7 +9,7 @@ import { ProfileScreen, MapScreen, RestaurantScreen,
     RouletteScreen, FeedsScreen, AddReviewScreen, 
     EditProfileScreen, SearchUsersScreen, OthersProfileScreen, 
     FollowersScreen, FollowingScreen, InputScreen, 
-    DirectionScreen, RestaurantGetScreen, BookmarkScreen, ListOfRestaurantsScreen, AddReviewOtherScreen, RestaurantOtherScreen} from "../screens";
+    DirectionScreen, RestaurantGetScreen, BookmarkScreen, ListOfRestaurantsScreen, AddReviewOtherScreen, RestaurantOtherScreen, LikesScreen} from "../screens";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -44,6 +44,11 @@ const FeedsStack = ({navigation}) => {
             <Stack.Screen
                 name="Get Restaurant"
                 component={RestaurantGetScreen}
+            />
+
+            <Stack.Screen
+                name="Likes Screen"
+                component={LikesScreen}
             />
 
             <Stack.Screen
@@ -240,6 +245,11 @@ const ProfileStack = ({navigation}) => {
             />
 
             <Stack.Screen
+                name="Likes Screen"
+                component={LikesScreen}
+            />
+
+            <Stack.Screen
                 name="Map"
                 component={DirectionScreen}
             />
@@ -324,6 +334,11 @@ const RestaurantStack = ({route, navigation}) => {
             />
 
             <Stack.Screen
+                name="Likes Screen"
+                component={LikesScreen}
+            />
+
+            <Stack.Screen
                 name="AddOtherReviews"
                 component={AddReviewOtherScreen}
                 options={{
@@ -404,6 +419,11 @@ const MapStack = ({route, navigation}) => {
             <Stack.Screen
                 name="Following"
                 component={FollowingScreen}
+            />
+
+            <Stack.Screen
+                name="Likes Screen"
+                component={LikesScreen}
             />
 
             <Stack.Screen
