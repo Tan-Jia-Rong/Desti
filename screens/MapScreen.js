@@ -163,6 +163,7 @@ const MapScreen = ({navigation}) => {
       if(status !== 'granted') {
         setErrorMsg("Permission to access location not granted");
         console.log(errorMsg);
+        alert(errorMsg);
         return;
       }
       console.log("Location Permission Granted!")

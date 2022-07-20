@@ -12,6 +12,7 @@ const RouletteScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const [value, setValue] = useState(0);
   const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [runningAlgo, setRunningAlgo] = useState(false);
   const [loadingIndicatorText, setLoadingIndicatorText] = useState('');
   const windowWidth = Dimensions.get('window').width;
@@ -47,6 +48,7 @@ const RouletteScreen = ({navigation}) => {
         let { status } = await Location.requestForegroundPermissionsAsync(); // request permission if not granted
         if(status !== 'granted') {
           setErrorMsg("Permission to access location not granted");
+          alert(errorMsg);
           console.log(errorMsg);
           return; // returning here causes location to be null
         }
@@ -170,7 +172,7 @@ const RouletteScreen = ({navigation}) => {
         }
 
           if (maxSumRestaurantPlaceId == '') {
-            alert("No nearby restaurants has fitting requirments yet...\n\nBut we found a restaurant for you!")
+            alert("No nearby restaurants has fitting requirements yet...\n\nBut we found a restaurant for you!")
             const random = Math.floor(Math.random() * 20);
             maxSumRestaurantPlaceId = restaurantArr[random];
             console.log("Random is:" + random);
