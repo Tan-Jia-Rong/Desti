@@ -12,6 +12,7 @@ const RouletteScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const [value, setValue] = useState(0);
   const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [runningAlgo, setRunningAlgo] = useState(false);
   const [loadingIndicatorText, setLoadingIndicatorText] = useState('');
   const windowWidth = Dimensions.get('window').width;
@@ -47,6 +48,7 @@ const RouletteScreen = ({navigation}) => {
         let { status } = await Location.requestForegroundPermissionsAsync(); // request permission if not granted
         if(status !== 'granted') {
           setErrorMsg("Permission to access location not granted");
+          alert(errorMsg);
           console.log(errorMsg);
           return; // returning here causes location to be null
         }
@@ -79,8 +81,6 @@ const RouletteScreen = ({navigation}) => {
   const getRestaurantDetails = async (place_id) => {
       const data = await handlePlaceId(place_id);
       const result = data.result;
-
-      console.log("Hi result is: " +  result)
       return result;
   }
 
@@ -140,7 +140,7 @@ const RouletteScreen = ({navigation}) => {
       if (firstLargestTag === 'lol' || secondLargestTag === 'lol' || thirdLargestTag === 'lol') {
         const restaurantArr = await getRestaurantArray(location.coords.latitude, location.coords.longitude);
         alert("Not enough personal data\nAdd more restaurant tags in your reviews\n\nMeanwhile, here's a random nearby restaurant for you!");
-        const random = Math.floor(Math.random(20));
+        const random = Math.floor(Math.random() * 20);
         maxSumRestaurantPlaceId = restaurantArr[random];
         const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
         setRunningAlgo(false);
@@ -172,9 +172,10 @@ const RouletteScreen = ({navigation}) => {
         }
 
           if (maxSumRestaurantPlaceId == '') {
-            alert("No nearby restaurants has fitting requirments yet...\n\nBut we found a restaurant for you!")
-            const random = Math.floor(Math.random(20));
+            alert("No nearby restaurants has fitting requirements yet...\n\nBut we found a restaurant for you!")
+            const random = Math.floor(Math.random() * 20);
             maxSumRestaurantPlaceId = restaurantArr[random];
+            console.log("Random is:" + random);
             const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
             setRunningAlgo(false);
             navigation.navigate("Restaurant Screen", { result });
