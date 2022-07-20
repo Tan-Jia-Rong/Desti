@@ -261,7 +261,7 @@ const RestaurantScreen = ({navigation, route}) => {
                 <TouchableOpacity
                     style={styles.buttonLeftContainer}
                     onPress={() => {
-                        navigation.navigate("Map", { destination, address, name })}}
+                        navigation.navigate("Directions", { destination, address, name })}}
                 >
                     <MaterialCommunityIcons name="directions" size={30} color={"white"}/>
                 </TouchableOpacity>

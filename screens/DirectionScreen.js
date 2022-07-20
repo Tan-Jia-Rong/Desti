@@ -93,7 +93,7 @@ const DirectionScreen = ({route, navigation}) => {
 
   if(loading == true) return (
     <View style={styles.container}>
-      <Text> loading... </Text>
+      <Text> Loading... </Text>
     </View>
   )
 

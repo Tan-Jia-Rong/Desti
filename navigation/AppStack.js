@@ -148,6 +148,11 @@ const FeedsStack = ({navigation}) => {
                     headerTitleAlign: 'center'
                 }}
             />
+
+            <Stack.Screen
+                name="Directions"
+                component={DirectionScreen}
+            />
         </Stack.Navigator>
     )
 }
@@ -250,7 +255,7 @@ const ProfileStack = ({navigation}) => {
             />
 
             <Stack.Screen
-                name="Map"
+                name="Directions"
                 component={DirectionScreen}
             />
         </Stack.Navigator>

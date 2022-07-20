@@ -26,7 +26,7 @@ const RestaurantReviewFragment = ({ navigation, placeId }) => {
                 const q = query(collection(db, 'Posts'), orderBy('postTime', 'desc'));
                 const querySnapshot = await getDocs(q);
                 querySnapshot.forEach((doc) => {
-                    const { comments, likes, postImg, postText, postTime, rating, userId, restaurant } = doc.data();
+                    const { comments, likes, postImg, postText, postTime, rating, userId, restaurant, restaurantPlaceId } = doc.data();
                     if (postsThatReviewed.includes(doc.id)) {
                         reviewArr.push({
                             id: doc.id,
@@ -37,7 +37,8 @@ const RestaurantReviewFragment = ({ navigation, placeId }) => {
                             postTime,
                             rating,
                             userId,
-                            restaurant
+                            restaurant,
+                            restaurantPlaceId
                         });
                     }
                 }, []);
