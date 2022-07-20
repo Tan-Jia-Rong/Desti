@@ -79,8 +79,6 @@ const RouletteScreen = ({navigation}) => {
   const getRestaurantDetails = async (place_id) => {
       const data = await handlePlaceId(place_id);
       const result = data.result;
-
-      console.log("Hi result is: " +  result)
       return result;
   }
 
@@ -140,7 +138,7 @@ const RouletteScreen = ({navigation}) => {
       if (firstLargestTag === 'lol' || secondLargestTag === 'lol' || thirdLargestTag === 'lol') {
         const restaurantArr = await getRestaurantArray(location.coords.latitude, location.coords.longitude);
         alert("Not enough personal data\nAdd more restaurant tags in your reviews\n\nMeanwhile, here's a random nearby restaurant for you!");
-        const random = Math.floor(Math.random(20));
+        const random = Math.floor(Math.random() * 20);
         maxSumRestaurantPlaceId = restaurantArr[random];
         const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
         setRunningAlgo(false);
@@ -173,8 +171,9 @@ const RouletteScreen = ({navigation}) => {
 
           if (maxSumRestaurantPlaceId == '') {
             alert("No nearby restaurants has fitting requirments yet...\n\nBut we found a restaurant for you!")
-            const random = Math.floor(Math.random(20));
+            const random = Math.floor(Math.random() * 20);
             maxSumRestaurantPlaceId = restaurantArr[random];
+            console.log("Random is:" + random);
             const result = await getRestaurantDetails(maxSumRestaurantPlaceId);
             setRunningAlgo(false);
             navigation.navigate("Restaurant Screen", { result });

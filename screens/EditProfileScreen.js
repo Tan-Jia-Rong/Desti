@@ -196,17 +196,17 @@ const EditProfileScreen = ({ navigation }) => {
     getUser();
   }, []));
 
-  if (hasCameraPermission === false && hasGalleryPermission === false) {
-    return <Text>No permission access to camera and photo gallery</Text>
-  }
+  // if (hasCameraPermission === false && hasGalleryPermission === false) {
+  //   return <Text>No permission access to camera and photo gallery</Text>
+  // }
 
-  if (hasCameraPermission === false ) {
-    return <Text>No permission access to camera</Text>
-  }
+  // if (hasCameraPermission === false ) {
+  //   return <Text>No permission access to camera</Text>
+  // }
 
-  if (hasGalleryPermission === false) {
-    return <Text>No permission access to photo gallery</Text>
-  }
+  // if (hasGalleryPermission === false) {
+  //   return <Text>No permission access to photo gallery</Text>
+  // }
 
   return (
     <View style = {styles.container}>
