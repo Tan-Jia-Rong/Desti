@@ -5,7 +5,7 @@
     "slug": "Desti",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/DestiAppIcon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -27,7 +27,7 @@
       "package": "com.orbitals.Desti",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/DestiAppIcon.png",
         "backgroundColor": "#FFFFFF"
       },
       "config": {
