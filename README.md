@@ -375,18 +375,110 @@ The activity diagram shows the overview of the actions that users can take at va
          <td style="text-align: center; vertical-align: middle;">Redesign a new poster for milestone 2</td>
      </tr>
      <tr>
-      <td style="text-align: center; vertical-align: middle;">Total Hours</td>
-        <td style="text-align: center; vertical-align: middle;">NIL</td>
-        <td style="text-align: center; vertical-align: middle;">98</td>
-        <td style="text-align: center; vertical-align: middle;">99</td>
-         <td style="text-align: center; vertical-align: middle;">NIL</td>
+      <td style="text-align: center; vertical-align: middle;">Map Page: Fix Bugs and Improve UI of Maps</td>
+        <td style="text-align: center; vertical-align: middle;">26/06/22-04/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">1</td>
+         <td style="text-align: center; vertical-align: middle;">6</td>
+         <td style="text-align: center; vertical-align: middle;">Improve UI by setting boundaries
+         Implement description to restaurant page navigation</td>
      </tr>
      <tr>
-      <td style="text-align: center; vertical-align: middle;">To be filled</td>
-        <td style="text-align: center; vertical-align: middle;">To be filled</td>
-        <td style="text-align: center; vertical-align: middle;">To be filled</td>
-         <td style="text-align: center; vertical-align: middle;">To be filled</td>
-         <td style="text-align: center; vertical-align: middle;">To be filled</td>
+      <td style="text-align: center; vertical-align: middle;">Add Review Screen: Implement Tags Feature</td>
+        <td style="text-align: center; vertical-align: middle;">26/06/22-04/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">5</td>
+         <td style="text-align: center; vertical-align: middle;">3</td>
+         <td style="text-align: center; vertical-align: middle;"></td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Restaurant Page: Link tags to restaurant</td>
+        <td style="text-align: center; vertical-align: middle;">05/07/22-11/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">3</td>
+         <td style="text-align: center; vertical-align: middle;">0</td>
+         <td style="text-align: center; vertical-align: middle;"></td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Roulette Feature: Link tags to users</td>
+        <td style="text-align: center; vertical-align: middle;">05/07/22-11/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">3</td>
+         <td style="text-align: center; vertical-align: middle;">1</td>
+         <td style="text-align: center; vertical-align: middle;"></td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Roulette Feature: Implement Algorithm</td>
+        <td style="text-align: center; vertical-align: middle;">12/07/22-18/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">12</td>
+         <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">Create algorithm page and implement algorithm</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Bookmark Page: Create CSS and details for bookmark Page</td>
+        <td style="text-align: center; vertical-align: middle;">12/07/22-18/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">0</td>
+         <td style="text-align: center; vertical-align: middle;">4</td>
+         <td style="text-align: center; vertical-align: middle;">Made flatlist for bookmark, implemented navigation from bookmark, and added the swipe to delete bookmark feature</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Input Screen: Implement search by filter functionality</td>
+        <td style="text-align: center; vertical-align: middle;">12/07/22-18/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">6</td>
+         <td style="text-align: center; vertical-align: middle;">0</td>
+         <td style="text-align: center; vertical-align: middle;">Filter by ratings, price level, and tags</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Improve UI of Restaurant Screen</td>
+        <td style="text-align: center; vertical-align: middle;">12/07/22-18/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">0</td>
+         <td style="text-align: center; vertical-align: middle;">5</td>
+         <td style="text-align: center; vertical-align: middle;">Improve on the looks of Restaurant Screen</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Improve on README for MS3</td>
+        <td style="text-align: center; vertical-align: middle;">12/07/22-25/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">6</td>
+         <td style="text-align: center; vertical-align: middle;">16</td>
+         <td style="text-align: center; vertical-align: middle;">Drastically changed the direction of README to better align with the feedback from MS2</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">System Testing: Testing of application and fixing of bugs (if any)</td>
+        <td style="text-align: center; vertical-align: middle;">18/07/22-21/06/22</td>
+        <td style="text-align: center; vertical-align: middle;">6</td>
+         <td style="text-align: center; vertical-align: middle;">6</td>
+         <td style="text-align: center; vertical-align: middle;"></td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">User Testing: Design questionaire and distribute application to friends for feedback</td>
+        <td style="text-align: center; vertical-align: middle;">18/07/22-25/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">4</td>
+         <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">Obtained valuable feedback for us to fix any urgent issues, and consider the rest as possible future improvements</td>
+     </tr>
+      <tr>
+      <td style="text-align: center; vertical-align: middle;">Improve on app based on user testing and fixing of bugs</td>
+        <td style="text-align: center; vertical-align: middle;">23/07/22-25/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">3</td>
+         <td style="text-align: center; vertical-align: middle;">3</td>
+         <td style="text-align: center; vertical-align: middle;">Time taken by us to fix urgent issues related to user testing</td>
+     </tr>
+      <tr>
+      <td style="text-align: center; vertical-align: middle;">Final update of README for MS3</td>
+        <td style="text-align: center; vertical-align: middle;">23/07/22-25/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">1</td>
+         <td style="text-align: center; vertical-align: middle;">4</td>
+         <td style="text-align: center; vertical-align: middle;">Improved the standard of MS3 with compiliations of everything project-related (eg how the app runs, tech stack used, the testing we did...)</td>
+     </tr>
+      <tr>
+      <td style="text-align: center; vertical-align: middle;">Make video for MS3 and final product advertisement</td>
+        <td style="text-align: center; vertical-align: middle;">23/07/22-25/07/22</td>
+        <td style="text-align: center; vertical-align: middle;">4</td>
+         <td style="text-align: center; vertical-align: middle;">2</td>
+         <td style="text-align: center; vertical-align: middle;">Created a concise app-walkthrough video for advertisement uses</td>
+     </tr>
+     <tr>
+      <td style="text-align: center; vertical-align: middle;">Total Hours</td>
+        <td style="text-align: center; vertical-align: middle;">NIL</td>
+        <td style="text-align: center; vertical-align: middle;">152</td>
+        <td style="text-align: center; vertical-align: middle;">153</td>
+         <td style="text-align: center; vertical-align: middle;">NIL</td>
      </tr>
   </tbody>
 </table>
